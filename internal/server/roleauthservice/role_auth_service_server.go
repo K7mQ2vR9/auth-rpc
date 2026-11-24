@@ -75,11 +75,6 @@ func (s *RoleAuthServiceServer) GetOneRole(ctx context.Context, in *authRpc.GetO
 	return l.GetOneRole(in)
 }
 
-func (s *RoleAuthServiceServer) CheckAdminRoleMenu(ctx context.Context, in *authRpc.CheckAdminRoleMenuReq) (*authRpc.CheckAdminRoleMenuResp, error) {
-	l := roleauthservicelogic.NewCheckAdminRoleMenuLogic(ctx, s.svcCtx)
-	return l.CheckAdminRoleMenu(in)
-}
-
 // 菜单板块
 func (s *RoleAuthServiceServer) AddMenu(ctx context.Context, in *authRpc.AddMenuReq) (*authRpc.AddMenuResp, error) {
 	l := roleauthservicelogic.NewAddMenuLogic(ctx, s.svcCtx)
@@ -104,6 +99,24 @@ func (s *RoleAuthServiceServer) GetMenuList(ctx context.Context, in *authRpc.Get
 func (s *RoleAuthServiceServer) GetMenuByAdminId(ctx context.Context, in *authRpc.GetMenuByAdminIdReq) (*authRpc.GetMenuByAdminIdResp, error) {
 	l := roleauthservicelogic.NewGetMenuByAdminIdLogic(ctx, s.svcCtx)
 	return l.GetMenuByAdminId(in)
+}
+
+// GetUserPermissionTree 返回完整菜单目录和目标用户勾选状态，不执行保存或接口鉴权。
+func (s *RoleAuthServiceServer) GetUserPermissionTree(ctx context.Context, in *authRpc.GetUserPermissionTreeReq) (*authRpc.GetUserPermissionTreeResp, error) {
+	l := roleauthservicelogic.NewGetUserPermissionTreeLogic(ctx, s.svcCtx)
+	return l.GetUserPermissionTree(in)
+}
+
+// SaveUserPermission 覆盖保存目标用户权限，模板选择本身不会调用此入口或立即写库。
+func (s *RoleAuthServiceServer) SaveUserPermission(ctx context.Context, in *authRpc.SaveUserPermissionReq) (*authRpc.SaveUserPermissionResp, error) {
+	l := roleauthservicelogic.NewSaveUserPermissionLogic(ctx, s.svcCtx)
+	return l.SaveUserPermission(in)
+}
+
+// CheckUserPermission 按用户ID检查明确授予的菜单或按钮，成功空响应，失败保留错误分类。
+func (s *RoleAuthServiceServer) CheckUserPermission(ctx context.Context, in *authRpc.CheckUserPermissionReq) (*authRpc.CheckUserPermissionResp, error) {
+	l := roleauthservicelogic.NewCheckUserPermissionLogic(ctx, s.svcCtx)
+	return l.CheckUserPermission(in)
 }
 
 func (s *RoleAuthServiceServer) InitSuperRole(ctx context.Context, in *authRpc.InitSuperRoleReq) (*authRpc.InitSuperRoleResp, error) {

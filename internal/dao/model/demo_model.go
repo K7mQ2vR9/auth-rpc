@@ -61,8 +61,9 @@ func (model *DemoInfoModel) UpdateByMap(id int64, data *schema.DemoInfo) error {
 	return model.getDb().Model(&schema.DemoInfo{}).Where("id = ?", id).Updates(upData).Error
 }
 
+// UpdateAll 保存示例业务字段，排除软删除列，避免零值覆盖数据库的未删除NULL。
 func (model *DemoInfoModel) UpdateAll(id int64, data *schema.DemoInfo) error {
-	return model.getDb().Model(&schema.DemoInfo{}).Where("id = ?", id).Save(data).Error
+	return model.getDb().Model(&schema.DemoInfo{}).Where("id = ?", id).Omit("deleted_at").Save(data).Error
 }
 
 func (model *DemoInfoModel) GetList(in *schema.DemoInfo, sTime, eTime int64, pageQuery *PageQuery) (int64, []*schema.DemoInfo, error) {

@@ -6,8 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gorm.io/plugin/soft_delete"
-	"time"
 
 	"authRpc/authRpc"
 	"authRpc/internal/svc"
@@ -62,7 +60,7 @@ func (l *DeletedPermissionLogic) DeletedPermission(in *authRpc.DeletedPermission
 		return nil, errors.New(fmt.Sprintf("Role [ %s ] have set, can not be delete", roleInfo.RoleName))
 	}
 
-	err := l.PermissionMenuModel.UpdateByMap(in.Id, &schema.PermissionMenu{DeletedAt: soft_delete.DeletedAt(time.Now().Unix())})
+	err := l.PermissionMenuModel.DeleteByID(in.Id)
 	if err != nil {
 		return nil, err
 	}

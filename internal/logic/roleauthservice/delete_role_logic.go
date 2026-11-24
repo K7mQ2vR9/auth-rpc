@@ -6,8 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gorm.io/plugin/soft_delete"
-	"time"
 
 	"authRpc/authRpc"
 	"authRpc/internal/svc"
@@ -65,9 +63,7 @@ func (l *DeleteRoleLogic) DeleteRole(in *authRpc.DeleteRoleReq) (*authRpc.Delete
 		return nil, errors.New(fmt.Sprintf("Admin [ %s ] have set, can not be delete", adminInfo.Name))
 	}
 
-	err := l.RoleModel.UpdateByMap(in.Id, &schema.RolePermission{
-		DeletedAt: soft_delete.DeletedAt(time.Now().Unix()),
-	})
+	err := l.RoleModel.DeleteByID(in.Id)
 	if err != nil {
 		return nil, err
 	}

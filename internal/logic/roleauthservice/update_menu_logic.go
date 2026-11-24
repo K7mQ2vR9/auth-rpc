@@ -4,7 +4,6 @@ import (
 	"authRpc/internal/dao/model/mysql"
 	"authRpc/internal/dao/schema"
 	"context"
-	"errors"
 	"github.com/K7mQ2vR9/base-pkg/headInfo"
 	"github.com/jinzhu/copier"
 
@@ -12,6 +11,8 @@ import (
 	"authRpc/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type UpdateMenuLogic struct {
@@ -39,27 +40,20 @@ func NewUpdateMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	return logic
 }
 
+// UpdateMenu 修改菜单每次都须传入API服务名，避免服务字段缺失或被默认归入其他服务。
 func (l *UpdateMenuLogic) UpdateMenu(in *authRpc.UpdateMenuReq) (*authRpc.UpdateMenuResp, error) {
+	if in == nil || in.Data == nil {
+		return nil, status.Error(codes.InvalidArgument, "菜单data不能为空")
+	}
+	if err := mysql.ValidateServiceName(in.Data.ServiceName); err != nil {
+		return nil, err
+	}
+	if in.Data.Id <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "修改菜单ID必须为正数")
+	}
+
 	if l.initErr != nil {
 		return nil, l.initErr
-	}
-
-	if in.Data.MenuPid != 0 {
-		pInfo := l.MenuModel.FindOne(&schema.Menu{
-			ID: in.Data.MenuPid,
-		})
-		if pInfo.ID == 0 {
-			return nil, errors.New("Pid menu not found")
-		}
-	}
-
-	if in.Data.Path != "" {
-		oInfo := l.MenuModel.FindOne(&schema.Menu{
-			Path: in.Data.Path,
-		})
-		if oInfo.ID != 0 && oInfo.ID != in.Data.Id {
-			return nil, errors.New("Path is exsit")
-		}
 	}
 
 	ind := &schema.Menu{}

@@ -6,6 +6,7 @@ toolchain go1.22.4
 
 require (
 	github.com/K7mQ2vR9/base-pkg v0.1.0
+	github.com/go-sql-driver/mysql v1.8.1
 	github.com/jinzhu/copier v0.4.0
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/spf13/cast v1.10.0
@@ -32,7 +33,6 @@ require (
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.4 // indirect
-	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
 	github.com/golang/mock v1.6.0 // indirect

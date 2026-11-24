@@ -4,7 +4,6 @@ import (
 	"authRpc/internal/dao/model/mysql"
 	"authRpc/internal/dao/schema"
 	"context"
-	"errors"
 	"github.com/K7mQ2vR9/base-pkg/headInfo"
 	"github.com/jinzhu/copier"
 
@@ -12,6 +11,8 @@ import (
 	"authRpc/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type AddMenuLogic struct {
@@ -39,28 +40,17 @@ func NewAddMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddMenuLo
 	return logic
 }
 
-// 菜单板块
+// AddMenu 新增菜单要求显式传入API服务名，路径检查集中由菜单模型按业务及服务处理。
 func (l *AddMenuLogic) AddMenu(in *authRpc.AddMenuReq) (*authRpc.AddMenuResp, error) {
+	if in == nil || in.Data == nil {
+		return nil, status.Error(codes.InvalidArgument, "菜单data不能为空")
+	}
+	if err := mysql.ValidateServiceName(in.Data.ServiceName); err != nil {
+		return nil, err
+	}
+
 	if l.initErr != nil {
 		return nil, l.initErr
-	}
-
-	if in.Data.MenuPid != 0 {
-		pInfo := l.MenuModel.FindOne(&schema.Menu{
-			ID: in.Data.MenuPid,
-		})
-		if pInfo.ID == 0 {
-			return nil, errors.New("Pid menu not found")
-		}
-	}
-
-	if in.Data.Path != "" {
-		oInfo := l.MenuModel.FindOne(&schema.Menu{
-			Path: in.Data.Path,
-		})
-		if oInfo.ID != 0 {
-			return nil, errors.New("Path is exsit")
-		}
 	}
 
 	ind := &schema.Menu{}

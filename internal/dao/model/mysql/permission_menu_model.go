@@ -9,6 +9,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/K7mQ2vR9/base-pkg/headInfo"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 	"time"
 )
@@ -82,11 +84,9 @@ func (model *PermissionMenuModel) InsertSchema(data *schema.PermissionMenu) erro
 	return nil
 }
 
+// UpdateByMap 仅更新分组业务字段，软删除统一使用DeleteByID。
 func (model *PermissionMenuModel) UpdateByMap(id int64, data *schema.PermissionMenu) error {
 	upData := map[string]interface{}{}
-	if data.DeletedAt != 0 {
-		upData["deleted_at"] = data.DeletedAt
-	}
 	if data.MenuIds != "" {
 		upData["menu_ids"] = data.MenuIds
 	}
@@ -97,8 +97,17 @@ func (model *PermissionMenuModel) UpdateByMap(id int64, data *schema.PermissionM
 	return model.getDb().Model(&schema.PermissionMenu{}).Where("id = ?", id).Updates(upData).Error
 }
 
+// DeleteByID 通过模型软删除指定分组，自动写入Unix秒并同步UpdatedAt，不物理删除记录。
+func (model *PermissionMenuModel) DeleteByID(id int64) error {
+	if id <= 0 {
+		return status.Error(codes.InvalidArgument, "分组ID必须为正数")
+	}
+	return model.getDb().Where("id = ?", id).Delete(&schema.PermissionMenu{}).Error
+}
+
+// UpdateAll 更新分组业务字段，软删除字段由DeleteByID统一处理。
 func (model *PermissionMenuModel) UpdateAll(id int64, data *schema.PermissionMenu) error {
-	return model.getDb().Model(&schema.PermissionMenu{}).Where("id = ?", id).Updates(data).Error
+	return model.getDb().Model(&schema.PermissionMenu{}).Where("id = ?", id).Omit("deleted_at").Updates(data).Error
 }
 
 func (model *PermissionMenuModel) GetList(in *schema.PermissionMenu, pageQuery *bmodel.PageQuery) (int64, []*schema.PermissionMenu, error) {

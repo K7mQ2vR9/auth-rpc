@@ -143,6 +143,7 @@ message MenuItem{
   int32 status=6;
   int32 sort=7;
   int64 createdAt=8;
+  string serviceName = 9; // 接口所属API服务名，新增和修改必填，最多64字符，精确匹配。
 }
 message AddMenuReq{
   MenuItem data=1;
@@ -187,6 +188,7 @@ message GetMenuByAdminIdItem{
   int64 menuPid = 4; //父级ID
   int32 menuType = 5; // 1=菜单，2=按钮
   repeated GetMenuByAdminIdItem children = 6; //子级菜单
+  string serviceName = 7; // 菜单所属API服务名，供调用方区分相同路径。
 }
 
 message GetMenuByAdminIdResp{
@@ -209,11 +211,63 @@ message initSuperRoleResp{
   RoleItem data =1;
 }
 
-message CheckAdminRoleMenuReq{
-  int64 roleId =1;
-  string path =2;
+// GetUserPermissionTreeReq 查询授权编辑页，userId是目标管理员，不作为RPC登录认证条件。
+message GetUserPermissionTreeReq {
+  // 必填正数，对应admin_info.id；业务范围读取当前请求的business-code。
+  int64 userId = 1;
 }
-message CheckAdminRoleMenuResp{}
+
+// UserPermissionMenu 表示菜单树节点；勾选仅来自用户独立权限，不继承角色或父节点。
+message UserPermissionMenu {
+  int64 id = 1; // 菜单ID，同一菜单跨组出现时前端按此ID同步勾选。
+  int64 menuPid = 2; // 原父节点ID，0表示顶级。
+  string menuName = 3; // 页面或按钮名称。
+  int32 menuType = 4; // 1为页面，2为按钮，沿用菜单表定义。
+  string path = 5; // 菜单或接口路径。
+  int32 status = 6; // 1为启用，其他状态作为停用项展示。
+  int32 sort = 7; // 升序排序，值相同时按ID升序。
+  bool checked = 8; // 用户已保存该菜单ID时为true，不代表接口实际鉴权结果。
+  bool disabled = 9; // 停用项或仅补齐结构的父节点为true，前端禁止直接勾选。
+  repeated UserPermissionMenu children = 10; // 子节点；不自动授予子节点或父节点权限。
+  bool displayOnly = 11; // true表示该组仅借此祖先节点组织展示，不属于本组直接成员。
+  string serviceName = 12; // 菜单所属API服务名，与菜单列表、增改和实际鉴权使用同一值。
+}
+
+// UserPermissionGroup 保留菜单分组，包括没有勾选项的分组。
+message UserPermissionGroup {
+  int64 id = 1; // 分组ID；0专用于承载未分组菜单，不写入数据库。
+  string permissionName = 2; // 分组名称，虚拟分组名为未分组。
+  repeated UserPermissionMenu menus = 3; // 本组完整菜单树，不按用户已有权限裁剪。
+}
+
+// GetUserPermissionTreeResp 一次返回目录和勾选状态，不提供单独的已选权限汇总。
+message GetUserPermissionTreeResp {
+  int64 userId = 1; // 本次查询的管理员ID。
+  int64 version = 2; // 无记录时为0；软删除记录返回原版本但不勾选权限，供后续恢复时比较。
+  repeated UserPermissionGroup groups = 3; // 当前business-code下全部未删除分组及菜单。
+}
+
+// SaveUserPermissionReq 保存最终勾选结果，固定全量覆盖，不接收角色ID或追加模式。
+message SaveUserPermissionReq {
+  int64 userId = 1; // 必填正数，对应admin_info.id；业务归属从当前business-code读取。
+  optional string menuIds = 2; // 必须显式传入，英文逗号分隔；空字符串明确清空，缺失则拒绝。
+  optional int64 version = 3; // 必须显式传入；0仅用于首次创建，已有或软删除记录使用查询返回的版本。
+}
+
+// SaveUserPermissionResp 返回成功保存后的版本，前端后续保存需使用此值。
+message SaveUserPermissionResp {
+  int64 version = 1; // 首次成功为1，覆盖或恢复成功为原版本加1。
+}
+
+// CheckUserPermissionReq 由API认证完成后传入可信用户ID和当前完整接口路径，不使用角色ID。
+message CheckUserPermissionReq {
+  int64 userId = 1; // 必填正数，对应admin_info.id；业务范围从当前business-code读取。
+  string path = 2; // 必填完整路径，精确匹配；不包含查询参数，不支持通配、前缀或角色继承。
+  string serviceName = 3; // API自身配置的服务名，必填且最多64字符；不能采信前端任意值。
+}
+
+// CheckUserPermissionResp 返回空响应表示允许；无权限返回PermissionDenied，内部故障返回独立错误。
+message CheckUserPermissionResp {}
 
 service RoleAuthService {
   //权限板块
@@ -229,7 +283,6 @@ service RoleAuthService {
   rpc getRoleList(GetRoleListReq)returns(GetRoleListResp);
   rpc getRoleMenus(GetRoleMenusReq)returns(GetRoleMenusResp);
   rpc getOneRole(GetOneRoleReq)returns(GetOneRoleResp);
-  rpc checkAdminRoleMenu(CheckAdminRoleMenuReq)returns(CheckAdminRoleMenuResp);
 
   //菜单板块
   rpc addMenu(AddMenuReq)returns(AddMenuResp);
@@ -237,6 +290,15 @@ service RoleAuthService {
   rpc deleteMenu(DeleteMenuReq)returns(DeleteMenuResp);
   rpc getMenuList(GetMenuListReq)returns(GetMenuListResp);
   rpc getMenuByAdminId(GetMenuByAdminIdReq)returns(GetMenuByAdminIdResp);
+
+  // 授权编辑页一次获取全部菜单分组和用户勾选状态，只查询，不保存或复制模板。
+  rpc getUserPermissionTree(GetUserPermissionTreeReq) returns(GetUserPermissionTreeResp);
+
+  // 单条插入或版本条件更新，覆盖保存用户独立权限，不额外开启事务。
+  rpc saveUserPermission(SaveUserPermissionReq) returns(SaveUserPermissionResp);
+
+  // 按用户独立菜单权限检查请求路径；仅放行有效用户明确获得的已启用页面或按钮。
+  rpc checkUserPermission(CheckUserPermissionReq) returns(CheckUserPermissionResp);
 
   rpc initSuperRole(initSuperRoleReq)returns(initSuperRoleResp);
 }

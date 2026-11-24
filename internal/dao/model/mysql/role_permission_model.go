@@ -9,6 +9,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/cast"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 	"time"
 )
@@ -87,11 +89,9 @@ func (model *RoleModel) InsertSchema(data *schema.RolePermission) error {
 	return nil
 }
 
+// UpdateByMap 仅更新角色业务字段，软删除统一使用DeleteByID。
 func (model *RoleModel) UpdateByMap(id int64, data *schema.RolePermission) error {
 	upData := map[string]interface{}{}
-	if data.DeletedAt != 0 {
-		upData["deleted_at"] = data.DeletedAt
-	}
 	if data.PermissionIds != "" {
 		upData["permission_ids"] = data.PermissionIds
 	}
@@ -105,8 +105,17 @@ func (model *RoleModel) UpdateByMap(id int64, data *schema.RolePermission) error
 	return model.getDb().Model(&schema.RolePermission{}).Where("id = ?", id).Updates(upData).Error
 }
 
+// DeleteByID 通过模型软删除指定角色，自动写入Unix秒并同步UpdatedAt，不物理删除记录。
+func (model *RoleModel) DeleteByID(id int64) error {
+	if id <= 0 {
+		return status.Error(codes.InvalidArgument, "角色ID必须为正数")
+	}
+	return model.getDb().Where("id = ?", id).Delete(&schema.RolePermission{}).Error
+}
+
+// UpdateAll 更新角色业务字段，软删除字段由DeleteByID统一处理。
 func (model *RoleModel) UpdateAll(id int64, data *schema.RolePermission) error {
-	return model.getDb().Model(&schema.RolePermission{}).Where("id = ?", id).Updates(data).Error
+	return model.getDb().Model(&schema.RolePermission{}).Where("id = ?", id).Omit("deleted_at").Updates(data).Error
 }
 
 func (model *RoleModel) GetList(in *schema.RolePermission, pageQuery *bmodel.PageQuery) (int64, []*schema.RolePermission, error) {

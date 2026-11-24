@@ -1,11 +1,9 @@
 package test
 
 import (
-	"authRpc/authRpc"
 	"authRpc/internal/config"
 	"authRpc/internal/dao/model/mysql"
 	"authRpc/internal/dao/schema"
-	roleauthservicelogic "authRpc/internal/logic/roleauthservice"
 	"authRpc/internal/svc"
 	"context"
 	"encoding/json"
@@ -28,16 +26,8 @@ func CreateSvcCtx() *svc.ServiceContext {
 }
 
 func TestTime123(t *testing.T) {
-	svctx := CreateSvcCtx()
-	defer svctx.Close()
-	in := &authRpc.CheckAdminRoleMenuReq{
-		RoleId: 19,
-		Path:   "/esUserNew/esUserNewList",
-	}
-	_, err := roleauthservicelogic.NewCheckAdminRoleMenuLogic(context.Background(), svctx).CheckAdminRoleMenu(in)
-	if err != nil {
-		return
-	}
+	// 保留项目原有测试入口；其验证的角色鉴权接口已删除，不再连接真实资源调用旧接口。
+	t.Skip("角色鉴权接口已移除，用户独立权限鉴权待另行实现")
 }
 func TestTimeNow(t *testing.T) {
 

@@ -13,7 +13,7 @@ SelectDb:
   - DbKey: user-rpc
     MySQL:
       # pro模式须为原v1:密文；dev/test模式为原样DSN，日志不回显此值。
-      DataSource: root:@tcp(127.0.0.1:3306)/KING_BACCARAT_PAIRuser_rpc?parseTime=true
+      DataSource: root:@tcp(127.0.0.1:3306)/user_rpc?parseTime=true
       # 启动探活及版本探测预算，默认5s，父ctx更早截止时间优先。
       StartupTimeout: 5s
       # SQL日志默认warn，各运行模式一致；未列出的连接池和超时字段走公共包默认值。

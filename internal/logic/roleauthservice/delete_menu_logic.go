@@ -2,13 +2,10 @@ package roleauthservicelogic
 
 import (
 	"authRpc/internal/dao/model/mysql"
-	"authRpc/internal/dao/schema"
 	"context"
 	"errors"
 	"fmt"
 	"github.com/spf13/cast"
-	"gorm.io/plugin/soft_delete"
-	"time"
 
 	"authRpc/authRpc"
 	"authRpc/internal/svc"
@@ -59,10 +56,7 @@ func (l *DeleteMenuLogic) DeleteMenu(in *authRpc.DeleteMenuReq) (*authRpc.Delete
 		return nil, errors.New(fmt.Sprintf("Permission [ %s ] info have set", permissionInfo.PermissionName))
 	}
 
-	ind := &schema.Menu{
-		DeletedAt: soft_delete.DeletedAt(time.Now().Unix()),
-	}
-	err := l.MenuModel.UpdateAll(in.Id, ind)
+	err := l.MenuModel.DeleteByID(in.Id)
 	if err != nil {
 		return nil, err
 	}

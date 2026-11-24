@@ -4,6 +4,14 @@ auth-rpc提供角色、权限、菜单管理、管理员菜单查询、路径权
 
 实际数据库结构、只读连接结果及待讨论的代码问题见 [数据库与代码分析](CODE_REVIEW.md)。本轮分析未修改业务代码或数据库，未运行服务、构建或业务测试。
 
+用户独立授权及角色模板的数据库设计见 [数据库设计与执行状态](DATABASE.md)。2026-11-24已按最新配置在user_rpc完成结构迁移：新增admin_permission，角色表改用menu_ids并删除is_super_role；管理员、菜单和分组表保持。AdminPermission模型、GetUserPermissionTree查询及SaveUserPermission覆盖保存已实现，见 [用户权限接入](USER_PERMISSION.md)。保存要求显式传入菜单IDs及版本号，支持清空和按版本恢复，单条写入不额外开启事务。旧角色业务仍待适配新结构后使用。
+
+deleted_at统一通过模型软删除管理：未删除为NULL，模型Delete写入Unix秒并同步updated_at，普通查询自动过滤；读取已删除权限的版本号时才显式使用Unscoped。模型与相关删除入口已同步，本次未修改数据库或运行构建、测试。
+
+用户权限代码集中维护：查询、保存、校验和菜单ID解析放在admin_permission_model.go；菜单树组装放在get_user_permission_tree_logic.go。保留每个RPC的Logic入口，同一业务的中间逻辑不再按小功能拆成多个辅助文件。
+
+旧CheckAdminRoleMenu已删除，新CheckUserPermission(userId, serviceName, path)已接入协议、本地Client/Server及Logic，实际鉴权集中在admin_permission_model.go。仅放行当前业务正常管理员明确获得的未删除、已启用页面或按钮，服务名和完整路径同时精确匹配，无权限返回PermissionDenied，不开启事务或读取角色模板。menu新增service_name，菜单增改必填，列表及权限树同步回显。user-rpc仍引用外部客户端中的旧调用，需同步客户端并迁移，当前不能据此认定完整登录链路已联调。
+
 go.mod当前仍声明 `github.com/K7mQ2vR9/base-pkg v0.1.0`，旧common-pkg和GitLab replace已移除。**当前RPC准入新接口及configcipher组件尚未发布，v0.1.0既不含该组件，也不支持当前RPC构造签名，仅在根工作区使用本地common-pkg时可接入；独立部署须先发布新公共包版本并更新go.mod/go.sum，不能直接以GOWORK=off使用当前源码。** 公共资源说明见 [base-pkg首版](https://github.com/K7mQ2vR9/base-pkg/tree/v0.1.0)。配置加解密统一使用公共包configcipher，本项目不再保留重复算法。
 
 ## RPC准入与显式白名单
@@ -72,7 +80,7 @@ etc/auth_rpc.yaml已同步为新结构：DbKey字段使用规范名称，原MySQ
 
 ## 本次迁移状态
 
-截至2026-11-24，已完成公共包导入迁移、新格式MySQL/Redis配置及初始化接入、公共configcipher加解密组件接入、模型取库错误返回，以及RPC metadata准入和显式GetWhitePath接入。已删除本地重复解密算法、平铺配置转换、环境SQL日志覆盖、TLS隐式开启和自动全量白名单。角色/权限/菜单业务规则、protobuf协议及其他业务项目源码保持；生成Client/Server只同步module导入路径，原有测试仅适配接口、关闭入口和导入路径，未运行其真实资源操作。
+截至2026-11-24，已完成公共包导入迁移、新格式MySQL/Redis接入、公共configcipher接入、模型取库错误返回、RPC metadata准入及GetWhitePath接入。用户权限阶段已新增AdminPermission模型及GetUserPermissionTree，只读返回当前业务全部菜单分组及用户勾选状态，协议和本地Client/Server已同步。旧角色及其他CRUD接口尚未重构，其他业务项目源码保持；原有测试仅适配接口、关闭入口和导入路径，未运行其真实资源操作。
 
 Go module已由auth改为authRpc，并同步原有源码、生成Client/Server及原有测试中的Go导入路径；makefile的导出路径替换规则和密钥链接注入说明已同步。只调整导入，不重新生成protobuf或改动协议内容；根go.work继续按原目录引用，无须改动。此次执行gofmt格式化修改的Go文件，未执行构建、测试、代码生成或范例；无新增测试、脚本、缓存或临时产物，无需清理。
 
@@ -80,4 +88,4 @@ Go module已由auth改为authRpc，并同步原有源码、生成Client/Server�
 
 本轮仅格式化修改文件并维护依赖，按前述安排未执行构建、测试、范例或运行时联调；密文兼容和RPC行为依据旧版源码适配，不声称已做实际密钥/密文或调用方联调。没有新增测试用例或测试脚本。登记命令、结果和限制后，已删除本轮下载的依赖源码、模块元数据、zip及sumdb临时缓存，任务目录已不存在；原有模块缓存、测试和配置文件保留。
 
-当前RPC新接口及configcipher组件仍只在本地工作区生效，未覆盖v0.1.0或发布新版本。配置加解密封装沿用v1:协议及MySQL/Redis配置结构，删除项目内重复算法，启动层按既定优先级解析密钥；环境变量已统一为MYSQL_CONFIG_KEY_BASE64，链接注入路径已调整，依赖版本和RPC规则未更改。本次仅用gofmt格式化修改的Go文件，未执行构建、测试、范例或实际密钥/密文联调。无新增测试、脚本、缓存或临时产物，无需清理；没有提交、推送或发版。
+当前RPC新接口及configcipher组件仍只在本地工作区生效，未覆盖v0.1.0或发布新版本。配置加解密沿用v1:协议和既定密钥来源，尚无实际密钥/密文联调结论。用户权限保存已通过离线模拟SQL的定向测试和本地Client/Server编译，具体命令、范围及本次测试文件清理状态见 [用户权限接入](USER_PERMISSION.md)。该结果不替代旧角色逻辑、真实并发、API或前端联调；没有提交、推送或发版。

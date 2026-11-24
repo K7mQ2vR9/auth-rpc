@@ -2,6 +2,8 @@
 
 分析日期：2026-11-24。依据当前工作区源码和项目配置完成只读数据库连接、表结构与索引检查、汇总查询。本文用于讨论后续修改，不代表已经修复。未修改业务源码、数据库结构或数据。
 
+后续数据库阶段已按用户确认执行：user_rpc新增admin_permission，role_permission的permission_ids改为TEXT menu_ids并删除is_super_role，其他核心表结构保持，详见 [当前数据库设计与执行状态](DATABASE.md)。下文表结构及角色继承描述为此次迁移前的分析快照；业务代码尚未适配，不作为迁移后的数据库现状。
+
 ## 数据库连接与当前数据
 
 已使用 `etc/auth_rpc.yaml` 的MySQL连接配置成功连接，当前项目运行模式为dev，DSN按明文连接，不需要配置解密密钥。连接凭证、地址、数据库名和账户明细不写入本报告。
@@ -50,6 +52,8 @@ RPC入口按既定规则要求metadata、合法Trace及非白名单business-code
 
 ### 1. 统一软删除语义：NULL与0不匹配（高）
 
+后续处理状态：auth-rpc六个schema已统一default:null及模型软删除，GetUserPermissionTree普通查询已移除手写过滤；菜单、分组和角色删除已改用模型Delete。本项下文保留迁移前问题依据，不代表当前模型仍缺少NULL配置；其他项目尚未随此修改。
+
 依据：[菜单模型字段](internal/dao/schema/menu.go:15)、[角色模型字段](internal/dao/schema/role_permission.go:11)及实际四张表定义。当前schema使用soft_delete.DeletedAt，gorm标签未配置default:null；本地依赖gorm.io/plugin/soft_delete v1.2.1默认追加deleted_at=0，只有字段默认值标记为null时才生成IS NULL条件。
 
 影响：按数据库默认值或项目约定写入deleted_at=NULL的正常记录，普通查询及更新会被当作不可见。当前表为空，没有已存在的漏查记录；代码创建的记录可能写入0，后续还会形成两种约定混用。
@@ -95,7 +99,7 @@ SELECT FIND_IN_SET('1', JSON_ARRAY(1,2)),
 
 ### 5. 禁用菜单仍可能通过路径权限校验（高）
 
-依据：[CheckAdminRoleMenu](internal/logic/roleauthservice/check_admin_role_menu_logic.go:80)、[GetMenuByIds](internal/dao/model/mysql/menu_model.go:156)、[GetMenuByAdminId](internal/logic/roleauthservice/get_menu_by_admin_id_logic.go:54)。
+依据：迁移前的CheckAdminRoleMenu（接口及实现现已删除）、[GetMenuByIds](internal/dao/model/mysql/menu_model.go:156)、[GetMenuByAdminId](internal/logic/roleauthservice/get_menu_by_admin_id_logic.go:54)。
 
 路径检查只按path和menu_type=按钮查菜单，没有要求status=启用。管理员菜单树按ID取菜单同样未过滤状态；管理员菜单查询没有选择有效管理员状态。
 
