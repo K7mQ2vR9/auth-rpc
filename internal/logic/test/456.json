@@ -1,0 +1,3442 @@
+{
+  "adminUser": {
+    "ParseAdminToken": {
+      "post": {
+        "url": "/adminUser/ParseAdminToken",
+        "name": "解析AdminToken",
+        "operationId": "parseAdminToken",
+        "tags": [
+          "adminUser"
+        ]
+      }
+    },
+    "bindBusinessSite": {
+      "post": {
+        "url": "/adminUser/bindBusinessSite",
+        "name": "管理员绑定站点",
+        "operationId": "bindBusinessSite",
+        "tags": [
+          "adminUser"
+        ]
+      }
+    },
+    "createUser": {
+      "post": {
+        "url": "/adminUser/createUser",
+        "name": "创建管理员",
+        "operationId": "createUser",
+        "tags": [
+          "adminUser"
+        ]
+      }
+    },
+    "deleteGoogleCode": {
+      "post": {
+        "url": "/adminUser/deleteGoogleCode",
+        "name": "删除GoogleCode",
+        "operationId": "DeleteGoogleCode",
+        "tags": [
+          "adminUser"
+        ]
+      }
+    },
+    "deleteUser": {
+      "post": {
+        "url": "/adminUser/deleteUser",
+        "name": "删除管理员",
+        "operationId": "deleteUser",
+        "tags": [
+          "adminUser"
+        ]
+      }
+    },
+    "getOneUser": {
+      "post": {
+        "url": "/adminUser/getOneUser",
+        "name": "获取管理员详情",
+        "operationId": "getOneUser",
+        "tags": [
+          "adminUser"
+        ]
+      }
+    },
+    "updateUser": {
+      "post": {
+        "url": "/adminUser/updateUser",
+        "name": "编辑管理员",
+        "operationId": "updateUser",
+        "tags": [
+          "adminUser"
+        ]
+      }
+    },
+    "userList": {
+      "post": {
+        "url": "/adminUser/userList",
+        "name": "管理员列表",
+        "operationId": "userList",
+        "tags": [
+          "adminUser"
+        ]
+      }
+    },
+    "userLogin": {
+      "post": {
+        "url": "/adminUser/userLogin",
+        "name": "管理员登录",
+        "operationId": "adminLogin",
+        "tags": [
+          "adminUser"
+        ]
+      }
+    }
+  },
+  "category": {
+    "editGameCategory": {
+      "post": {
+        "url": "/category/editGameCategory",
+        "name": "编辑游戏类型",
+        "operationId": "editGameCategory",
+        "tags": [
+          "game/category"
+        ]
+      }
+    },
+    "editGameChildCategory": {
+      "post": {
+        "url": "/category/editGameChildCategory",
+        "name": "编辑游戏类型",
+        "operationId": "editGameChildCategory",
+        "tags": [
+          "game/childCategory"
+        ]
+      }
+    },
+    "enableGameCategory": {
+      "post": {
+        "url": "/category/enableGameCategory",
+        "name": "启用/禁用游戏类型",
+        "operationId": "enableGameCategory",
+        "tags": [
+          "game/category"
+        ]
+      }
+    },
+    "enableGameChildCategory": {
+      "post": {
+        "url": "/category/enableGameChildCategory",
+        "name": "启用/禁用游戏类型",
+        "operationId": "enableGameChildCategory",
+        "tags": [
+          "game/childCategory"
+        ]
+      }
+    },
+    "getGameCategoryList": {
+      "post": {
+        "url": "/category/getGameCategoryList",
+        "name": "获取游戏类型列表",
+        "operationId": "getGameCategoryList",
+        "tags": [
+          "game/category"
+        ]
+      }
+    },
+    "getGameChildCategoryList": {
+      "post": {
+        "url": "/category/getGameChildCategoryList",
+        "name": "获取游戏类型列表",
+        "operationId": "getGameChildCategoryList",
+        "tags": [
+          "game/childCategory"
+        ]
+      }
+    },
+    "syncGameCategory": {
+      "post": {
+        "url": "/category/syncGameCategory",
+        "name": "同步游戏类型",
+        "operationId": "syncGameCategory",
+        "tags": [
+          "game/category"
+        ]
+      }
+    },
+    "syncGameChildCategory": {
+      "post": {
+        "url": "/category/syncGameChildCategory",
+        "name": "同步游戏类型",
+        "operationId": "syncGameChildCategory",
+        "tags": [
+          "game/childCategory"
+        ]
+      }
+    }
+  },
+  "communication": {
+    "SendSms": {
+      "post": {
+        "url": "/communication/SendSms",
+        "name": "发送手机验证码",
+        "operationId": "SendSms",
+        "tags": [
+          "common/communication"
+        ]
+      }
+    },
+    "getEmailSendList": {
+      "post": {
+        "url": "/communication/getEmailSendList",
+        "name": "邮箱发送日志列表",
+        "operationId": "GetEmailSendList",
+        "tags": [
+          "common/communication"
+        ]
+      }
+    },
+    "getSmsSendList": {
+      "post": {
+        "url": "/communication/getSmsSendList",
+        "name": "手机短信发送日志列表",
+        "operationId": "GetSmsSendList",
+        "tags": [
+          "common/communication"
+        ]
+      }
+    },
+    "sendEmailCode": {
+      "post": {
+        "url": "/communication/sendEmailCode",
+        "name": "发送邮箱验证码",
+        "operationId": "sendEmailCode",
+        "tags": [
+          "common/communication"
+        ]
+      }
+    },
+    "sendTgSms": {
+      "post": {
+        "url": "/communication/sendTgSms",
+        "name": "发送TG消息",
+        "operationId": "SendTgSms",
+        "tags": [
+          "common/communication"
+        ]
+      }
+    }
+  },
+  "esUser": {
+    "esUserList": {
+      "post": {
+        "url": "/esUser/esUserList",
+        "name": "用户列表",
+        "operationId": "esUserList",
+        "tags": [
+          "esReport/esUser"
+        ]
+      }
+    },
+    "esUserStatisticsList": {
+      "post": {
+        "url": "/esUser/esUserStatisticsList",
+        "name": "用户统计列表",
+        "operationId": "esUserStatisticsList",
+        "tags": [
+          "esReport/esUser"
+        ]
+      }
+    },
+    "exportEsUserList": {
+      "post": {
+        "url": "/esUser/exportEsUserList",
+        "name": "导出用户列表",
+        "operationId": "exportEsUserList",
+        "tags": [
+          "esReport/esUser"
+        ]
+      }
+    },
+    "exportEsUserStatisticsList": {
+      "post": {
+        "url": "/esUser/exportEsUserStatisticsList",
+        "name": "导出用户统计列表",
+        "operationId": "exportEsUserStatisticsList",
+        "tags": [
+          "esReport/esUser"
+        ]
+      }
+    }
+  },
+  "esUserGame": {
+    "esUserGameWinLoseList": {
+      "post": {
+        "url": "/esUserGame/esUserGameWinLoseList",
+        "name": "用户输赢统计列表自己",
+        "operationId": "esUserGameWinLoseList",
+        "tags": [
+          "esReport/esUserGame"
+        ]
+      }
+    },
+    "esUserGameWinLoseListAgent": {
+      "post": {
+        "url": "/esUserGame/esUserGameWinLoseListAgent",
+        "name": "用户输赢统计列表代理",
+        "operationId": "esUserGameWinLoseListAgent",
+        "tags": [
+          "esReport/esUserGame"
+        ]
+      }
+    },
+    "esUserGameWinLoseListByUserPage": {
+      "post": {
+        "url": "/esUserGame/esUserGameWinLoseListByUserPage",
+        "name": "用户输赢统计列表--按照用户分组",
+        "operationId": "esUserGameWinLoseListByUserPage",
+        "tags": [
+          "esReport/esUserGame"
+        ]
+      }
+    },
+    "esUserGameWinLoseListMember": {
+      "post": {
+        "url": "/esUserGame/esUserGameWinLoseListMember",
+        "name": "用户输赢统计列表玩家",
+        "operationId": "esUserGameWinLoseListMember",
+        "tags": [
+          "esReport/esUserGame"
+        ]
+      }
+    },
+    "esUserGameWinLoseSortList": {
+      "post": {
+        "url": "/esUserGame/esUserGameWinLoseSortList",
+        "name": "用户输赢排行榜列表",
+        "operationId": "esUserGameWinLoseSortList",
+        "tags": [
+          "esReport/esUserGame"
+        ]
+      }
+    },
+    "exportEsUserGameWinLoseList": {
+      "post": {
+        "url": "/esUserGame/exportEsUserGameWinLoseList",
+        "name": "导出用户输赢统计列表自己",
+        "operationId": "exportEsUserGameWinLoseList",
+        "tags": [
+          "esReport/esUserGame"
+        ]
+      }
+    }
+  },
+  "esUserNew": {
+    "esAgentEarningsList": {
+      "post": {
+        "url": "/esUserNew/esAgentEarningsList",
+        "name": "代理用户盈利列表",
+        "operationId": "esAgentEarningsList",
+        "tags": [
+          "esReport/esUserNew"
+        ]
+      }
+    },
+    "esAgentEarningsListExport": {
+      "post": {
+        "url": "/esUserNew/esAgentEarningsListExport",
+        "name": "导出代理用户盈利列表",
+        "operationId": "esAgentEarningsListExport",
+        "tags": [
+          "esReport/esUserNew"
+        ]
+      }
+    },
+    "esAgentNewList": {
+      "post": {
+        "url": "/esUserNew/esAgentNewList",
+        "name": "代理列表",
+        "operationId": "esAgentNewList",
+        "tags": [
+          "esReport/esUserNew"
+        ]
+      }
+    },
+    "esAgentNewListExport": {
+      "post": {
+        "url": "/esUserNew/esAgentNewListExport",
+        "name": "代理列表导出",
+        "operationId": "esAgentNewListExport",
+        "tags": [
+          "esReport/esUserNew"
+        ]
+      }
+    },
+    "esUserNewDetail": {
+      "post": {
+        "url": "/esUserNew/esUserNewDetail",
+        "name": "用户详情",
+        "operationId": "esUserNewDetail",
+        "tags": [
+          "esReport/esUserNew"
+        ]
+      }
+    },
+    "esUserNewList": {
+      "post": {
+        "url": "/esUserNew/esUserNewList",
+        "name": "用户列表",
+        "operationId": "esUserNewList",
+        "tags": [
+          "esReport/esUserNew"
+        ]
+      }
+    },
+    "esUserNewListExport": {
+      "post": {
+        "url": "/esUserNew/esUserNewListExport",
+        "name": "导出用户列表",
+        "operationId": "esUserNewListExport",
+        "tags": [
+          "esReport/esUserNew"
+        ]
+      }
+    }
+  },
+  "esWallet": {
+    "esUserSumWalletLogByUser": {
+      "post": {
+        "url": "/esWallet/esUserSumWalletLogByUser",
+        "name": "用户余额变动记录--按照用户分组",
+        "operationId": "esUserSumWalletLogByUser",
+        "tags": [
+          "esReport/esWallet"
+        ]
+      }
+    },
+    "esWithdrawOrderByUser": {
+      "post": {
+        "url": "/esWallet/esWithdrawOrderByUser",
+        "name": "提现订单--按照用户分组",
+        "operationId": "esWithdrawOrderByUser",
+        "tags": [
+          "esReport/esWallet"
+        ]
+      }
+    }
+  },
+  "firstActive": {
+    "addOneRule": {
+      "post": {
+        "url": "/firstActive/addOneRule",
+        "name": "首冲活动-新增加规则",
+        "operationId": "addOneRule",
+        "tags": [
+          "active/firstActive"
+        ]
+      }
+    },
+    "deletedOneRule": {
+      "post": {
+        "url": "/firstActive/deletedOneRule",
+        "name": "首冲活动-删除详情规则",
+        "operationId": "deletedOneRule",
+        "tags": [
+          "active/firstActive"
+        ]
+      }
+    },
+    "getOneDetail": {
+      "post": {
+        "url": "/firstActive/getOneDetail",
+        "name": "首冲活动-获取规则详情",
+        "operationId": "getOneDetail",
+        "tags": [
+          "active/firstActive"
+        ]
+      }
+    },
+    "updateOneRuleDetail": {
+      "post": {
+        "url": "/firstActive/updateOneRuleDetail",
+        "name": "首冲活动-编辑详情规则",
+        "operationId": "updateOneRuleDetail",
+        "tags": [
+          "active/firstActive"
+        ]
+      }
+    },
+    "userJoinActivityLogList": {
+      "post": {
+        "url": "/firstActive/userJoinActivityLogList",
+        "name": "首冲活动-用户参加活动列表",
+        "operationId": "userJoinActivityLogList",
+        "tags": [
+          "active/firstActive"
+        ]
+      }
+    }
+  },
+  "game": {
+    "editGameOneDetail": {
+      "post": {
+        "url": "/game/editGameOneDetail",
+        "name": "编辑游戏详情",
+        "operationId": "editGameOneDetail",
+        "tags": [
+          "game/game"
+        ]
+      }
+    },
+    "enableGameOne": {
+      "post": {
+        "url": "/game/enableGameOne",
+        "name": "游戏上架/下架",
+        "operationId": "enableGameOne",
+        "tags": [
+          "game/game"
+        ]
+      }
+    },
+    "getGameList": {
+      "post": {
+        "url": "/game/getGameList",
+        "name": "获取游戏列表",
+        "operationId": "getGameList",
+        "tags": [
+          "game/game"
+        ]
+      }
+    },
+    "getGameOneDetail": {
+      "post": {
+        "url": "/game/getGameOneDetail",
+        "name": "获取游戏详情",
+        "operationId": "getGameOneDetail",
+        "tags": [
+          "game/game"
+        ]
+      }
+    }
+  },
+  "menu": {
+    "addMenu": {
+      "post": {
+        "url": "/menu/addMenu",
+        "name": "添加菜单",
+        "operationId": "addMenu",
+        "tags": [
+          "auth/menu"
+        ]
+      }
+    },
+    "deleteMenu": {
+      "post": {
+        "url": "/menu/deleteMenu",
+        "name": "删除菜单",
+        "operationId": "deleteMenu",
+        "tags": [
+          "auth/menu"
+        ]
+      }
+    },
+    "getAdminMenu": {
+      "post": {
+        "url": "/menu/getAdminMenu",
+        "name": "根据用户ID获取菜单列表",
+        "operationId": "getAdminMenu",
+        "tags": [
+          "auth/menu"
+        ]
+      }
+    },
+    "getMenuList": {
+      "post": {
+        "url": "/menu/getMenuList",
+        "name": "获取菜单列表",
+        "operationId": "getMenuList",
+        "tags": [
+          "auth/menu"
+        ]
+      }
+    },
+    "updateMenu": {
+      "post": {
+        "url": "/menu/updateMenu",
+        "name": "修改菜单",
+        "operationId": "updateMenu",
+        "tags": [
+          "auth/menu"
+        ]
+      }
+    }
+  },
+  "mobileLottery": {
+    "addUserDrawNumber": {
+      "post": {
+        "url": "/mobileLottery/addUserDrawNumber",
+        "name": "赠送抽奖次数",
+        "operationId": "addUserDrawNumber",
+        "tags": [
+          "active/mobileLottery"
+        ]
+      }
+    },
+    "createLotteryOrderSn": {
+      "post": {
+        "url": "/mobileLottery/createLotteryOrderSn",
+        "name": "创建抽奖期号",
+        "operationId": "createLotteryOrderSn",
+        "tags": [
+          "active/mobileLottery"
+        ]
+      }
+    },
+    "drawLotteryOrder": {
+      "post": {
+        "url": "/mobileLottery/drawLotteryOrder",
+        "name": "人工开奖",
+        "operationId": "drawLotteryOrder",
+        "tags": [
+          "active/mobileLottery"
+        ]
+      }
+    },
+    "getLotteryConfig": {
+      "post": {
+        "url": "/mobileLottery/getLotteryConfig",
+        "name": "获取所有的配置",
+        "operationId": "getLotteryConfig",
+        "tags": [
+          "active/mobileLottery"
+        ]
+      }
+    },
+    "getLotteryOrderSnList": {
+      "post": {
+        "url": "/mobileLottery/getLotteryOrderSnList",
+        "name": "获取抽奖期号列表",
+        "operationId": "getLotteryOrderSnList",
+        "tags": [
+          "active/mobileLottery"
+        ]
+      }
+    },
+    "getLotteryUserLotteryNumberList": {
+      "post": {
+        "url": "/mobileLottery/getLotteryUserLotteryNumberList",
+        "name": "获取用户抽奖列表",
+        "operationId": "getLotteryUserLotteryNumberList",
+        "tags": [
+          "active/mobileLottery"
+        ]
+      }
+    },
+    "getUserDrawsNumberList": {
+      "post": {
+        "url": "/mobileLottery/getUserDrawsNumberList",
+        "name": "获取用户抽奖记录列表",
+        "operationId": "getUserDrawsNumberList",
+        "tags": [
+          "active/mobileLottery"
+        ]
+      }
+    },
+    "updateLotteryConfig": {
+      "post": {
+        "url": "/mobileLottery/updateLotteryConfig",
+        "name": "修改配置",
+        "operationId": "updateLotteryConfig",
+        "tags": [
+          "active/mobileLottery"
+        ]
+      }
+    }
+  },
+  "order": {
+    "exportGameOrderList": {
+      "post": {
+        "url": "/order/exportGameOrderList",
+        "name": "导出游戏订单列表",
+        "operationId": "exportGameOrderList",
+        "tags": [
+          "game/order"
+        ]
+      }
+    },
+    "getBetFailOrderList": {
+      "post": {
+        "url": "/order/getBetFailOrderList",
+        "name": "获取已扣款未下注成功的变动记录",
+        "operationId": "getBetFailOrderList",
+        "tags": [
+          "game/order"
+        ]
+      }
+    },
+    "getGameOrderDetail": {
+      "post": {
+        "url": "/order/getGameOrderDetail",
+        "name": "获取游戏订单详情",
+        "operationId": "getGameOrderDetail",
+        "tags": [
+          "game/order"
+        ]
+      }
+    },
+    "getGameOrderDetailBySn": {
+      "post": {
+        "url": "/order/getGameOrderDetailBySn",
+        "name": "获取游戏注单详情",
+        "operationId": "getGameOrderDetailBySn",
+        "tags": [
+          "game/order"
+        ]
+      }
+    },
+    "getGameOrderList": {
+      "post": {
+        "url": "/order/getGameOrderList",
+        "name": "获取游戏订单列表",
+        "operationId": "getGameOrderList",
+        "tags": [
+          "game/order"
+        ]
+      }
+    },
+    "getGameOrderRebateList": {
+      "post": {
+        "url": "/order/getGameOrderRebateList",
+        "name": "获取游戏注单返利详情",
+        "operationId": "getGameOrderRebateList",
+        "tags": [
+          "game/order"
+        ]
+      }
+    },
+    "getGameThirdOrderDetail": {
+      "post": {
+        "url": "/order/getGameThirdOrderDetail",
+        "name": "获取游戏三方订单详情",
+        "operationId": "getGameThirdOrderDetail",
+        "tags": [
+          "game/order"
+        ]
+      }
+    },
+    "getSettleFailOrderList": {
+      "post": {
+        "url": "/order/getSettleFailOrderList",
+        "name": "获取已结算未变动余额的订单",
+        "operationId": "getSettleFailOrderList",
+        "tags": [
+          "game/order"
+        ]
+      }
+    },
+    "settleGameOrder": {
+      "post": {
+        "url": "/order/settleGameOrder",
+        "name": "结算订单状态",
+        "operationId": "settleGameOrder",
+        "tags": [
+          "game/order"
+        ]
+      }
+    },
+    "sumGameLogAmount": {
+      "post": {
+        "url": "/order/sumGameLogAmount",
+        "name": "根据订单日志记录统计数据",
+        "operationId": "sumGameLogAmount",
+        "tags": [
+          "game/order"
+        ]
+      }
+    }
+  },
+  "personStatistics": {
+    "getPersonGameCategoryStatisticsList": {
+      "post": {
+        "url": "/personStatistics/getPersonGameCategoryStatisticsList",
+        "name": "用户个人游戏分类下注累计统计",
+        "operationId": "getPersonGameCategoryStatisticsList",
+        "tags": [
+          "agent/personStatistics"
+        ]
+      }
+    },
+    "getPersonStatisticsList": {
+      "post": {
+        "url": "/personStatistics/getPersonStatisticsList",
+        "name": "用户个人累计统计",
+        "operationId": "getPersonStatisticsList",
+        "tags": [
+          "agent/personStatistics"
+        ]
+      }
+    }
+  },
+  "recharge": {
+    "exportRechargeOrderListPage": {
+      "post": {
+        "url": "/recharge/exportRechargeOrderListPage",
+        "name": "导出充值订单列表",
+        "operationId": "ExportRechargeOrderListPage",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeChannelInfo": {
+      "post": {
+        "url": "/recharge/rechargeChannelInfo",
+        "name": "充值渠道详情",
+        "operationId": "rechargeChannelInfo",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeChannelList": {
+      "post": {
+        "url": "/recharge/rechargeChannelList",
+        "name": "充值渠道列表",
+        "operationId": "rechargeChannelList",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeChannelUpdate": {
+      "post": {
+        "url": "/recharge/rechargeChannelUpdate",
+        "name": "修改充值渠道",
+        "operationId": "rechargeChannelUpdate",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeOrderAdminConfirm": {
+      "post": {
+        "url": "/recharge/rechargeOrderAdminConfirm",
+        "name": "充值订单人工确认",
+        "operationId": "rechargeOrderAdminConfirm",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeOrderInfo": {
+      "post": {
+        "url": "/recharge/rechargeOrderInfo",
+        "name": "充值订单详情",
+        "operationId": "rechargeOrderInfo",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeOrderListPage": {
+      "post": {
+        "url": "/recharge/rechargeOrderListPage",
+        "name": "充值订单列表",
+        "operationId": "rechargeOrderListPage",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    }
+  },
+  "redPacketActive": {
+    "addRedPacket": {
+      "post": {
+        "url": "/redPacketActive/addRedPacket",
+        "name": "红包活动 - 新增红包",
+        "operationId": "addRedPacket",
+        "tags": [
+          "active/redPacketActive"
+        ]
+      }
+    },
+    "editPushSetting": {
+      "post": {
+        "url": "/redPacketActive/editPushSetting",
+        "name": "红包活动 - 编辑推送配置",
+        "operationId": "editPushSetting",
+        "tags": [
+          "active/redPacketActive"
+        ]
+      }
+    },
+    "getReceiveReadPacketLogList": {
+      "post": {
+        "url": "/redPacketActive/getReceiveReadPacketLogList",
+        "name": "红包活动 - 领取日志列表",
+        "operationId": "getReceiveReadPacketLogList",
+        "tags": [
+          "active/redPacketActive"
+        ]
+      }
+    },
+    "getRedPacketList": {
+      "post": {
+        "url": "/redPacketActive/getRedPacketList",
+        "name": "红包活动 - 红包列表",
+        "operationId": "getRedPacketList",
+        "tags": [
+          "active/redPacketActive"
+        ]
+      }
+    },
+    "getRedPacketOneDetail": {
+      "post": {
+        "url": "/redPacketActive/getRedPacketOneDetail",
+        "name": "红包活动 - 红包详情",
+        "operationId": "getRedPacketOneDetail",
+        "tags": [
+          "active/redPacketActive"
+        ]
+      }
+    },
+    "updateRedPacketList": {
+      "post": {
+        "url": "/redPacketActive/updateRedPacketList",
+        "name": "红包活动 - 编辑红包",
+        "operationId": "updateRedPacketList",
+        "tags": [
+          "active/redPacketActive"
+        ]
+      }
+    }
+  },
+  "roleAuth": {
+    "addPermission": {
+      "post": {
+        "url": "/roleAuth/addPermission",
+        "name": "添加权限组",
+        "operationId": "addPermission",
+        "tags": [
+          "auth/roleAuth"
+        ]
+      }
+    },
+    "addRole": {
+      "post": {
+        "url": "/roleAuth/addRole",
+        "name": "添加角色",
+        "operationId": "addRole",
+        "tags": [
+          "auth/roleAuth"
+        ]
+      }
+    },
+    "deleteRole": {
+      "post": {
+        "url": "/roleAuth/deleteRole",
+        "name": "删除角色",
+        "operationId": "deleteRole",
+        "tags": [
+          "auth/roleAuth"
+        ]
+      }
+    },
+    "deletedPermission": {
+      "post": {
+        "url": "/roleAuth/deletedPermission",
+        "name": "删除权限组",
+        "operationId": "deletedPermission",
+        "tags": [
+          "auth/roleAuth"
+        ]
+      }
+    },
+    "getPermissionList": {
+      "post": {
+        "url": "/roleAuth/getPermissionList",
+        "name": "权限组列表",
+        "operationId": "getPermissionList",
+        "tags": [
+          "auth/roleAuth"
+        ]
+      }
+    },
+    "getRoleList": {
+      "post": {
+        "url": "/roleAuth/getRoleList",
+        "name": "角色列表",
+        "operationId": "getRoleList",
+        "tags": [
+          "auth/roleAuth"
+        ]
+      }
+    },
+    "updatePermission": {
+      "post": {
+        "url": "/roleAuth/updatePermission",
+        "name": "编辑权限组",
+        "operationId": "updatePermission",
+        "tags": [
+          "auth/roleAuth"
+        ]
+      }
+    },
+    "updateRole": {
+      "post": {
+        "url": "/roleAuth/updateRole",
+        "name": "编辑角色",
+        "operationId": "updateRole",
+        "tags": [
+          "auth/roleAuth"
+        ]
+      }
+    }
+  },
+  "secondVerify": {
+    "bindAnswer": {
+      "post": {
+        "url": "/secondVerify/bindAnswer",
+        "name": "绑定密保问答",
+        "operationId": "bindAnswer",
+        "tags": [
+          "secondVerify"
+        ]
+      }
+    },
+    "bindEmail": {
+      "post": {
+        "url": "/secondVerify/bindEmail",
+        "name": "绑定邮箱",
+        "operationId": "bindEmail",
+        "tags": [
+          "secondVerify"
+        ]
+      }
+    },
+    "bindGoogleCode": {
+      "post": {
+        "url": "/secondVerify/bindGoogleCode",
+        "name": "绑定Google验证",
+        "operationId": "bindGoogleCode",
+        "tags": [
+          "secondVerify"
+        ]
+      }
+    },
+    "checkAnswer": {
+      "post": {
+        "url": "/secondVerify/checkAnswer",
+        "name": "验证密保问答",
+        "operationId": "checkAnswer",
+        "tags": [
+          "secondVerify"
+        ]
+      }
+    },
+    "checkEmail": {
+      "post": {
+        "url": "/secondVerify/checkEmail",
+        "name": "验证邮箱",
+        "operationId": "checkEmail",
+        "tags": [
+          "secondVerify"
+        ]
+      }
+    },
+    "checkGoogleCode": {
+      "post": {
+        "url": "/secondVerify/checkGoogleCode",
+        "name": "校验Google验证",
+        "operationId": "checkGoogleCode",
+        "tags": [
+          "secondVerify"
+        ]
+      }
+    },
+    "deleteDeviceLogin": {
+      "post": {
+        "url": "/secondVerify/deleteDeviceLogin",
+        "name": "删除登录设备",
+        "operationId": "deleteDeviceLogin",
+        "tags": [
+          "secondVerify"
+        ]
+      }
+    },
+    "deviceLoginLogList": {
+      "post": {
+        "url": "/secondVerify/deviceLoginLogList",
+        "name": "获取设备登录日志",
+        "operationId": "deviceLoginLogList",
+        "tags": [
+          "secondVerify"
+        ]
+      }
+    },
+    "getGoogleKey": {
+      "post": {
+        "url": "/secondVerify/getGoogleKey",
+        "name": "获取GoogleKey",
+        "operationId": "getGoogleKey",
+        "tags": [
+          "secondVerify"
+        ]
+      }
+    },
+    "getSecondVerifyList": {
+      "post": {
+        "url": "/secondVerify/getSecondVerifyList",
+        "name": "获取验证绑定列表",
+        "operationId": "getSecondVerifyList",
+        "tags": [
+          "secondVerify"
+        ]
+      }
+    },
+    "updateVerifyType": {
+      "post": {
+        "url": "/secondVerify/updateVerifyType",
+        "name": "修改默认验证方式",
+        "operationId": "updateVerifyType",
+        "tags": [
+          "secondVerify"
+        ]
+      }
+    }
+  },
+  "serviceConfig": {
+    "GetOneServiceConfig": {
+      "post": {
+        "url": "/serviceConfig/GetOneServiceConfig",
+        "name": "获取单条详情",
+        "operationId": "GetOneServiceConfig",
+        "tags": [
+          "common/serviceConfig"
+        ]
+      }
+    },
+    "GetServiceConfigList": {
+      "post": {
+        "url": "/serviceConfig/GetServiceConfigList",
+        "name": "获取配置列表",
+        "operationId": "GetServiceConfigList",
+        "tags": [
+          "common/serviceConfig"
+        ]
+      }
+    },
+    "UpdateServiceConfig": {
+      "post": {
+        "url": "/serviceConfig/UpdateServiceConfig",
+        "name": "修改配置详情",
+        "operationId": "UpdateServiceConfig",
+        "tags": [
+          "common/serviceConfig"
+        ]
+      }
+    }
+  },
+  "setting": {
+    "getCommonSetting": {
+      "post": {
+        "url": "/setting/getCommonSetting",
+        "name": "获取通用配置消息",
+        "operationId": "getCommonSetting",
+        "tags": [
+          "common/setting"
+        ]
+      }
+    },
+    "getUploadPresign": {
+      "post": {
+        "url": "/setting/getUploadPresign",
+        "name": "获取上传签名",
+        "operationId": "getUploadPresign",
+        "tags": [
+          "common/setting"
+        ]
+      }
+    }
+  },
+  "supplier": {
+    "editOneGameSupplier": {
+      "post": {
+        "url": "/supplier/editOneGameSupplier",
+        "name": "编辑游戏供应商",
+        "operationId": "editOneGameSupplier",
+        "tags": [
+          "game/supplier"
+        ]
+      }
+    },
+    "enableOneGameSupplier": {
+      "post": {
+        "url": "/supplier/enableOneGameSupplier",
+        "name": "启用/禁用游戏供应商",
+        "operationId": "enableOneGameSupplier",
+        "tags": [
+          "game/supplier"
+        ]
+      }
+    },
+    "getGameSupplierList": {
+      "post": {
+        "url": "/supplier/getGameSupplierList",
+        "name": "获取游戏供应商列表",
+        "operationId": "getGameSupplierList",
+        "tags": [
+          "game/supplier"
+        ]
+      }
+    },
+    "syncSupplierGame": {
+      "post": {
+        "url": "/supplier/syncSupplierGame",
+        "name": "同步供应商游戏",
+        "operationId": "syncSupplierGame",
+        "tags": [
+          "game/supplier"
+        ]
+      }
+    }
+  },
+  "swagger": {
+    "get": {
+      "url": "/swagger",
+      "name": "",
+      "operationId": "swagger",
+      "tags": [
+        "Api"
+      ]
+    }
+  },
+  "user": {
+    "bindPUserId": {
+      "post": {
+        "url": "/user/bindPUserId",
+        "name": "游客绑定上级",
+        "operationId": "bindPUserId",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "createOneUser": {
+      "post": {
+        "url": "/user/createOneUser",
+        "name": "创建C端用户",
+        "operationId": "createOneUser",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "getOneDetail": {
+      "post": {
+        "url": "/user/getOneDetail",
+        "name": "获取单个用户详情",
+        "operationId": "getOneUserDetail",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "getUserList": {
+      "post": {
+        "url": "/user/getUserList",
+        "name": "获取用户列表",
+        "operationId": "getUserList",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "runTemp": {
+      "post": {
+        "url": "/user/runTemp",
+        "name": "RunTemp",
+        "operationId": "runTemp",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "syncGameUser": {
+      "post": {
+        "url": "/user/syncGameUser",
+        "name": "同步游戏用户",
+        "operationId": "syncGameUser",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "updateUserDetail": {
+      "post": {
+        "url": "/user/updateUserDetail",
+        "name": "编辑用户详情",
+        "operationId": "updateUserDetail",
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "userActiveList": {
+      "post": {
+        "url": "/user/userActiveList",
+        "name": "用户活跃日志",
+        "operationId": "userActiveList",
+        "tags": [
+          "user"
+        ]
+      }
+    }
+  },
+  "userChannel": {
+    "alipayAdd": {
+      "post": {
+        "url": "/userChannel/alipayAdd",
+        "name": "添加支付宝收款账号地址",
+        "operationId": "alipayAdd",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "alipayDelete": {
+      "post": {
+        "url": "/userChannel/alipayDelete",
+        "name": "删除支付宝收款账号地址",
+        "operationId": "alipayDelete",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "alipayList": {
+      "post": {
+        "url": "/userChannel/alipayList",
+        "name": "支付宝账号列表",
+        "operationId": "alipayList",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "alipayUpdate": {
+      "post": {
+        "url": "/userChannel/alipayUpdate",
+        "name": "修改支付宝收款账号地址",
+        "operationId": "alipayUpdate",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "channelList": {
+      "post": {
+        "url": "/userChannel/channelList",
+        "name": "获取收款渠道列表",
+        "operationId": "channelList",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "chinaBankAdd": {
+      "post": {
+        "url": "/userChannel/chinaBankAdd",
+        "name": "添加中国银行卡收款账号地址",
+        "operationId": "chinaBankAdd",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "chinaBankDelete": {
+      "post": {
+        "url": "/userChannel/chinaBankDelete",
+        "name": "删除中国银行卡收款账号地址",
+        "operationId": "chinaBankDelete",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "chinaBankList": {
+      "post": {
+        "url": "/userChannel/chinaBankList",
+        "name": "中国银行卡账号列表",
+        "operationId": "chinaBankList",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "chinaBankUpdate": {
+      "post": {
+        "url": "/userChannel/chinaBankUpdate",
+        "name": "修改中国银行卡收款账号地址",
+        "operationId": "chinaBankUpdate",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "huioneAdd": {
+      "post": {
+        "url": "/userChannel/huioneAdd",
+        "name": "添加汇旺收款账号地址",
+        "operationId": "huioneAdd",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "huioneDelete": {
+      "post": {
+        "url": "/userChannel/huioneDelete",
+        "name": "删除汇旺收款账号地址",
+        "operationId": "huioneDelete",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "huioneList": {
+      "post": {
+        "url": "/userChannel/huioneList",
+        "name": "用户汇旺收款账号列表",
+        "operationId": "huioneList",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "huioneUpdate": {
+      "post": {
+        "url": "/userChannel/huioneUpdate",
+        "name": "修改汇旺收款账号地址",
+        "operationId": "huioneUpdate",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "kdpayAdd": {
+      "post": {
+        "url": "/userChannel/kdpayAdd",
+        "name": "添加KDPay收款账号地址",
+        "operationId": "kdpayAdd",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "kdpayDelete": {
+      "post": {
+        "url": "/userChannel/kdpayDelete",
+        "name": "删除KDPay收款账号地址",
+        "operationId": "kdpayDelete",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "kdpayList": {
+      "post": {
+        "url": "/userChannel/kdpayList",
+        "name": "KDPay账号列表",
+        "operationId": "kdpayList",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "kdpayUpdate": {
+      "post": {
+        "url": "/userChannel/kdpayUpdate",
+        "name": "修改KDPay收款账号地址",
+        "operationId": "kdpayUpdate",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "okpayAdd": {
+      "post": {
+        "url": "/userChannel/okpayAdd",
+        "name": "添加OKPay收款账号地址",
+        "operationId": "okpayAdd",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "okpayDelete": {
+      "post": {
+        "url": "/userChannel/okpayDelete",
+        "name": "删除OKPay收款账号地址",
+        "operationId": "okpayDelete",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "okpayList": {
+      "post": {
+        "url": "/userChannel/okpayList",
+        "name": "OKPay账号列表",
+        "operationId": "okpayList",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "okpayUpdate": {
+      "post": {
+        "url": "/userChannel/okpayUpdate",
+        "name": "修改OKPay收款账号地址",
+        "operationId": "okpayUpdate",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "pay808Add": {
+      "post": {
+        "url": "/userChannel/pay808Add",
+        "name": "添加808收款账号地址",
+        "operationId": "pay808Add",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "pay808Delete": {
+      "post": {
+        "url": "/userChannel/pay808Delete",
+        "name": "删除808收款账号地址",
+        "operationId": "pay808Delete",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "pay808List": {
+      "post": {
+        "url": "/userChannel/pay808List",
+        "name": "808账号列表",
+        "operationId": "pay808List",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "pay808Update": {
+      "post": {
+        "url": "/userChannel/pay808Update",
+        "name": "修改808收款账号地址",
+        "operationId": "pay808Update",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "usdtAdd": {
+      "post": {
+        "url": "/userChannel/usdtAdd",
+        "name": "添加用户USDT地址",
+        "operationId": "usdtAdd",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "usdtDelete": {
+      "post": {
+        "url": "/userChannel/usdtDelete",
+        "name": "删除用户USDT地址",
+        "operationId": "usdtDelete",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "usdtList": {
+      "post": {
+        "url": "/userChannel/usdtList",
+        "name": "用户USDT地址列表",
+        "operationId": "usdtList",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    },
+    "usdtUpdate": {
+      "post": {
+        "url": "/userChannel/usdtUpdate",
+        "name": "修改用户USDT地址",
+        "operationId": "usdtUpdate",
+        "tags": [
+          "finance/userChannel"
+        ]
+      }
+    }
+  },
+  "userWallet": {
+    "balanceDecrease": {
+      "post": {
+        "url": "/userWallet/balanceDecrease",
+        "name": "扣减用户余额",
+        "operationId": "balanceDecrease",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "balanceIncrease": {
+      "post": {
+        "url": "/userWallet/balanceIncrease",
+        "name": "增加用户余额",
+        "operationId": "balanceIncrease",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "gameMarkList": {
+      "post": {
+        "url": "/userWallet/gameMarkList",
+        "name": "打码量变动明细列表",
+        "operationId": "gameMarkList",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "getBalance": {
+      "post": {
+        "url": "/userWallet/getBalance",
+        "name": "获取钱包余额",
+        "operationId": "GetBalance",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "getCoinTypeList": {
+      "post": {
+        "url": "/userWallet/getCoinTypeList",
+        "name": "币种列表",
+        "operationId": "getCoinTypeList",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "getSumBalance": {
+      "post": {
+        "url": "/userWallet/getSumBalance",
+        "name": "用户总余额",
+        "operationId": "getSumBalance",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "sendUserTrxEnergy": {
+      "post": {
+        "url": "/userWallet/sendUserTrxEnergy",
+        "name": "赠送TRX钱包能量",
+        "operationId": "sendUserTrxEnergy",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "setUserValidConsume": {
+      "post": {
+        "url": "/userWallet/setUserValidConsume",
+        "name": "设置用户已打码量",
+        "operationId": "setUserValidConsume",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "syncCoinType": {
+      "post": {
+        "url": "/userWallet/syncCoinType",
+        "name": "同步币种",
+        "operationId": "syncCoinType",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "syncUserWallet": {
+      "post": {
+        "url": "/userWallet/syncUserWallet",
+        "name": "校准用户余额",
+        "operationId": "syncUserWallet",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "updateCoinType": {
+      "post": {
+        "url": "/userWallet/updateCoinType",
+        "name": "编辑币种",
+        "operationId": "updateCoinType",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "userWalletLogList": {
+      "post": {
+        "url": "/userWallet/userWalletLogList",
+        "name": "用户余额变动记录",
+        "operationId": "userWalletLogList",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "userWalletType": {
+      "post": {
+        "url": "/userWallet/userWalletType",
+        "name": "钱包类型列表",
+        "operationId": "userWalletType",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    }
+  },
+  "v1": {
+    "activity": {
+      "SpeedRaceActive": {
+        "addRule": {
+          "post": {
+            "url": "/v1/activity/SpeedRaceActive/addRule",
+            "name": "倍速竞赛活动规则 - 新增",
+            "operationId": "AddSpeedRaceRule",
+            "tags": [
+              "active/speedRaceActive"
+            ]
+          }
+        },
+        "delRule": {
+          "post": {
+            "url": "/v1/activity/SpeedRaceActive/delRule",
+            "name": "倍速竞赛活动规则 - 删除",
+            "operationId": "DelSpeedRaceRule",
+            "tags": [
+              "active/speedRaceActive"
+            ]
+          }
+        },
+        "modifyRule": {
+          "post": {
+            "url": "/v1/activity/SpeedRaceActive/modifyRule",
+            "name": "倍速竞赛活动规则 - 编辑",
+            "operationId": "ModifySpeedRaceRule",
+            "tags": [
+              "active/speedRaceActive"
+            ]
+          }
+        },
+        "ruleList": {
+          "post": {
+            "url": "/v1/activity/SpeedRaceActive/ruleList",
+            "name": "倍速竞赛活动规则 - 列表",
+            "operationId": "SpeedRaceRuleList",
+            "tags": [
+              "active/speedRaceActive"
+            ]
+          }
+        },
+        "userJoinActivityLogList": {
+          "post": {
+            "url": "/v1/activity/SpeedRaceActive/userJoinActivityLogList",
+            "name": "闯关活动-用户参加活动列表",
+            "operationId": "UserJoinSpeedRaceActivityLogList",
+            "tags": [
+              "active/speedRaceActive"
+            ]
+          }
+        }
+      },
+      "add": {
+        "post": {
+          "url": "/v1/activity/add",
+          "name": "活动 - 新增",
+          "operationId": "AddActivity",
+          "tags": [
+            "active"
+          ]
+        }
+      },
+      "challengeActive": {
+        "addChallengeActiveIssue": {
+          "post": {
+            "url": "/v1/activity/challengeActive/addChallengeActiveIssue",
+            "name": "闯关活动-新增期号",
+            "operationId": "addChallengeActiveIssue",
+            "tags": [
+              "active/challengeActive"
+            ]
+          }
+        },
+        "addRule": {
+          "post": {
+            "url": "/v1/activity/challengeActive/addRule",
+            "name": "闯关活动规则 - 新增",
+            "operationId": "AddChallengeRule",
+            "tags": [
+              "active/challengeActive"
+            ]
+          }
+        },
+        "delRule": {
+          "post": {
+            "url": "/v1/activity/challengeActive/delRule",
+            "name": "闯关活动规则 - 删除",
+            "operationId": "DelChallengeRule",
+            "tags": [
+              "active/challengeActive"
+            ]
+          }
+        },
+        "deleteChallengeActiveIssue": {
+          "post": {
+            "url": "/v1/activity/challengeActive/deleteChallengeActiveIssue",
+            "name": "闯关活动-期号删除",
+            "operationId": "deleteChallengeActiveIssue",
+            "tags": [
+              "active/challengeActive"
+            ]
+          }
+        },
+        "getChallengeActiveIssueList": {
+          "post": {
+            "url": "/v1/activity/challengeActive/getChallengeActiveIssueList",
+            "name": "闯关活动-期号列表",
+            "operationId": "getChallengeActiveIssueList",
+            "tags": [
+              "active/challengeActive"
+            ]
+          }
+        },
+        "modifyRule": {
+          "post": {
+            "url": "/v1/activity/challengeActive/modifyRule",
+            "name": "闯关活动规则 - 编辑",
+            "operationId": "ModifyChallengeRule",
+            "tags": [
+              "active/challengeActive"
+            ]
+          }
+        },
+        "ruleList": {
+          "post": {
+            "url": "/v1/activity/challengeActive/ruleList",
+            "name": "闯关活动规则 - 列表",
+            "operationId": "ChallengeRuleList",
+            "tags": [
+              "active/challengeActive"
+            ]
+          }
+        },
+        "updateChallengeActiveIssue": {
+          "post": {
+            "url": "/v1/activity/challengeActive/updateChallengeActiveIssue",
+            "name": "闯关活动-期号编辑",
+            "operationId": "updateChallengeActiveIssue",
+            "tags": [
+              "active/challengeActive"
+            ]
+          }
+        },
+        "userJoinActivityLogList": {
+          "post": {
+            "url": "/v1/activity/challengeActive/userJoinActivityLogList",
+            "name": "闯关活动-用户参加活动列表",
+            "operationId": "UserJoinChallengeActivityLogList",
+            "tags": [
+              "active/challengeActive"
+            ]
+          }
+        }
+      },
+      "commonList": {
+        "post": {
+          "url": "/v1/activity/commonList",
+          "name": "平台活动 - 列表",
+          "operationId": "CommonActivityList",
+          "tags": [
+            "active"
+          ]
+        }
+      },
+      "del": {
+        "post": {
+          "url": "/v1/activity/del",
+          "name": "活动 - 删除",
+          "operationId": "DelActivity",
+          "tags": [
+            "active"
+          ]
+        }
+      },
+      "isShowActivity": {
+        "post": {
+          "url": "/v1/activity/isShowActivity",
+          "name": "活动 - C端活动是否展示",
+          "operationId": "UpdateIsShowActivity",
+          "tags": [
+            "active"
+          ]
+        }
+      },
+      "isShowIndex": {
+        "post": {
+          "url": "/v1/activity/isShowIndex",
+          "name": "活动 - C端BANNER是否展示",
+          "operationId": "UpdateIsShowIndex",
+          "tags": [
+            "active"
+          ]
+        }
+      },
+      "list": {
+        "post": {
+          "url": "/v1/activity/list",
+          "name": "活动 - 列表",
+          "operationId": "ActivityList",
+          "tags": [
+            "active"
+          ]
+        }
+      },
+      "popUpWindow": {
+        "ReIndexActive": {
+          "post": {
+            "url": "/v1/activity/popUpWindow/ReIndexActive",
+            "name": "公告弹窗 - 排序",
+            "operationId": "ReIndexActive",
+            "tags": [
+              "active/popUpWindow"
+            ]
+          }
+        },
+        "delPopUpWindow": {
+          "post": {
+            "url": "/v1/activity/popUpWindow/delPopUpWindow",
+            "name": "公告弹窗 - 删除",
+            "operationId": "delPopUpWindow",
+            "tags": [
+              "active/popUpWindow"
+            ]
+          }
+        },
+        "modifyPopUpWindow": {
+          "post": {
+            "url": "/v1/activity/popUpWindow/modifyPopUpWindow",
+            "name": "公告弹窗 - 新增编辑",
+            "operationId": "modifyPopUpWindow",
+            "tags": [
+              "active/popUpWindow"
+            ]
+          }
+        },
+        "popUpWindowEnumList": {
+          "post": {
+            "url": "/v1/activity/popUpWindow/popUpWindowEnumList",
+            "name": "公告弹窗 - 内部跳转枚举值",
+            "operationId": "popUpWindowEnumList",
+            "tags": [
+              "active/popUpWindow"
+            ]
+          }
+        },
+        "popUpWindowList": {
+          "post": {
+            "url": "/v1/activity/popUpWindow/popUpWindowList",
+            "name": "公告弹窗 - 列表",
+            "operationId": "popUpWindowList",
+            "tags": [
+              "active/popUpWindow"
+            ]
+          }
+        },
+        "setStatus": {
+          "post": {
+            "url": "/v1/activity/popUpWindow/setStatus",
+            "name": "公告弹窗 - 修改状态",
+            "operationId": "setStatus",
+            "tags": [
+              "active/popUpWindow"
+            ]
+          }
+        }
+      },
+      "status": {
+        "post": {
+          "url": "/v1/activity/status",
+          "name": "活动 - 状态开关",
+          "operationId": "UpdateStatus",
+          "tags": [
+            "active"
+          ]
+        }
+      },
+      "totalRechargeActivity": {
+        "addRule": {
+          "post": {
+            "url": "/v1/activity/totalRechargeActivity/addRule",
+            "name": "累充活动规则 - 新增",
+            "operationId": "AddTotalRechargeRule",
+            "tags": [
+              "active/totalRecharge"
+            ]
+          }
+        },
+        "delRule": {
+          "post": {
+            "url": "/v1/activity/totalRechargeActivity/delRule",
+            "name": "累充活动规则 - 删除",
+            "operationId": "DelTotalRechargeRule",
+            "tags": [
+              "active/totalRecharge"
+            ]
+          }
+        },
+        "modifyRule": {
+          "post": {
+            "url": "/v1/activity/totalRechargeActivity/modifyRule",
+            "name": "累充活动规则 - 编辑",
+            "operationId": "ModifyTotalRechargeRule",
+            "tags": [
+              "active/totalRecharge"
+            ]
+          }
+        },
+        "ruleList": {
+          "post": {
+            "url": "/v1/activity/totalRechargeActivity/ruleList",
+            "name": "累充活动规则 - 列表",
+            "operationId": "TotalRechargeRuleList",
+            "tags": [
+              "active/totalRecharge"
+            ]
+          }
+        },
+        "userJoinActivityLogList": {
+          "post": {
+            "url": "/v1/activity/totalRechargeActivity/userJoinActivityLogList",
+            "name": "累冲活动-用户参加活动列表",
+            "operationId": "userJoinTotalRechargeActivityLogList",
+            "tags": [
+              "active/totalRecharge"
+            ]
+          }
+        }
+      },
+      "update": {
+        "post": {
+          "url": "/v1/activity/update",
+          "name": "活动 - 修改活动详情",
+          "operationId": "UpdateActivity",
+          "tags": [
+            "active"
+          ]
+        }
+      }
+    },
+    "addSignConf": {
+      "post": {
+        "url": "/v1/addSignConf",
+        "name": "添加签到配置",
+        "operationId": "AddSignConf",
+        "tags": [
+          "active/sign"
+        ]
+      }
+    },
+    "agent": {
+      "addPersonAgentSetting": {
+        "post": {
+          "url": "/v1/agent/addPersonAgentSetting",
+          "name": "全民代理配置 - 新增",
+          "operationId": "AddPersonAgentSetting",
+          "tags": [
+            "agent/agentSetting"
+          ]
+        }
+      },
+      "addTraderAgentSetting": {
+        "post": {
+          "url": "/v1/agent/addTraderAgentSetting",
+          "name": "负盈利代理配置 - 新增",
+          "operationId": "AddTraderAgentSetting",
+          "tags": [
+            "agent/agentSetting"
+          ]
+        }
+      },
+      "agentServiceConfigList": {
+        "post": {
+          "url": "/v1/agent/agentServiceConfigList",
+          "name": "代理服务配置 - 列表",
+          "operationId": "AgentServiceConfigList",
+          "tags": [
+            "agent/agentSetting"
+          ]
+        }
+      },
+      "delPersonAgentSetting": {
+        "post": {
+          "url": "/v1/agent/delPersonAgentSetting",
+          "name": "全民代理配置 - 删除",
+          "operationId": "DelPersonAgentSetting",
+          "tags": [
+            "agent/agentSetting"
+          ]
+        }
+      },
+      "delTraderAgentSetting": {
+        "post": {
+          "url": "/v1/agent/delTraderAgentSetting",
+          "name": "负盈利代理配置 - 删除",
+          "operationId": "DelTraderAgentSetting",
+          "tags": [
+            "agent/agentSetting"
+          ]
+        }
+      },
+      "modifyAgentServiceConfig": {
+        "post": {
+          "url": "/v1/agent/modifyAgentServiceConfig",
+          "name": "代理服务配置 - 编辑",
+          "operationId": "ModifyAgentServiceConfig",
+          "tags": [
+            "agent/agentSetting"
+          ]
+        }
+      },
+      "modifyPersonAgentSetting": {
+        "post": {
+          "url": "/v1/agent/modifyPersonAgentSetting",
+          "name": "全民代理配置 - 编辑",
+          "operationId": "ModifyPersonAgentSetting",
+          "tags": [
+            "agent/agentSetting"
+          ]
+        }
+      },
+      "modifyTraderAgentSetting": {
+        "post": {
+          "url": "/v1/agent/modifyTraderAgentSetting",
+          "name": "负盈利代理配置 - 编辑",
+          "operationId": "ModifyTraderAgentSetting",
+          "tags": [
+            "agent/agentSetting"
+          ]
+        }
+      },
+      "personAgentSettingList": {
+        "post": {
+          "url": "/v1/agent/personAgentSettingList",
+          "name": "全民代理配置 - 列表",
+          "operationId": "PersonAgentSettingList",
+          "tags": [
+            "agent/agentSetting"
+          ]
+        }
+      },
+      "traderAgentSettingList": {
+        "post": {
+          "url": "/v1/agent/traderAgentSettingList",
+          "name": "负盈利代理配置 - 列表",
+          "operationId": "TraderAgentSettingList",
+          "tags": [
+            "agent/agentSetting"
+          ]
+        }
+      }
+    },
+    "agentStatistics": {
+      "personAgentCommissionList": {
+        "post": {
+          "url": "/v1/agentStatistics/personAgentCommissionList",
+          "name": "全民代理 - 佣金列表",
+          "operationId": "PersonAgentCommissionList",
+          "tags": [
+            "agent/agentStatistics"
+          ]
+        }
+      },
+      "personAgentDailyCommissionDetail": {
+        "post": {
+          "url": "/v1/agentStatistics/personAgentDailyCommissionDetail",
+          "name": "全民代理 - 日佣金明细",
+          "operationId": "PersonAgentDailyCommissionDetail",
+          "tags": [
+            "agent/agentStatistics"
+          ]
+        }
+      },
+      "traderAgentCommissionList": {
+        "post": {
+          "url": "/v1/agentStatistics/traderAgentCommissionList",
+          "name": "负盈利代理 - 佣金列表",
+          "operationId": "TraderAgentCommissionList",
+          "tags": [
+            "agent/agentStatistics"
+          ]
+        }
+      },
+      "traderAgentMonthCommissionDetail": {
+        "post": {
+          "url": "/v1/agentStatistics/traderAgentMonthCommissionDetail",
+          "name": "负盈利代理 - 佣金明细",
+          "operationId": "TraderAgentMonthCommissionDetail",
+          "tags": [
+            "agent/agentStatistics"
+          ]
+        }
+      }
+    },
+    "agentUser": {
+      "agentBalanceOperate": {
+        "post": {
+          "url": "/v1/agentUser/agentBalanceOperate",
+          "name": "代理上下分，正数加，负数减",
+          "operationId": "agentBalanceOperate",
+          "tags": [
+            "agent/agentUser"
+          ]
+        }
+      },
+      "agentList": {
+        "post": {
+          "url": "/v1/agentUser/agentList",
+          "name": "渠道代理列表",
+          "operationId": "AgentList",
+          "tags": [
+            "agent/agentUser"
+          ]
+        }
+      },
+      "agentRelationship": {
+        "post": {
+          "url": "/v1/agentUser/agentRelationship",
+          "name": "查询代理关系",
+          "operationId": "AgentRelationship",
+          "tags": [
+            "agent/agentUser"
+          ]
+        }
+      },
+      "agentTypeAndStatus": {
+        "post": {
+          "url": "/v1/agentUser/agentTypeAndStatus",
+          "name": "负盈利代理审核、锁定",
+          "operationId": "AgentTypeAndStatus",
+          "tags": [
+            "agent/agentUser"
+          ]
+        }
+      },
+      "agentUserList": {
+        "post": {
+          "url": "/v1/agentUser/agentUserList",
+          "name": "代理用户列表",
+          "operationId": "AgentUserList",
+          "tags": [
+            "agent/agentUser"
+          ]
+        }
+      },
+      "createAgentAdmin": {
+        "post": {
+          "url": "/v1/agentUser/createAgentAdmin",
+          "name": "创建代理管理员",
+          "operationId": "createAgentAdmin",
+          "tags": [
+            "agent/agentUser"
+          ]
+        }
+      },
+      "getAgentRebateRatioMax": {
+        "post": {
+          "url": "/v1/agentUser/getAgentRebateRatioMax",
+          "name": "获取代理返利配置限制",
+          "operationId": "getAgentRebateRatioMax",
+          "tags": [
+            "agent/agentUser"
+          ]
+        }
+      }
+    },
+    "common": {
+      "message": {
+        "notice": {
+          "addNoticeTemplateList": {
+            "post": {
+              "url": "/v1/common/message/notice/addNoticeTemplateList",
+              "name": "增加公告模版",
+              "operationId": "AddNoticeTemplateList",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "addNoticeTemplateStrategy": {
+            "post": {
+              "url": "/v1/common/message/notice/addNoticeTemplateStrategy",
+              "name": "增加公告模版与策略关联关系",
+              "operationId": "AddNoticeTemplateStrategy",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "delNoticeTemplate": {
+            "post": {
+              "url": "/v1/common/message/notice/delNoticeTemplate",
+              "name": "删除公告模版",
+              "operationId": "DelNoticeTemplate",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "delNoticeTemplateStrategy": {
+            "post": {
+              "url": "/v1/common/message/notice/delNoticeTemplateStrategy",
+              "name": "删除公告模版与策略关联关系",
+              "operationId": "DelNoticeTemplateStrategy",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "deletedReceiveLog": {
+            "post": {
+              "url": "/v1/common/message/notice/deletedReceiveLog",
+              "name": "删除已发送消息",
+              "operationId": "deletedReceiveLog",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "modifyNoticeTemplate": {
+            "post": {
+              "url": "/v1/common/message/notice/modifyNoticeTemplate",
+              "name": "修改公告模版",
+              "operationId": "ModifyNoticeTemplate",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "modifyNoticeTemplateStrategy": {
+            "post": {
+              "url": "/v1/common/message/notice/modifyNoticeTemplateStrategy",
+              "name": "修改公告模版与策略关联关系",
+              "operationId": "ModifyNoticeTemplateStrategy",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "sendLogList": {
+            "post": {
+              "url": "/v1/common/message/notice/sendLogList",
+              "name": "公告发送日志列表",
+              "operationId": "NoticeSendLogList",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "sendNoticeByCode": {
+            "post": {
+              "url": "/v1/common/message/notice/sendNoticeByCode",
+              "name": "根据模版code发送公告 - 手动发送",
+              "operationId": "SendNoticeByCode",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "sendNoticeByStrategyID": {
+            "post": {
+              "url": "/v1/common/message/notice/sendNoticeByStrategyID",
+              "name": "根据策略ID发送公告 - 手动发送",
+              "operationId": "SendNoticeByStrategyID",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "strategyList": {
+            "post": {
+              "url": "/v1/common/message/notice/strategyList",
+              "name": "公告策略列表",
+              "operationId": "NoticeStrategyList",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "templateList": {
+            "post": {
+              "url": "/v1/common/message/notice/templateList",
+              "name": "公告模版列表",
+              "operationId": "NoticeTemplateList",
+              "tags": [
+                "common/message"
+              ]
+            }
+          },
+          "templateStrategyList": {
+            "post": {
+              "url": "/v1/common/message/notice/templateStrategyList",
+              "name": "公告模版与策略关联关系列表",
+              "operationId": "NoticeTemplateStrategyList",
+              "tags": [
+                "common/message"
+              ]
+            }
+          }
+        }
+      },
+      "userOperateLog": {
+        "post": {
+          "url": "/v1/common/userOperateLog",
+          "name": "用户操作日志",
+          "operationId": "UserOperateLog",
+          "tags": [
+            "common/userOperateLog"
+          ]
+        }
+      },
+      "userOperateLogType": {
+        "post": {
+          "url": "/v1/common/userOperateLogType",
+          "name": "用户操作日志类型",
+          "operationId": "UserOperateLogType",
+          "tags": [
+            "common/userOperateLog"
+          ]
+        }
+      }
+    },
+    "deleteSignConf": {
+      "post": {
+        "url": "/v1/deleteSignConf",
+        "name": "删除签到配置",
+        "operationId": "DeleteSignConf",
+        "tags": [
+          "active/sign"
+        ]
+      }
+    },
+    "esReport": {
+      "exportEsPlatformDailyStatisticsList": {
+        "post": {
+          "url": "/v1/esReport/exportEsPlatformDailyStatisticsList",
+          "name": "导出平台明细统计表",
+          "operationId": "ExportEsPlatformDailyStatisticsList",
+          "tags": [
+            "esReport"
+          ]
+        }
+      },
+      "platformDailyStatisticsList": {
+        "post": {
+          "url": "/v1/esReport/platformDailyStatisticsList",
+          "name": "平台明细统计表--列表",
+          "operationId": "EsPlatformDailyStatisticsList",
+          "tags": [
+            "esReport"
+          ]
+        }
+      },
+      "platformDailyStatisticsTotal": {
+        "post": {
+          "url": "/v1/esReport/platformDailyStatisticsTotal",
+          "name": "平台明细统计表--总数",
+          "operationId": "EsPlatformDailyStatisticsTotal",
+          "tags": [
+            "esReport"
+          ]
+        }
+      }
+    },
+    "fixData": {
+      "fixRebateData": {
+        "post": {
+          "url": "/v1/fixData/fixRebateData",
+          "name": "补流水",
+          "operationId": "fixRebateData",
+          "tags": [
+            "fixData"
+          ]
+        }
+      }
+    },
+    "getSignConf": {
+      "post": {
+        "url": "/v1/getSignConf",
+        "name": "获取签到配置",
+        "operationId": "GetSignConf",
+        "tags": [
+          "active/sign"
+        ]
+      }
+    },
+    "getSignLog": {
+      "post": {
+        "url": "/v1/getSignLog",
+        "name": "获取签到日志",
+        "operationId": "GetSignLog",
+        "tags": [
+          "active/sign"
+        ]
+      }
+    },
+    "payNotify": {
+      "cgPayNotify": {
+        "post": {
+          "url": "/v1/payNotify/cgPayNotify",
+          "name": "CGPay代收回调",
+          "operationId": "CGPayNotify",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "cgPayWithdrawNotify": {
+        "post": {
+          "url": "/v1/payNotify/cgPayWithdrawNotify",
+          "name": "OKPay代付回调",
+          "operationId": "CGPayWithdrawNotify",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "dogNotify": {
+        "post": {
+          "url": "/v1/payNotify/dogNotify",
+          "name": "代收代付回调通知",
+          "operationId": "DogNotify",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "huioneNotify": {
+        "post": {
+          "url": "/v1/payNotify/huioneNotify",
+          "name": "汇旺代收回调通知",
+          "operationId": "HuioneNotify",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "kdpayNotify": {
+        "post": {
+          "url": "/v1/payNotify/kdpayNotify",
+          "name": "KDPay代收回调",
+          "operationId": "KDPayNotify",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "kdpayWithdrawNotify": {
+        "post": {
+          "url": "/v1/payNotify/kdpayWithdrawNotify",
+          "name": "KDPay代收回调",
+          "operationId": "KDPayWithdrawNotify",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "okPayNotify": {
+        "post": {
+          "url": "/v1/payNotify/okPayNotify",
+          "name": "OKPay代收回调",
+          "operationId": "OKPayNotify",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "okPayWithdrawNotify": {
+        "post": {
+          "url": "/v1/payNotify/okPayWithdrawNotify",
+          "name": "OKPay代付回调",
+          "operationId": "OKPayWithdrawNotify",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "p808Notify1": {
+        "post": {
+          "url": "/v1/payNotify/p808Notify1",
+          "name": "808Pay充值回调",
+          "operationId": "Pay808Recharge",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "p808Notify2": {
+        "post": {
+          "url": "/v1/payNotify/p808Notify2",
+          "name": "808Pay提现回调",
+          "operationId": "Pay808Withdraw",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "p808Notify3": {
+        "post": {
+          "url": "/v1/payNotify/p808Notify3",
+          "name": "808Pay代付回调",
+          "operationId": "Pay808BP",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "qingweiNotify": {
+        "post": {
+          "url": "/v1/payNotify/qingweiNotify",
+          "name": "QingWeiPay代收回调",
+          "operationId": "QingWeiNotify",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "qingweiWithdrawNotify": {
+        "post": {
+          "url": "/v1/payNotify/qingweiWithdrawNotify",
+          "name": "QingWeiPay代付回调",
+          "operationId": "QingWeiWithdrawNotify",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "tzUserPayNotify": {
+        "post": {
+          "url": "/v1/payNotify/tzUserPayNotify",
+          "name": "TzPay代收回调",
+          "operationId": "TzPayUserPay",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      },
+      "tzUserWithdrawNotify": {
+        "post": {
+          "url": "/v1/payNotify/tzUserWithdrawNotify",
+          "name": "TzPay代付回调",
+          "operationId": "TzPayUserWithdraw",
+          "tags": [
+            "finance/payNotify"
+          ]
+        }
+      }
+    },
+    "report": {
+      "CountUserInfoByCategory": {
+        "post": {
+          "url": "/v1/report/CountUserInfoByCategory",
+          "name": "根据游戏类型统计用户数量、下注总额、输赢总额",
+          "operationId": "CountUserInfoByCategory",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "DailyUserWalletLogAggs": {
+        "post": {
+          "url": "/v1/report/DailyUserWalletLogAggs",
+          "name": "资产变动每日报表",
+          "operationId": "DailyUserWalletLogAggs",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "UserDailyBetCategoryList": {
+        "post": {
+          "url": "/v1/report/UserDailyBetCategoryList",
+          "name": "用户每日投注按游戏分类统计",
+          "operationId": "UserDailyBetCategoryList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "UserDayBetRebateList": {
+        "post": {
+          "url": "/v1/report/UserDayBetRebateList",
+          "name": "用户每日投注返利记录",
+          "operationId": "UserDayBetRebateList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "UserGameBetLogList": {
+        "post": {
+          "url": "/v1/report/UserGameBetLogList",
+          "name": "游戏下注记录报表",
+          "operationId": "UserGameBetLogList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "UserGameLogAggs": {
+        "post": {
+          "url": "/v1/report/UserGameLogAggs",
+          "name": "游戏投注输赢汇总",
+          "operationId": "UserGameLogAggs",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "UserGameOnlineList": {
+        "post": {
+          "url": "/v1/report/UserGameOnlineList",
+          "name": "用户游戏在线列表",
+          "operationId": "UserGameOnlineList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "UserWalletLogAggs": {
+        "post": {
+          "url": "/v1/report/UserWalletLogAggs",
+          "name": "按资产变动类型汇总",
+          "operationId": "UserWalletLogAggs",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "UserWalletLogList": {
+        "post": {
+          "url": "/v1/report/UserWalletLogList",
+          "name": "资产变动记录报表",
+          "operationId": "UserWalletLogList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "agentChildAggsList": {
+        "post": {
+          "url": "/v1/report/agentChildAggsList",
+          "name": "代理层级报表",
+          "operationId": "agentChildAggsList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "allTraderAgent": {
+        "post": {
+          "url": "/v1/report/allTraderAgent",
+          "name": "负盈利代理",
+          "operationId": "AllTraderAgent",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "dailyGameCategoryReportList": {
+        "post": {
+          "url": "/v1/report/dailyGameCategoryReportList",
+          "name": "平台日投注报表-按游戏分类",
+          "operationId": "DailyGameCategoryReportList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "dailyOverallReportList": {
+        "post": {
+          "url": "/v1/report/dailyOverallReportList",
+          "name": "平台日报表",
+          "operationId": "DailyOverallReportList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "dayGameSupplierCategoryList": {
+        "post": {
+          "url": "/v1/report/dayGameSupplierCategoryList",
+          "name": "游戏厂商每日统计",
+          "operationId": "DayGameSupplierCategoryList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "dayUserRechargeWithdrawList": {
+        "post": {
+          "url": "/v1/report/dayUserRechargeWithdrawList",
+          "name": "用户每日充值、提现查询",
+          "operationId": "UserDailyRechargeWithdrawList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "downloadExportJob": {
+        "post": {
+          "url": "/v1/report/downloadExportJob",
+          "name": "下载导出的报表",
+          "operationId": "downloadExportJob",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "getExportJobList": {
+        "post": {
+          "url": "/v1/report/getExportJobList",
+          "name": "获取导出报表列表",
+          "operationId": "getExportJobList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "ipReportList": {
+        "post": {
+          "url": "/v1/report/ipReportList",
+          "name": "IP统计列表",
+          "operationId": "IPReportList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "userDailyBetList": {
+        "post": {
+          "url": "/v1/report/userDailyBetList",
+          "name": "用户每日投注统计",
+          "operationId": "UserDailyBetList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "userRechargeList": {
+        "post": {
+          "url": "/v1/report/userRechargeList",
+          "name": "用户充值订单查询",
+          "operationId": "UserRechargeList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "userReportList": {
+        "post": {
+          "url": "/v1/report/userReportList",
+          "name": "用户报表--用户详情",
+          "operationId": "UserReportList",
+          "tags": [
+            "report"
+          ]
+        }
+      },
+      "userWithdrawList": {
+        "post": {
+          "url": "/v1/report/userWithdrawList",
+          "name": "用户提现订单查询",
+          "operationId": "UserWithdrawList",
+          "tags": [
+            "report"
+          ]
+        }
+      }
+    },
+    "tgManage": {
+      "MiniappConfig": {
+        "GetCommonMiniappButtonList": {
+          "post": {
+            "url": "/v1/tgManage/MiniappConfig/GetCommonMiniappButtonList",
+            "name": "获取公共按钮列表",
+            "operationId": "GetCommonMiniappButtonList",
+            "tags": [
+              "tgManage"
+            ]
+          }
+        },
+        "GetMiniappBotConfigList": {
+          "post": {
+            "url": "/v1/tgManage/MiniappConfig/GetMiniappBotConfigList",
+            "name": "获取基础配置",
+            "operationId": "GetMiniappBotConfigList",
+            "tags": [
+              "tgManage"
+            ]
+          }
+        },
+        "GetMiniappButtonList": {
+          "post": {
+            "url": "/v1/tgManage/MiniappConfig/GetMiniappButtonList",
+            "name": "获取商户按钮列表",
+            "operationId": "GetMiniappButtonList",
+            "tags": [
+              "tgManage"
+            ]
+          }
+        },
+        "GetMiniappJobList": {
+          "post": {
+            "url": "/v1/tgManage/MiniappConfig/GetMiniappJobList",
+            "name": "获取任务列表",
+            "operationId": "GetMiniappJobList",
+            "tags": [
+              "tgManage"
+            ]
+          }
+        },
+        "GetMiniappMenuList": {
+          "post": {
+            "url": "/v1/tgManage/MiniappConfig/GetMiniappMenuList",
+            "name": "获取菜单配置列表",
+            "operationId": "GetMiniappMenuList",
+            "tags": [
+              "tgManage"
+            ]
+          }
+        },
+        "SaveMiniappBotConfig": {
+          "post": {
+            "url": "/v1/tgManage/MiniappConfig/SaveMiniappBotConfig",
+            "name": "修改基础配置",
+            "operationId": "SaveMiniappBotConfig",
+            "tags": [
+              "tgManage"
+            ]
+          }
+        },
+        "SaveMiniappMenu": {
+          "post": {
+            "url": "/v1/tgManage/MiniappConfig/SaveMiniappMenu",
+            "name": "修改菜单配置",
+            "operationId": "SaveMiniappMenu",
+            "tags": [
+              "tgManage"
+            ]
+          }
+        },
+        "SendMiniappJob": {
+          "post": {
+            "url": "/v1/tgManage/MiniappConfig/SendMiniappJob",
+            "name": "发送任务",
+            "operationId": "SendMiniappJob",
+            "tags": [
+              "tgManage"
+            ]
+          }
+        },
+        "UpdateMiniappButton": {
+          "post": {
+            "url": "/v1/tgManage/MiniappConfig/UpdateMiniappButton",
+            "name": "修改按钮",
+            "operationId": "UpdateMiniappButton",
+            "tags": [
+              "tgManage"
+            ]
+          }
+        },
+        "UpdateMiniappJob": {
+          "post": {
+            "url": "/v1/tgManage/MiniappConfig/UpdateMiniappJob",
+            "name": "修改任务",
+            "operationId": "UpdateMiniappJob",
+            "tags": [
+              "tgManage"
+            ]
+          }
+        }
+      }
+    },
+    "updateSignConf": {
+      "post": {
+        "url": "/v1/updateSignConf",
+        "name": "更新签到配置",
+        "operationId": "UpdateSignConf",
+        "tags": [
+          "active/sign"
+        ]
+      }
+    }
+  },
+  "vip": {
+    "GetPlatformLotteryRebateRate": {
+      "post": {
+        "url": "/vip/GetPlatformLotteryRebateRate",
+        "name": "游戏管理 - 获取平台代理游戏类型的返利配置比率",
+        "operationId": "GetPlatformLotteryRebateRate",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "SetPlatformLotteryRebateRate": {
+      "post": {
+        "url": "/vip/SetPlatformLotteryRebateRate",
+        "name": "游戏管理 - 设置平台代理游戏类型的返利配置比率",
+        "operationId": "SetPlatformLotteryRebateRate",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "addVipLevelSetting": {
+      "post": {
+        "url": "/vip/addVipLevelSetting",
+        "name": "VIP管理 - 新增VIP等级",
+        "operationId": "AddVipLevelSetting",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "delVipLevelSetting": {
+      "post": {
+        "url": "/vip/delVipLevelSetting",
+        "name": "VIP管理 - 删除VIP等级",
+        "operationId": "DelVipLevelSetting",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "getPlatformLevelRebateRate": {
+      "post": {
+        "url": "/vip/getPlatformLevelRebateRate",
+        "name": "游戏管理 - 获取平台代理阶梯返利配置比率",
+        "operationId": "GetPlatformLevelRebateRate",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "getVipKeepDay": {
+      "post": {
+        "url": "/vip/getVipKeepDay",
+        "name": "VIP管理 - 查询配置保级天数",
+        "operationId": "GetVipKeepDay",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "getVipRebateRateSetting": {
+      "post": {
+        "url": "/vip/getVipRebateRateSetting",
+        "name": "VIP管理 - 获取折扣返利",
+        "operationId": "GetVipRebateRateSetting",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "list": {
+      "GetAllLotteryType": {
+        "post": {
+          "url": "/vip/list/GetAllLotteryType",
+          "name": "游戏管理 - 获取彩票所有类型",
+          "operationId": "GetAllLotteryType",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "GetUserCategoryRebateRate": {
+        "post": {
+          "url": "/vip/list/GetUserCategoryRebateRate",
+          "name": "游戏管理 - 获取游戏类型的返利配置比率",
+          "operationId": "GetUserCategoryRebateRate",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "GetUserVipRebate": {
+        "post": {
+          "url": "/vip/list/GetUserVipRebate",
+          "name": "代理列表 - 领取VIP反水",
+          "operationId": "GetUserVipRebate",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "ResetUserVipRebate": {
+        "post": {
+          "url": "/vip/list/ResetUserVipRebate",
+          "name": "反水数据校对",
+          "operationId": "ResetUserVipRebate",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "SetPlayTypeRebate": {
+        "post": {
+          "url": "/vip/list/SetPlayTypeRebate",
+          "name": "游戏管理 - 设置玩法返利配置",
+          "operationId": "SetPlayTypeRebate",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "getLevelRebate": {
+        "post": {
+          "url": "/vip/list/getLevelRebate",
+          "name": "游戏管理 - 获取阶梯返利配置",
+          "operationId": "GetLevelRebate",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "getParentRebateRate": {
+        "post": {
+          "url": "/vip/list/getParentRebateRate",
+          "name": "获取上级反水比例配置",
+          "operationId": "GetParentRebateRate",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "getUserVipLevel": {
+        "post": {
+          "url": "/vip/list/getUserVipLevel",
+          "name": "USER VIP页信息 - 获取VIP详情",
+          "operationId": "GetUserVipLevel",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "getVipRebateRatioMax": {
+        "post": {
+          "url": "/vip/list/getVipRebateRatioMax",
+          "name": "获取VIP反水配置限制",
+          "operationId": "getVipRebateRatioMax",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "setLevelRebate": {
+        "post": {
+          "url": "/vip/list/setLevelRebate",
+          "name": "游戏管理 - 设置阶梯返利配置",
+          "operationId": "SetLevelRebate",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "setUserAllRebateRate": {
+        "post": {
+          "url": "/vip/list/setUserAllRebateRate",
+          "name": "根据上级反水比例，覆盖下级用户反水配置",
+          "operationId": "SetUserAllRebateRate",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "updateChildRebateRate": {
+        "post": {
+          "url": "/vip/list/updateChildRebateRate",
+          "name": "设置下级反水占比比例",
+          "operationId": "updateChildRebateRate",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "userGetVipBenefitLogList": {
+        "post": {
+          "url": "/vip/list/userGetVipBenefitLogList",
+          "name": "USER VIP页信息 - VIP彩金领取记录列表",
+          "operationId": "UserGetVipBenefitLogList",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "userGetVipChangeLogList": {
+        "post": {
+          "url": "/vip/list/userGetVipChangeLogList",
+          "name": "USER VIP页信息 - VIP变动记录列表",
+          "operationId": "UserGetVipChangeLogList",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "userGetVipList": {
+        "post": {
+          "url": "/vip/list/userGetVipList",
+          "name": "USER VIP页信息 - 获取用户VIP列表",
+          "operationId": "UserGetVipList",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "userGetVipRebateLogList": {
+        "post": {
+          "url": "/vip/list/userGetVipRebateLogList",
+          "name": "USER VIP页信息 - VIP投注返利记录列表",
+          "operationId": "UserGetVipRebateLogList",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "userModifyVipLevel": {
+        "post": {
+          "url": "/vip/list/userModifyVipLevel",
+          "name": "USER VIP页信息 - 修改VIP等级",
+          "operationId": "UserModifyVipLevel",
+          "tags": [
+            "vip"
+          ]
+        }
+      },
+      "userModifyVipRebate": {
+        "post": {
+          "url": "/vip/list/userModifyVipRebate",
+          "name": "USER VIP页信息 - 设置VIP返水比率",
+          "operationId": "UserModifyVipRebate",
+          "tags": [
+            "vip"
+          ]
+        }
+      }
+    },
+    "modifyVipKeepDay": {
+      "post": {
+        "url": "/vip/modifyVipKeepDay",
+        "name": "VIP管理 - 配置保级天数",
+        "operationId": "ModifyVipKeepDay",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "modifyVipLevelSetting": {
+      "post": {
+        "url": "/vip/modifyVipLevelSetting",
+        "name": "VIP管理 - 修改VIP等级",
+        "operationId": "ModifyVipLevelSetting",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "modifyVipRebateRateSetting": {
+      "post": {
+        "url": "/vip/modifyVipRebateRateSetting",
+        "name": "VIP管理 - 配置折扣返利",
+        "operationId": "ModifyVipRebateRateSetting",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "searchVipLevelSetting": {
+      "post": {
+        "url": "/vip/searchVipLevelSetting",
+        "name": "VIP管理 - 查询",
+        "operationId": "SearchVipLevelSetting",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "setPlatformLevelRebateRate": {
+      "post": {
+        "url": "/vip/setPlatformLevelRebateRate",
+        "name": "游戏管理 - 设置平台代理阶梯返利配置比率",
+        "operationId": "SetPlatformLevelRebateRate",
+        "tags": [
+          "vip"
+        ]
+      }
+    },
+    "vipLevelStat": {
+      "post": {
+        "url": "/vip/vipLevelStat",
+        "name": "VIP管理 - 查询VIP人数",
+        "operationId": "userVipLevelStat",
+        "tags": [
+          "vip"
+        ]
+      }
+    }
+  },
+  "walletInoutConfig": {
+    "configInoutList": {
+      "post": {
+        "url": "/walletInoutConfig/configInoutList",
+        "name": "钱包变动类型列表",
+        "operationId": "ConfigInoutList",
+        "tags": [
+          "finance/walletInoutConfig"
+        ]
+      }
+    },
+    "deleteConfigInout": {
+      "post": {
+        "url": "/walletInoutConfig/deleteConfigInout",
+        "name": "删除钱包变动类型",
+        "operationId": "deleteConfigInout",
+        "tags": [
+          "finance/walletInoutConfig"
+        ]
+      }
+    },
+    "editConfigInout": {
+      "post": {
+        "url": "/walletInoutConfig/editConfigInout",
+        "name": "修改钱包变动类型",
+        "operationId": "editConfigInout",
+        "tags": [
+          "finance/walletInoutConfig"
+        ]
+      }
+    },
+    "syncConfigInout": {
+      "post": {
+        "url": "/walletInoutConfig/syncConfigInout",
+        "name": "同步钱包变动类型",
+        "operationId": "syncConfigInout",
+        "tags": [
+          "finance/walletInoutConfig"
+        ]
+      }
+    }
+  },
+  "withdraw": {
+    "exportWithdrawUserOrderListPage": {
+      "post": {
+        "url": "/withdraw/exportWithdrawUserOrderListPage",
+        "name": "导出提现订单列表",
+        "operationId": "ExportWithdrawUserOrderListPage",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawChannelInfo": {
+      "post": {
+        "url": "/withdraw/withdrawChannelInfo",
+        "name": "编辑提现渠道详情",
+        "operationId": "withdrawChannelInfo",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawChannelList": {
+      "post": {
+        "url": "/withdraw/withdrawChannelList",
+        "name": "提现渠道列表",
+        "operationId": "withdrawChannelList",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawChannelUpdate": {
+      "post": {
+        "url": "/withdraw/withdrawChannelUpdate",
+        "name": "编辑提现渠道",
+        "operationId": "withdrawChannelUpdate",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawUserOrderAdminConfirm": {
+      "post": {
+        "url": "/withdraw/withdrawUserOrderAdminConfirm",
+        "name": "提现订单审核",
+        "operationId": "withdrawUserOrderAdminConfirm",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawUserOrderConfirmPay": {
+      "post": {
+        "url": "/withdraw/withdrawUserOrderConfirmPay",
+        "name": "提现订单确认出款",
+        "operationId": "withdrawUserOrderConfirmPay",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawUserOrderDetail": {
+      "post": {
+        "url": "/withdraw/withdrawUserOrderDetail",
+        "name": "提现订单详情",
+        "operationId": "withdrawUserOrderDetail",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawUserOrderListPage": {
+      "post": {
+        "url": "/withdraw/withdrawUserOrderListPage",
+        "name": "提现订单列表",
+        "operationId": "withdrawUserOrderListPage",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    }
+  }
+}

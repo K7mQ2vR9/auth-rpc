@@ -1,0 +1,32 @@
+# 公共包新格式的部署模板，不包含真实凭证；生产模式仍使用v1:配置密文。
+Name: auth-rpc
+ListenOn: 127.0.0.1:9101
+Mode: dev
+
+ConfigCipher:
+  # 公共configcipher.Config：原AES-256密钥的无填充标准Base64，解码后32字节，无默认密钥。
+  # 省略本字段时，服务启动层依次读取MYSQL_CONFIG_KEY_BASE64和rpc/internal/svc.encryptionKeyBase64链接注入值。
+  KeyBase64: ''
+
+SelectDb:
+  # 沿用现有权限数据连接标识，不是新建数据库的指令。
+  - DbKey: user-rpc
+    MySQL:
+      # pro模式须为原v1:密文；dev/test模式为原样DSN，日志不回显此值。
+      DataSource: root:@tcp(127.0.0.1:3306)/KING_BACCARAT_PAIRuser_rpc?parseTime=true
+      # 启动探活及版本探测预算，默认5s，父ctx更早截止时间优先。
+      StartupTimeout: 5s
+      # SQL日志默认warn，各运行模式一致；未列出的连接池和超时字段走公共包默认值。
+      LogLevel: warn
+
+# Redis为可选资源，不需要时删除整个RedisConf配置块。
+RedisConf:
+  Type: node
+  Addr: '127.0.0.1:6379'
+  # pro模式沿用原v1:密文，不将明文密码写入此文件。
+  Password: ''
+  DB: 0
+  # TLS默认false；需要加密传输时显式设true，InsecureSkipVerify不再隐式开启TLS。
+  TLS: false
+  # 默认验证证书；只有TLS=true时才允许显式跳过验证。
+  InsecureSkipVerify: false

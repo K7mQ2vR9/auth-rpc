@@ -1,0 +1,844 @@
+{
+  "business": {
+    "addBusinessDetail": {
+      "post": {
+        "url": "/business/addBusinessDetail",
+        "name": "添加商户",
+        "operationId": "addBusinessDetail",
+        "tags": [
+          "business/business"
+        ]
+      }
+    },
+    "addBusinessSiteDetail": {
+      "post": {
+        "url": "/business/addBusinessSiteDetail",
+        "name": "添加站点",
+        "operationId": "addBusinessSiteDetail",
+        "tags": [
+          "business/site"
+        ]
+      }
+    },
+    "editBusinessDetail": {
+      "post": {
+        "url": "/business/editBusinessDetail",
+        "name": "编辑商户详情",
+        "operationId": "editBusinessDetail",
+        "tags": [
+          "business/business"
+        ]
+      }
+    },
+    "editBusinessSiteDetail": {
+      "post": {
+        "url": "/business/editBusinessSiteDetail",
+        "name": "编辑商户站点详情",
+        "operationId": "editBusinessSiteDetail",
+        "tags": [
+          "business/site"
+        ]
+      }
+    },
+    "enableBusinessDetail": {
+      "post": {
+        "url": "/business/enableBusinessDetail",
+        "name": "启用/禁用商户",
+        "operationId": "enableBusinessDetail",
+        "tags": [
+          "business/business"
+        ]
+      }
+    },
+    "enableBusinessSiteDetail": {
+      "post": {
+        "url": "/business/enableBusinessSiteDetail",
+        "name": "启用/禁用站点",
+        "operationId": "enableBusinessSiteDetail",
+        "tags": [
+          "business/site"
+        ]
+      }
+    },
+    "getBusinessDetail": {
+      "post": {
+        "url": "/business/getBusinessDetail",
+        "name": "获取商户详情",
+        "operationId": "getBusinessDetail",
+        "tags": [
+          "business/business"
+        ]
+      }
+    },
+    "getBusinessList": {
+      "post": {
+        "url": "/business/getBusinessList",
+        "name": "获取商户列表",
+        "operationId": "getBusinessList",
+        "tags": [
+          "business/business"
+        ]
+      }
+    },
+    "getBusinessSiteDetail": {
+      "post": {
+        "url": "/business/getBusinessSiteDetail",
+        "name": "获取商户站点详情",
+        "operationId": "getBusinessSiteDetail",
+        "tags": [
+          "business/site"
+        ]
+      }
+    },
+    "getBusinessSiteList": {
+      "post": {
+        "url": "/business/getBusinessSiteList",
+        "name": "获取商户站点列表",
+        "operationId": "getBusinessSiteList",
+        "tags": [
+          "business/site"
+        ]
+      }
+    },
+    "getInitSiteDataStatus": {
+      "post": {
+        "url": "/business/getInitSiteDataStatus",
+        "name": "获取初始化站点数据状态",
+        "operationId": "getInitSiteDataStatus",
+        "tags": [
+          "business/site"
+        ]
+      }
+    },
+    "getSiteFinanceAmountLog": {
+      "post": {
+        "url": "/business/getSiteFinanceAmountLog",
+        "name": "获取站点余额变动日志",
+        "operationId": "getSiteFinanceAmountLog",
+        "tags": [
+          "business/site"
+        ]
+      }
+    },
+    "initSiteData": {
+      "post": {
+        "url": "/business/initSiteData",
+        "name": "初始化站点数据",
+        "operationId": "initSiteData",
+        "tags": [
+          "business/site"
+        ]
+      }
+    },
+    "updateSiteFinanceAmount": {
+      "post": {
+        "url": "/business/updateSiteFinanceAmount",
+        "name": "设置站点余额",
+        "operationId": "updateSiteFinanceAmount",
+        "tags": [
+          "business/site"
+        ]
+      }
+    }
+  },
+  "businessAdmin": {
+    "createUser": {
+      "post": {
+        "url": "/businessAdmin/createUser",
+        "name": "创建商户超级管理员",
+        "operationId": "createUser",
+        "tags": [
+          "business/admin"
+        ]
+      }
+    },
+    "enableOneUser": {
+      "post": {
+        "url": "/businessAdmin/enableOneUser",
+        "name": "禁用/启用管理员",
+        "operationId": "enableOneUser",
+        "tags": [
+          "business/admin"
+        ]
+      }
+    },
+    "getOneUser": {
+      "post": {
+        "url": "/businessAdmin/getOneUser",
+        "name": "获取商户超级管理员详情",
+        "operationId": "getOneUser",
+        "tags": [
+          "business/admin"
+        ]
+      }
+    },
+    "updateUser": {
+      "post": {
+        "url": "/businessAdmin/updateUser",
+        "name": "编辑商户超级管理员",
+        "operationId": "updateUser",
+        "tags": [
+          "business/admin"
+        ]
+      }
+    },
+    "userList": {
+      "post": {
+        "url": "/businessAdmin/userList",
+        "name": "管理员商户超级列表",
+        "operationId": "userList",
+        "tags": [
+          "business/admin"
+        ]
+      }
+    }
+  },
+  "category": {
+    "editGameChildCategory": {
+      "post": {
+        "url": "/category/editGameChildCategory",
+        "name": "编辑游戏类型",
+        "operationId": "editGameChildCategory",
+        "tags": [
+          "game/childCategory"
+        ]
+      }
+    },
+    "enableGameChildCategory": {
+      "post": {
+        "url": "/category/enableGameChildCategory",
+        "name": "启用/禁用游戏类型",
+        "operationId": "enableGameChildCategory",
+        "tags": [
+          "game/childCategory"
+        ]
+      }
+    },
+    "getGameChildCategoryList": {
+      "post": {
+        "url": "/category/getGameChildCategoryList",
+        "name": "获取游戏类型列表",
+        "operationId": "getGameChildCategoryList",
+        "tags": [
+          "game/childCategory"
+        ]
+      }
+    },
+    "syncGameChildCategory": {
+      "post": {
+        "url": "/category/syncGameChildCategory",
+        "name": "同步游戏类型",
+        "operationId": "syncGameChildCategory",
+        "tags": [
+          "game/childCategory"
+        ]
+      }
+    }
+  },
+  "gameCategory": {
+    "addCategoryOne": {
+      "post": {
+        "url": "/gameCategory/addCategoryOne",
+        "name": "添加游戏分类",
+        "operationId": "addCategoryOne",
+        "tags": [
+          "game/category"
+        ]
+      }
+    },
+    "editCategoryOne": {
+      "post": {
+        "url": "/gameCategory/editCategoryOne",
+        "name": "编辑游戏分类",
+        "operationId": "editCategoryOne",
+        "tags": [
+          "game/category"
+        ]
+      }
+    },
+    "enableCategoryOne": {
+      "post": {
+        "url": "/gameCategory/enableCategoryOne",
+        "name": "启用禁用游戏分类",
+        "operationId": "enableCategoryOne",
+        "tags": [
+          "game/category"
+        ]
+      }
+    },
+    "getCategoryList": {
+      "post": {
+        "url": "/gameCategory/getCategoryList",
+        "name": "获取游戏分类列表",
+        "operationId": "getCategoryList",
+        "tags": [
+          "game/category"
+        ]
+      }
+    },
+    "getCategoryPlayType": {
+      "post": {
+        "url": "/gameCategory/getCategoryPlayType",
+        "name": "获取游戏类型玩法",
+        "operationId": "getCategoryPlayType",
+        "tags": [
+          "game/category"
+        ]
+      }
+    },
+    "setCategoryPlayType": {
+      "post": {
+        "url": "/gameCategory/setCategoryPlayType",
+        "name": "设置游戏类型玩法",
+        "operationId": "setCategoryPlayType",
+        "tags": [
+          "game/category"
+        ]
+      }
+    }
+  },
+  "gameSupplier": {
+    "editGameSupplierOne": {
+      "post": {
+        "url": "/gameSupplier/editGameSupplierOne",
+        "name": "编辑供应商",
+        "operationId": "editGameSupplierOne",
+        "tags": [
+          "game/supplier"
+        ]
+      }
+    },
+    "enableGameSupplierOne": {
+      "post": {
+        "url": "/gameSupplier/enableGameSupplierOne",
+        "name": "启用/禁用供应商",
+        "operationId": "enableGameSupplierOne",
+        "tags": [
+          "game/supplier"
+        ]
+      }
+    },
+    "getGameSupplierList": {
+      "post": {
+        "url": "/gameSupplier/getGameSupplierList",
+        "name": "获取供应商列表",
+        "operationId": "getGameSupplierList",
+        "tags": [
+          "game/supplier"
+        ]
+      }
+    },
+    "getSupplierCategory": {
+      "post": {
+        "url": "/gameSupplier/getSupplierCategory",
+        "name": "获取供应商关联的类型",
+        "operationId": "getSupplierCategory",
+        "tags": [
+          "game/supplier"
+        ]
+      }
+    }
+  },
+  "platformGame": {
+    "addPlatformGameOne": {
+      "post": {
+        "url": "/platformGame/addPlatformGameOne",
+        "name": "添加游戏",
+        "operationId": "addPlatformGameOne",
+        "tags": [
+          "game/game"
+        ]
+      }
+    },
+    "editPlatformGameOne": {
+      "post": {
+        "url": "/platformGame/editPlatformGameOne",
+        "name": "编辑游戏",
+        "operationId": "editPlatformGameOne",
+        "tags": [
+          "game/game"
+        ]
+      }
+    },
+    "enablePlatformGameOne": {
+      "post": {
+        "url": "/platformGame/enablePlatformGameOne",
+        "name": "启动/禁用游戏",
+        "operationId": "enablePlatformGameOne",
+        "tags": [
+          "game/game"
+        ]
+      }
+    },
+    "getPlatformGameList": {
+      "post": {
+        "url": "/platformGame/getPlatformGameList",
+        "name": "获取游戏列表",
+        "operationId": "getPlatformGameList",
+        "tags": [
+          "game/game"
+        ]
+      }
+    },
+    "uploadFactoryGameFile": {
+      "post": {
+        "url": "/platformGame/uploadFactoryGameFile",
+        "name": "上传厂商游戏",
+        "operationId": "uploadFactoryGameFile",
+        "tags": [
+          "game/game"
+        ]
+      }
+    }
+  },
+  "recharge": {
+    "rechargeChannelDelete": {
+      "post": {
+        "url": "/recharge/rechargeChannelDelete",
+        "name": "删除充值渠道",
+        "operationId": "rechargeChannelDelete",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeChannelInfo": {
+      "post": {
+        "url": "/recharge/rechargeChannelInfo",
+        "name": "充值渠道详情",
+        "operationId": "rechargeChannelInfo",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeChannelList": {
+      "post": {
+        "url": "/recharge/rechargeChannelList",
+        "name": "充值渠道列表",
+        "operationId": "rechargeChannelList",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeChannelUpdate": {
+      "post": {
+        "url": "/recharge/rechargeChannelUpdate",
+        "name": "修改充值渠道",
+        "operationId": "rechargeChannelUpdate",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeTypeCreate": {
+      "post": {
+        "url": "/recharge/rechargeTypeCreate",
+        "name": "添加充值类型",
+        "operationId": "rechargeTypeCreate",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeTypeDelete": {
+      "post": {
+        "url": "/recharge/rechargeTypeDelete",
+        "name": "删除充值类型",
+        "operationId": "rechargeTypeDeleted",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeTypeInfo": {
+      "post": {
+        "url": "/recharge/rechargeTypeInfo",
+        "name": "充值类型详情",
+        "operationId": "rechargeTypeInfo",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeTypeList": {
+      "post": {
+        "url": "/recharge/rechargeTypeList",
+        "name": "充值类型列表",
+        "operationId": "rechargeTypeList",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    },
+    "rechargeTypeUpdate": {
+      "post": {
+        "url": "/recharge/rechargeTypeUpdate",
+        "name": "修改充值类型",
+        "operationId": "rechargeTypeUpdate",
+        "tags": [
+          "finance/recharge"
+        ]
+      }
+    }
+  },
+  "siteRight": {
+    "editSiteRightActivityDetail": {
+      "post": {
+        "url": "/siteRight/editSiteRightActivityDetail",
+        "name": "编辑活动权益",
+        "operationId": "editSiteRightActivityDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "editSiteRightAllianceAgentDetail": {
+      "post": {
+        "url": "/siteRight/editSiteRightAllianceAgentDetail",
+        "name": "编辑联盟代通道权益",
+        "operationId": "editSiteRightAllianceAgentDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "editSiteRightGameSupplierDetail": {
+      "post": {
+        "url": "/siteRight/editSiteRightGameSupplierDetail",
+        "name": "编辑游戏通道权益",
+        "operationId": "editSiteRightGameSupplierDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "editSiteRightPersonAgentDetail": {
+      "post": {
+        "url": "/siteRight/editSiteRightPersonAgentDetail",
+        "name": "编辑人人代通道权益",
+        "operationId": "editSiteRightPersonAgentDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "editSiteRightRechargeDetail": {
+      "post": {
+        "url": "/siteRight/editSiteRightRechargeDetail",
+        "name": "编辑支付通道权益",
+        "operationId": "editSiteRightRechargeDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "editSiteRightVipAgentDetail": {
+      "post": {
+        "url": "/siteRight/editSiteRightVipAgentDetail",
+        "name": "编辑vipAgent通道权益",
+        "operationId": "editSiteRightVipAgentDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "editSiteRightVipDetail": {
+      "post": {
+        "url": "/siteRight/editSiteRightVipDetail",
+        "name": "编辑vip通道权益",
+        "operationId": "editSiteRightVipDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "editSiteRightWithdrawDetail": {
+      "post": {
+        "url": "/siteRight/editSiteRightWithdrawDetail",
+        "name": "编辑提现通道权益",
+        "operationId": "editSiteRightWithdrawDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "getSiteRightActivityDetail": {
+      "post": {
+        "url": "/siteRight/getSiteRightActivityDetail",
+        "name": "获取活动权益",
+        "operationId": "getSiteRightActivityDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "getSiteRightAllianceAgentDetail": {
+      "post": {
+        "url": "/siteRight/getSiteRightAllianceAgentDetail",
+        "name": "联盟代通道权益",
+        "operationId": "getSiteRightAllianceAgentDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "getSiteRightGameSupplierDetail": {
+      "post": {
+        "url": "/siteRight/getSiteRightGameSupplierDetail",
+        "name": "游戏通道权益",
+        "operationId": "getSiteRightGameSupplierDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "getSiteRightPersonAgentDetail": {
+      "post": {
+        "url": "/siteRight/getSiteRightPersonAgentDetail",
+        "name": "人人代通道权益",
+        "operationId": "getSiteRightPersonAgentDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "getSiteRightRechargeDetail": {
+      "post": {
+        "url": "/siteRight/getSiteRightRechargeDetail",
+        "name": "支付通道权益",
+        "operationId": "getSiteRightRechargeDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "getSiteRightVipAgentDetail": {
+      "post": {
+        "url": "/siteRight/getSiteRightVipAgentDetail",
+        "name": "获取vipAgent通道权益",
+        "operationId": "getSiteRightVipAgentDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "getSiteRightVipDetail": {
+      "post": {
+        "url": "/siteRight/getSiteRightVipDetail",
+        "name": "vip通道权益",
+        "operationId": "getSiteRightVipDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    },
+    "getSiteRightWithdrawDetail": {
+      "post": {
+        "url": "/siteRight/getSiteRightWithdrawDetail",
+        "name": "提现通道权益",
+        "operationId": "getSiteRightWithdrawDetail",
+        "tags": [
+          "business/siteRight"
+        ]
+      }
+    }
+  },
+  "swagger": {
+    "get": {
+      "url": "/swagger",
+      "name": "",
+      "operationId": "swagger",
+      "tags": [
+        "Api"
+      ]
+    }
+  },
+  "userWallet": {
+    "coinTypeList": {
+      "post": {
+        "url": "/userWallet/coinTypeList",
+        "name": "货币类型列表",
+        "operationId": "coinTypeList",
+        "tags": [
+          "finance/WalletType"
+        ]
+      }
+    },
+    "getCoinTypeList": {
+      "post": {
+        "url": "/userWallet/getCoinTypeList",
+        "name": "币种列表",
+        "operationId": "getCoinTypeList",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "updateCoinType": {
+      "post": {
+        "url": "/userWallet/updateCoinType",
+        "name": "编辑币种",
+        "operationId": "updateCoinType",
+        "tags": [
+          "finance/userWallet"
+        ]
+      }
+    },
+    "userWalletType": {
+      "post": {
+        "url": "/userWallet/userWalletType",
+        "name": "钱包类型列表",
+        "operationId": "userWalletType",
+        "tags": [
+          "finance/WalletType"
+        ]
+      }
+    }
+  },
+  "walletInoutConfig": {
+    "configInoutList": {
+      "post": {
+        "url": "/walletInoutConfig/configInoutList",
+        "name": "钱包变动类型列表",
+        "operationId": "ConfigInoutList",
+        "tags": [
+          "finance/walletInoutConfig"
+        ]
+      }
+    },
+    "createConfigInout": {
+      "post": {
+        "url": "/walletInoutConfig/createConfigInout",
+        "name": "创建钱包变动类型",
+        "operationId": "createConfigInout",
+        "tags": [
+          "finance/walletInoutConfig"
+        ]
+      }
+    },
+    "deleteConfigInout": {
+      "post": {
+        "url": "/walletInoutConfig/deleteConfigInout",
+        "name": "删除钱包变动类型",
+        "operationId": "deleteConfigInout",
+        "tags": [
+          "finance/walletInoutConfig"
+        ]
+      }
+    },
+    "editConfigInout": {
+      "post": {
+        "url": "/walletInoutConfig/editConfigInout",
+        "name": "修改钱包变动类型",
+        "operationId": "editConfigInout",
+        "tags": [
+          "finance/walletInoutConfig"
+        ]
+      }
+    },
+    "syncConfigInoutToSite": {
+      "post": {
+        "url": "/walletInoutConfig/syncConfigInoutToSite",
+        "name": "同步到站点",
+        "operationId": "SyncConfigInoutToSite",
+        "tags": [
+          "finance/walletInoutConfig"
+        ]
+      }
+    }
+  },
+  "withdraw": {
+    "withdrawChannelDelete": {
+      "post": {
+        "url": "/withdraw/withdrawChannelDelete",
+        "name": "删除提现渠道",
+        "operationId": "withdrawChannelDelete",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawChannelInfo": {
+      "post": {
+        "url": "/withdraw/withdrawChannelInfo",
+        "name": "编辑提现渠道详情",
+        "operationId": "withdrawChannelInfo",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawChannelList": {
+      "post": {
+        "url": "/withdraw/withdrawChannelList",
+        "name": "提现渠道列表",
+        "operationId": "withdrawChannelList",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawChannelUpdate": {
+      "post": {
+        "url": "/withdraw/withdrawChannelUpdate",
+        "name": "编辑提现渠道",
+        "operationId": "withdrawChannelUpdate",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawTypeCreate": {
+      "post": {
+        "url": "/withdraw/withdrawTypeCreate",
+        "name": "创建提现类型",
+        "operationId": "withdrawTypeCreate",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawTypeDelete": {
+      "post": {
+        "url": "/withdraw/withdrawTypeDelete",
+        "name": "删除提现类型",
+        "operationId": "withdrawTypeDelete",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawTypeInfo": {
+      "post": {
+        "url": "/withdraw/withdrawTypeInfo",
+        "name": "提现类型详情",
+        "operationId": "withdrawTypeInfo",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawTypeList": {
+      "post": {
+        "url": "/withdraw/withdrawTypeList",
+        "name": "提现类型列表",
+        "operationId": "withdrawTypeList",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    },
+    "withdrawTypeUpdate": {
+      "post": {
+        "url": "/withdraw/withdrawTypeUpdate",
+        "name": "编辑提现类型",
+        "operationId": "withdrawTypeUpdate",
+        "tags": [
+          "finance/withdraw"
+        ]
+      }
+    }
+  }
+}

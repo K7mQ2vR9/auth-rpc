@@ -1,0 +1,240 @@
+syntax = "proto3";
+
+message PermissionItem{
+  int64 id =1;
+  string permissionName=2;
+  string menuIds=3;
+  int64 createdAt=4;
+  string businessCode=5;
+}
+message AddPermissionReq{
+    PermissionItem data = 1;
+}
+
+message AddPermissionResp{
+  int64 id =1;
+}
+
+message DeletedPermissionReq{
+  int64 id =1;
+}
+
+message DeletedPermissionResp{
+
+}
+
+message UpdatePermissionReq{
+  PermissionItem data = 1;
+}
+
+message UpdatePermissionResp{
+
+}
+
+message GetPermissionListReq{
+  PermissionItem data =1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 STime =4;
+  int64 ETime =5;
+}
+
+
+message PermissionListMenuItem{
+  int64 id=1;
+  string menuName=2;
+}
+message PermissionListItem{
+  int64 id =1;
+  string permissionName=2;
+  repeated PermissionListMenuItem menus=3;
+  int64 createdAt=4;
+}
+message GetPermissionListResp{
+  repeated PermissionListItem list = 1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 total =4;
+}
+
+message RoleItem{
+  int64 id =1;
+  string roleName=2;
+  string permissionIds=3;
+  int64 createdAt=4;
+  string businessCode=5;
+  int32 isSuperRole=6;
+}
+message AddRoleReq{
+  RoleItem data =1;
+}
+
+message AddRoleResp{
+  int64 id =1;
+}
+
+message UpdateRoleReq{
+  RoleItem data =1;
+}
+
+message UpdateRoleResp{
+
+}
+
+message DeleteRoleReq{
+  int64 id =1;
+}
+
+message DeleteRoleResp{
+
+}
+
+message GetRoleListReq{
+  RoleItem data =1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 STime =4;
+  int64 ETime =5;
+}
+
+
+message RoleListPermissionItem{
+  int64 id =1;
+  string permissionName=2;
+}
+message RoleListItem{
+  int64 id =1;
+  string roleName=2;
+  repeated RoleListPermissionItem permissionIds=3;
+  int64 createdAt=4;
+  int32 isSuperRole=5;
+  string businessCode=6;
+}
+message GetRoleListResp{
+  repeated RoleListItem list = 1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 total =4;
+}
+
+message GetRoleMenusReq{
+  int64 id =1;
+  string businessCode=2;
+}
+message GetRoleMenusResp{
+  repeated int64 menuIds = 1;
+}
+
+message GetOneRoleReq{
+  int64 id =1;
+}
+message GetOneRoleResp{
+  RoleListItem data = 1;
+}
+
+message MenuItem{
+  int64 id =1;
+  int64 menuPid=2;
+  string menuName=3;
+  int32 menuType=4;
+  string path=5;
+  int32 status=6;
+  int32 sort=7;
+  int64 createdAt=8;
+}
+message AddMenuReq{
+  MenuItem data=1;
+}
+
+message AddMenuResp{
+  int64 id =1;
+}
+
+message UpdateMenuReq{
+  MenuItem data=1;
+}
+
+message UpdateMenuResp{
+
+}
+
+message GetMenuListReq{
+  MenuItem data =1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 STime =4;
+  int64 ETime =5;
+  repeated int64 menuIds =6;
+}
+
+message GetMenuListResp{
+  repeated MenuItem list = 1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 total =4;
+}
+
+message GetMenuByAdminIdReq{
+  int64 adminId = 1; //用户Id
+}
+
+message GetMenuByAdminIdItem{
+  int64 id = 1; //菜单ID
+  string menuName = 2; //菜单名字
+  string path = 3; //菜单路径地址
+  int64 menuPid = 4; //父级ID
+  int32 menuType = 5; // 1=菜单，2=按钮
+  repeated GetMenuByAdminIdItem children = 6; //子级菜单
+}
+
+message GetMenuByAdminIdResp{
+  repeated GetMenuByAdminIdItem List = 1; //登录成功后返回的菜单信息
+}
+
+message DeleteMenuReq{
+  int64 id = 1; //菜单ID
+}
+
+message DeleteMenuResp{
+
+}
+
+message initSuperRoleReq{
+  string businessCode=1;
+}
+
+message initSuperRoleResp{
+  RoleItem data =1;
+}
+
+message CheckAdminRoleMenuReq{
+  int64 roleId =1;
+  string path =2;
+}
+message CheckAdminRoleMenuResp{}
+
+service RoleAuthService {
+  //权限板块
+  rpc addPermission(AddPermissionReq)returns(AddPermissionResp);
+  rpc deletedPermission(DeletedPermissionReq)returns(DeletedPermissionResp);
+  rpc updatePermission(UpdatePermissionReq)returns(UpdatePermissionResp);
+  rpc getPermissionList(GetPermissionListReq)returns(GetPermissionListResp);
+
+  //角色管理
+  rpc addRole(AddRoleReq)returns(AddRoleResp);
+  rpc updateRole(UpdateRoleReq)returns(UpdateRoleResp);
+  rpc deleteRole(DeleteRoleReq)returns(DeleteRoleResp);
+  rpc getRoleList(GetRoleListReq)returns(GetRoleListResp);
+  rpc getRoleMenus(GetRoleMenusReq)returns(GetRoleMenusResp);
+  rpc getOneRole(GetOneRoleReq)returns(GetOneRoleResp);
+  rpc checkAdminRoleMenu(CheckAdminRoleMenuReq)returns(CheckAdminRoleMenuResp);
+
+  //菜单板块
+  rpc addMenu(AddMenuReq)returns(AddMenuResp);
+  rpc updateMenu(UpdateMenuReq)returns(UpdateMenuResp);
+  rpc deleteMenu(DeleteMenuReq)returns(DeleteMenuResp);
+  rpc getMenuList(GetMenuListReq)returns(GetMenuListResp);
+  rpc getMenuByAdminId(GetMenuByAdminIdReq)returns(GetMenuByAdminIdResp);
+
+  rpc initSuperRole(initSuperRoleReq)returns(initSuperRoleResp);
+}

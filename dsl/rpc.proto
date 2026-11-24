@@ -1,0 +1,171 @@
+syntax = "proto3";
+package rpc;
+option go_package ="./authRpc";
+
+message PermissionItem{
+  int64 id =1;
+  string permissionName=2;
+  string menuIds=3;
+  int64 createdAt=4;
+}
+message AddPermissionReq{
+    PermissionItem data = 1;
+}
+
+message AddPermissionResp{
+  int64 id =1;
+}
+
+message DeletedPermissionReq{
+  int64 id =1;
+}
+
+message DeletedPermissionResp{
+
+}
+
+message UpdatePermissionReq{
+  PermissionItem data = 1;
+}
+
+message UpdatePermissionResp{
+
+}
+
+message GetPermissionListReq{
+  PermissionItem data =1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 STime =4;
+  int64 ETime =5;
+}
+
+message GetPermissionListResp{
+  repeated PermissionItem list = 1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 total =4;
+}
+
+message RoleItem{
+  int64 id =1;
+  string roleName=2;
+  string permissionIds=3;
+  int64 createdAt=4;
+}
+message AddRoleReq{
+  RoleItem data =1;
+}
+
+message AddRoleResp{
+  int64 id =1;
+}
+
+message UpdateRoleReq{
+  RoleItem data =1;
+}
+
+message UpdateRoleResp{
+
+}
+
+message DeleteRoleReq{
+  int64 id =1;
+}
+
+message DeleteRoleResp{
+
+}
+
+message GetRoleListReq{
+  RoleItem data =1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 STime =4;
+  int64 ETime =5;
+}
+
+message GetRoleListResp{
+  repeated RoleItem list = 1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 total =4;
+}
+
+message MenuItem{
+  int64 id =1;
+  int64 menuPid=2;
+  string menuName=3;
+  int32 menuType=4;
+  string path=5;
+  int32 status=6;
+  int32 sort=7;
+  int64 createdAt=8;
+}
+message AddMenuReq{
+  MenuItem data=1;
+}
+
+message AddMenuResp{
+  int64 id =1;
+}
+
+message UpdateMenuReq{
+  MenuItem data=1;
+}
+
+message UpdateMenuResp{
+
+}
+
+message GetMenuListReq{
+  MenuItem data =1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 STime =4;
+  int64 ETime =5;
+}
+
+message GetMenuListResp{
+  repeated MenuItem list = 1;
+  int64 page = 2;
+  int64 pageSize = 3;
+  int64 total =4;
+}
+
+message GetMenuByAdminIdReq{
+  int64 adminId = 1; //用户Id
+}
+
+message GetMenuByAdminIdItem{
+  int64 id = 1; //菜单ID
+  string menuName = 2; //菜单名字
+  string path = 3; //菜单路径地址
+  int64 menuPid = 4; //父级ID
+  int32 menuType = 5; // 1=菜单，2=按钮
+  repeated GetMenuByAdminIdItem children = 6; //子级菜单
+}
+
+message GetMenuByAdminIdResp{
+  repeated GetMenuByAdminIdItem List = 1; //登录成功后返回的菜单信息
+}
+
+service RoleAuthService {
+  //权限板块
+  rpc addPermission(AddPermissionReq)returns(AddPermissionResp);
+  rpc deletedPermission(DeletedPermissionReq)returns(DeletedPermissionResp);
+  rpc updatePermission(UpdatePermissionReq)returns(UpdatePermissionResp);
+  rpc getPermissionList(GetPermissionListReq)returns(GetPermissionListResp);
+
+  //角色管理
+  rpc addRole(AddRoleReq)returns(AddRoleResp);
+  rpc updateRole(UpdateRoleReq)returns(UpdateRoleResp);
+  rpc deleteRole(DeleteRoleReq)returns(DeleteRoleResp);
+  rpc getRoleList(GetRoleListReq)returns(GetRoleListResp);
+
+  //菜单板块
+  rpc addMenu(AddMenuReq)returns(AddMenuResp);
+  rpc updateMenu(UpdateMenuReq)returns(UpdateMenuResp);
+  rpc getMenuList(GetMenuListReq)returns(GetMenuListResp);
+  rpc getMenuByAdminId(GetMenuByAdminIdReq)returns(GetMenuByAdminIdResp);
+}
