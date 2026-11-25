@@ -44,32 +44,37 @@ func (s *RoleAuthServiceServer) GetPermissionList(ctx context.Context, in *authR
 	return l.GetPermissionList(in)
 }
 
-// 角色管理
+// AddRole 新建当前站点自定义模板，不创建根模板，显式空menuIds表示空模板。
 func (s *RoleAuthServiceServer) AddRole(ctx context.Context, in *authRpc.AddRoleReq) (*authRpc.AddRoleResp, error) {
 	l := roleauthservicelogic.NewAddRoleLogic(ctx, s.svcCtx)
 	return l.AddRole(in)
 }
 
+// UpdateRole 按版本完整覆盖自定义模板，根模板及跨站点修改由业务层拒绝。
 func (s *RoleAuthServiceServer) UpdateRole(ctx context.Context, in *authRpc.UpdateRoleReq) (*authRpc.UpdateRoleResp, error) {
 	l := roleauthservicelogic.NewUpdateRoleLogic(ctx, s.svcCtx)
 	return l.UpdateRole(in)
 }
 
+// DeleteRole 只按版本软删除自定义模板，不联动用户授权。
 func (s *RoleAuthServiceServer) DeleteRole(ctx context.Context, in *authRpc.DeleteRoleReq) (*authRpc.DeleteRoleResp, error) {
 	l := roleauthservicelogic.NewDeleteRoleLogic(ctx, s.svcCtx)
 	return l.DeleteRole(in)
 }
 
+// GetRoleList 查询当前站点模板，支持类型、名称、ID及Unix秒创建时间范围筛选。
 func (s *RoleAuthServiceServer) GetRoleList(ctx context.Context, in *authRpc.GetRoleListReq) (*authRpc.GetRoleListResp, error) {
 	l := roleauthservicelogic.NewGetRoleListLogic(ctx, s.svcCtx)
 	return l.GetRoleList(in)
 }
 
+// GetRoleMenus 读取模板具体权限ID及来源版本，不读取菜单分组。
 func (s *RoleAuthServiceServer) GetRoleMenus(ctx context.Context, in *authRpc.GetRoleMenusReq) (*authRpc.GetRoleMenusResp, error) {
 	l := roleauthservicelogic.NewGetRoleMenusLogic(ctx, s.svcCtx)
 	return l.GetRoleMenus(in)
 }
 
+// GetOneRole 返回同站点模板完整快照，不以空对象掩盖不存在或数据库故障。
 func (s *RoleAuthServiceServer) GetOneRole(ctx context.Context, in *authRpc.GetOneRoleReq) (*authRpc.GetOneRoleResp, error) {
 	l := roleauthservicelogic.NewGetOneRoleLogic(ctx, s.svcCtx)
 	return l.GetOneRole(in)
@@ -117,9 +122,4 @@ func (s *RoleAuthServiceServer) SaveUserPermission(ctx context.Context, in *auth
 func (s *RoleAuthServiceServer) CheckUserPermission(ctx context.Context, in *authRpc.CheckUserPermissionReq) (*authRpc.CheckUserPermissionResp, error) {
 	l := roleauthservicelogic.NewCheckUserPermissionLogic(ctx, s.svcCtx)
 	return l.CheckUserPermission(in)
-}
-
-func (s *RoleAuthServiceServer) InitSuperRole(ctx context.Context, in *authRpc.InitSuperRoleReq) (*authRpc.InitSuperRoleResp, error) {
-	l := roleauthservicelogic.NewInitSuperRoleLogic(ctx, s.svcCtx)
-	return l.InitSuperRole(in)
 }

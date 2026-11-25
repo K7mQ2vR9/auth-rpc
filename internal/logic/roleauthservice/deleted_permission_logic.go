@@ -5,12 +5,13 @@ import (
 	"authRpc/internal/dao/schema"
 	"context"
 	"errors"
-	"fmt"
 
 	"authRpc/authRpc"
 	"authRpc/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type DeletedPermissionLogic struct {
@@ -20,7 +21,6 @@ type DeletedPermissionLogic struct {
 	svcCtx  *svc.ServiceContext
 	logx.Logger
 	*mysql.PermissionMenuModel
-	*mysql.RoleModel
 }
 
 // NewDeletedPermissionLogic 初始化请求模型，取库错误保存在当前Logic并由业务入口返回。
@@ -37,27 +37,20 @@ func NewDeletedPermissionLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 	logic.PermissionMenuModel = permissionMenuModel
 
-	roleModel, err := mysql.NewRoleModel(ctx, svcCtx)
-	if err != nil {
-		logic.initErr = err
-		return logic
-	}
-	logic.RoleModel = roleModel
 	return logic
 }
 
+// DeletedPermission 只删除展示分组，不再检查角色是否引用分组，也不改变模板或用户的具体权限集合。
 func (l *DeletedPermissionLogic) DeletedPermission(in *authRpc.DeletedPermissionReq) (*authRpc.DeletedPermissionResp, error) {
+	if in == nil || in.Id <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "分组ID必须为正数")
+	}
 	if l.initErr != nil {
 		return nil, l.initErr
 	}
 
 	if in.Id == schema.SitePermissionId {
 		return nil, errors.New("init data not be delete")
-	}
-
-	roleInfo := l.RoleModel.CountPermissionId(in.Id)
-	if roleInfo.ID != 0 {
-		return nil, errors.New(fmt.Sprintf("Role [ %s ] have set, can not be delete", roleInfo.RoleName))
 	}
 
 	err := l.PermissionMenuModel.DeleteByID(in.Id)

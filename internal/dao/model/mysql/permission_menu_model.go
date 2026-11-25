@@ -5,7 +5,6 @@ import (
 	"authRpc/internal/dao/schema"
 	"authRpc/internal/svc"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/K7mQ2vR9/base-pkg/headInfo"
@@ -129,23 +128,6 @@ func (model *PermissionMenuModel) GetList(in *schema.PermissionMenu, pageQuery *
 	rows := make([]*schema.PermissionMenu, 0)
 	err = builder.Offset(pageQuery.Offset()).Limit(pageQuery.GetPageSize()).Find(&rows).Error
 	return total, rows, err
-}
-
-func (model *PermissionMenuModel) GetMenuIds(permissionIds []int64) (res []int64, err error) {
-	res = make([]int64, 0)
-	rows := make([]*schema.PermissionMenu, 0)
-	err = model.getDb().Model(&schema.PermissionMenu{}).Where("id in ?", permissionIds).Find(&rows).Error
-	if err != nil {
-		return
-	}
-
-	for _, v := range rows {
-		ids := make([]int64, 0)
-		json.Unmarshal([]byte(v.MenuIds), &ids)
-		res = append(res, ids...)
-	}
-
-	return res, nil
 }
 
 func (model *PermissionMenuModel) GetAll(in *schema.PermissionMenu) ([]*schema.PermissionMenu, error) {

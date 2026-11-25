@@ -1,14 +1,24 @@
 # auth-rpc 权限服务接入与迁移说明
 
-auth-rpc提供角色、权限、菜单管理、管理员菜单查询、路径权限判断及超级角色初始化。Go模块名为 `authRpc`，项目内导入统一使用 `authRpc/...`，例如protobuf Go包路径为 `authRpc/authRpc`。protobuf协议包仍为 `rpc`，服务名仍为 `rpc.RoleAuthService`；module改名只影响Go导入及链接注入路径，不改变RPC方法路径。现有 `option go_package = "./authRpc"` 继续对应authRpc子目录，代码生成使用go.mod声明的module。
+三级权限、站点根模板、自定义模板、用户授权及菜单分组的后续设计见 [权限系统设计](PERMISSION_DESIGN.md)。该文D1—D16业务规则已全部确认，并列出后续实施细节；确认设计不代表层级权限、审计及模板复制接口已经实现，当前接口行为仍以USER_PERMISSION.md为准。
+
+最新设计明确删除用户与角色的绑定关系。当前已仅在auth-rpc移除schema.AdminInfo.RoleId、按role_id筛选管理员和角色删除时的用户绑定检查；GetMenuByAdminId已改读用户独立权限，旧AdminRoleModel继承链及无用登录角色菜单DTO已删除。角色模板自身的ID及复制来源roleId保留。数据库role_id列、user-rpc、JWT和后台本轮均未修改，后续另行迁移。
+
+auth-rpc提供权限模板、菜单分组、菜单管理、管理员菜单查询及路径权限判断，已移除旧超级角色初始化RPC。Go模块名为 `authRpc`，项目内导入统一使用 `authRpc/...`，例如protobuf Go包路径为 `authRpc/authRpc`。protobuf协议包仍为 `rpc`，服务名仍为 `rpc.RoleAuthService`；module改名只影响Go导入及链接注入路径，不改变保留方法的RPC路径。现有 `option go_package = "./authRpc"` 继续对应authRpc子目录，代码生成使用go.mod声明的module。
 
 实际数据库结构、只读连接结果及待讨论的代码问题见 [数据库与代码分析](CODE_REVIEW.md)。本轮分析未修改业务代码或数据库，未运行服务、构建或业务测试。
 
-用户独立授权及角色模板的数据库设计见 [数据库设计与执行状态](DATABASE.md)。2026-11-24已按最新配置在user_rpc完成结构迁移：新增admin_permission，角色表改用menu_ids并删除is_super_role；管理员、菜单和分组表保持。AdminPermission模型、GetUserPermissionTree查询及SaveUserPermission覆盖保存已实现，见 [用户权限接入](USER_PERMISSION.md)。保存要求显式传入菜单IDs及版本号，支持清空和按版本恢复，单条写入不额外开启事务。旧角色业务仍待适配新结构后使用。
+用户独立授权及角色模板的数据库设计见 [数据库设计与执行状态](DATABASE.md)。2026-11-24已完成迁移001、002。用户查询及覆盖保存见 [用户权限接入](USER_PERMISSION.md)，现有用户保存仍为单条版本写入；模板CRUD本轮已单独改为短写事务、具体menuIds、templateType和version，根模板受类型保护。模板依赖的 [迁移003](database/migrations/003_role_template_type_and_version.sql)已于2026-11-25在user_rpc执行并核对，当前库不可重跑，其他环境先核对实际结构。
+
+普通模板增改只接受当前站点自定义类型2，显式menuIds支持空字符串清空；修改、删除须提交已读版本。新增、修改锁定当前站点根模板并检查菜单集合不越界，根模板缺失即拒绝，不从固定权限组回退。模板列表、详情和GetRoleMenus直接返回具体权限及版本，不展开权限组。旧字段、旧初始化入口和无用的dsl/rpc.proto副本已删除，本地protobuf、Client和Server同步；其他项目未修改，也未向外部rpc-client复制。使用示例、分页、错误和未接入的边界见 [权限模板接口](USER_PERMISSION.md#权限模板接口)。
+
+迁移003已执行并核对三列、根唯一索引及三个启用CHECK，角色表仍为0条，其他相关表未变化，未创建根模板或授权数据。平台根模板管理、操作者自身权限上限、同事务审计及按模板覆盖用户接口仍待接入。未运行Go测试、构建、示例或业务联调，结构核对不代表这些业务已验证。
 
 deleted_at统一通过模型软删除管理：未删除为NULL，模型Delete写入Unix秒并同步updated_at，普通查询自动过滤；读取已删除权限的版本号时才显式使用Unscoped。模型与相关删除入口已同步，本次未修改数据库或运行构建、测试。
 
-用户权限代码集中维护：查询、保存、校验和菜单ID解析放在admin_permission_model.go；菜单树组装放在get_user_permission_tree_logic.go。保留每个RPC的Logic入口，同一业务的中间逻辑不再按小功能拆成多个辅助文件。
+用户权限代码集中维护：查询、保存、校验和菜单ID解析放在admin_permission_model.go；授权编辑树组装放在get_user_permission_tree_logic.go，登录菜单组装放在get_menu_by_admin_id_logic.go。两个入口共用的父级循环检查集中在menu_model.go，不新建辅助文件。保留每个RPC的Logic入口。
+
+GetMenuByAdminId(adminId)与CheckUserPermission共用当前业务正常用户的独立授权读取逻辑；菜单查询仅返回明确获授、未删除且自身启用的页面或按钮，按sort、ID升序。无有效授权返回空列表，异常用户拒绝，存储及数据库错误独立返回。只在已返回节点间建树，不补授父节点或其他菜单；缺失父节点时将当前节点放在返回根列表并保留原MenuPid。站点根模板上限、共享平台目录、完整祖先停用检查及平台跨站点身份分支尚未接入，不能据此认定完整三级权限已完成。
 
 旧CheckAdminRoleMenu已删除，新CheckUserPermission(userId, serviceName, path)已接入协议、本地Client/Server及Logic，实际鉴权集中在admin_permission_model.go。仅放行当前业务正常管理员明确获得的未删除、已启用页面或按钮，服务名和完整路径同时精确匹配，无权限返回PermissionDenied，不开启事务或读取角色模板。menu新增service_name，菜单增改必填，列表及权限树同步回显。user-rpc仍引用外部客户端中的旧调用，需同步客户端并迁移，当前不能据此认定完整登录链路已联调。
 
@@ -16,7 +26,7 @@ go.mod当前仍声明 `github.com/K7mQ2vR9/base-pkg v0.1.0`，旧common-pkg和Gi
 
 ## RPC准入与显式白名单
 
-用户身份由API层校验；RPC入口不根据UID缺失、空、0或合法正数决定放行，不验证JWT或服务凭证。原角色、权限、菜单及路径权限的业务Logic保持，不因入口调整删除业务权限判断。
+用户身份由API层校验；RPC入口不根据UID缺失、空、0或合法正数决定放行，不验证JWT或服务凭证。入口规则与各模板、权限、菜单业务判断分开，模板用途和站点边界仍由业务模型校验。
 
 | 情况 | GetWhitePath命中 | 未命中 |
 |---|---|---|

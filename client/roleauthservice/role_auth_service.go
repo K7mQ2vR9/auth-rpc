@@ -47,15 +47,12 @@ type (
 	CheckUserPermissionResp   = authRpc.CheckUserPermissionResp
 	UserPermissionGroup       = authRpc.UserPermissionGroup
 	UserPermissionMenu        = authRpc.UserPermissionMenu
-	InitSuperRoleReq          = authRpc.InitSuperRoleReq
-	InitSuperRoleResp         = authRpc.InitSuperRoleResp
 	MenuItem                  = authRpc.MenuItem
 	PermissionItem            = authRpc.PermissionItem
 	PermissionListItem        = authRpc.PermissionListItem
 	PermissionListMenuItem    = authRpc.PermissionListMenuItem
 	RoleItem                  = authRpc.RoleItem
 	RoleListItem              = authRpc.RoleListItem
-	RoleListPermissionItem    = authRpc.RoleListPermissionItem
 	UpdateMenuReq             = authRpc.UpdateMenuReq
 	UpdateMenuResp            = authRpc.UpdateMenuResp
 	UpdatePermissionReq       = authRpc.UpdatePermissionReq
@@ -69,7 +66,7 @@ type (
 		DeletedPermission(ctx context.Context, in *DeletedPermissionReq, opts ...grpc.CallOption) (*DeletedPermissionResp, error)
 		UpdatePermission(ctx context.Context, in *UpdatePermissionReq, opts ...grpc.CallOption) (*UpdatePermissionResp, error)
 		GetPermissionList(ctx context.Context, in *GetPermissionListReq, opts ...grpc.CallOption) (*GetPermissionListResp, error)
-		// 角色管理
+		// 权限模板管理：写入只允许当前站点自定义模板，修改和删除须提交版本。
 		AddRole(ctx context.Context, in *AddRoleReq, opts ...grpc.CallOption) (*AddRoleResp, error)
 		UpdateRole(ctx context.Context, in *UpdateRoleReq, opts ...grpc.CallOption) (*UpdateRoleResp, error)
 		DeleteRole(ctx context.Context, in *DeleteRoleReq, opts ...grpc.CallOption) (*DeleteRoleResp, error)
@@ -88,7 +85,6 @@ type (
 		SaveUserPermission(ctx context.Context, in *SaveUserPermissionReq, opts ...grpc.CallOption) (*SaveUserPermissionResp, error)
 		// CheckUserPermission 按用户ID和完整路径校验独立授权，拒绝时返回PermissionDenied。
 		CheckUserPermission(ctx context.Context, in *CheckUserPermissionReq, opts ...grpc.CallOption) (*CheckUserPermissionResp, error)
-		InitSuperRole(ctx context.Context, in *InitSuperRoleReq, opts ...grpc.CallOption) (*InitSuperRoleResp, error)
 	}
 
 	defaultRoleAuthService struct {
@@ -123,32 +119,37 @@ func (m *defaultRoleAuthService) GetPermissionList(ctx context.Context, in *GetP
 	return client.GetPermissionList(ctx, in, opts...)
 }
 
-// 角色管理
+// AddRole 显式提交自定义类型和menuIds，成功返回模板ID及首次版本1。
 func (m *defaultRoleAuthService) AddRole(ctx context.Context, in *AddRoleReq, opts ...grpc.CallOption) (*AddRoleResp, error) {
 	client := authRpc.NewRoleAuthServiceClient(m.cli.Conn())
 	return client.AddRole(ctx, in, opts...)
 }
 
+// UpdateRole 按版本完整覆盖自定义模板，空menuIds明确清空，成功返回新版本。
 func (m *defaultRoleAuthService) UpdateRole(ctx context.Context, in *UpdateRoleReq, opts ...grpc.CallOption) (*UpdateRoleResp, error) {
 	client := authRpc.NewRoleAuthServiceClient(m.cli.Conn())
 	return client.UpdateRole(ctx, in, opts...)
 }
 
+// DeleteRole 按已读版本软删除同站点自定义模板，不影响用户独立权限。
 func (m *defaultRoleAuthService) DeleteRole(ctx context.Context, in *DeleteRoleReq, opts ...grpc.CallOption) (*DeleteRoleResp, error) {
 	client := authRpc.NewRoleAuthServiceClient(m.cli.Conn())
 	return client.DeleteRole(ctx, in, opts...)
 }
 
+// GetRoleList 查询同站点模板快照，0页码和每页数分别默认1和20，最多每页200条。
 func (m *defaultRoleAuthService) GetRoleList(ctx context.Context, in *GetRoleListReq, opts ...grpc.CallOption) (*GetRoleListResp, error) {
 	client := authRpc.NewRoleAuthServiceClient(m.cli.Conn())
 	return client.GetRoleList(ctx, in, opts...)
 }
 
+// GetRoleMenus 返回模板直接保存的菜单ID和版本，不展开权限组。
 func (m *defaultRoleAuthService) GetRoleMenus(ctx context.Context, in *GetRoleMenusReq, opts ...grpc.CallOption) (*GetRoleMenusResp, error) {
 	client := authRpc.NewRoleAuthServiceClient(m.cli.Conn())
 	return client.GetRoleMenus(ctx, in, opts...)
 }
 
+// GetOneRole 返回同站点模板名称、归属、逗号权限集合、类型及版本，不存在时返回错误。
 func (m *defaultRoleAuthService) GetOneRole(ctx context.Context, in *GetOneRoleReq, opts ...grpc.CallOption) (*GetOneRoleResp, error) {
 	client := authRpc.NewRoleAuthServiceClient(m.cli.Conn())
 	return client.GetOneRole(ctx, in, opts...)
@@ -196,9 +197,4 @@ func (m *defaultRoleAuthService) SaveUserPermission(ctx context.Context, in *Sav
 func (m *defaultRoleAuthService) CheckUserPermission(ctx context.Context, in *CheckUserPermissionReq, opts ...grpc.CallOption) (*CheckUserPermissionResp, error) {
 	client := authRpc.NewRoleAuthServiceClient(m.cli.Conn())
 	return client.CheckUserPermission(ctx, in, opts...)
-}
-
-func (m *defaultRoleAuthService) InitSuperRole(ctx context.Context, in *InitSuperRoleReq, opts ...grpc.CallOption) (*InitSuperRoleResp, error) {
-	client := authRpc.NewRoleAuthServiceClient(m.cli.Conn())
-	return client.InitSuperRole(ctx, in, opts...)
 }

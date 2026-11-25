@@ -32,6 +32,7 @@ func (model *AdminInfoModel) getDb() *gorm.DB {
 	return model.db
 }
 
+// FindOne 按管理员ID和状态读取现有资料，不再通过用户绑定角色筛选管理员。
 func (model *AdminInfoModel) FindOne(in *schema.AdminInfo) schema.AdminInfo {
 	var res schema.AdminInfo
 	builder := model.getDb().Model(&schema.AdminInfo{})
@@ -40,9 +41,6 @@ func (model *AdminInfoModel) FindOne(in *schema.AdminInfo) schema.AdminInfo {
 	}
 	if in.Status != 0 {
 		builder.Where("status = ?", in.Status)
-	}
-	if in.RoleId != 0 {
-		builder.Where("role_id = ?", in.RoleId)
 	}
 	dbRes := builder.First(&res)
 	if err := dbRes.Error; err != nil {

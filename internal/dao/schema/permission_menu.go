@@ -14,7 +14,7 @@ type PermissionMenu struct {
 }
 
 func (u PermissionMenu) TableName() string {
-	return "permission_menu"
+	return "menu_group"
 }
 
 const SitePermissionId = 1 //平台管理默认权限组，固定值

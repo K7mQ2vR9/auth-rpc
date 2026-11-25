@@ -5,71 +5,39 @@ import (
 	"authRpc/internal/dao/model/mysql"
 	"authRpc/internal/svc"
 	"context"
-	"encoding/json"
-	"errors"
-
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
+// GetRoleMenusLogic 承载当前站点权限模板操作，模型构造错误由业务入口返回。
 type GetRoleMenusLogic struct {
-	// initErr 防止模型取库失败后继续执行权限业务或解引用空模型。
-	initErr error
-	ctx     context.Context
-	svcCtx  *svc.ServiceContext
 	logx.Logger
-	*mysql.RoleModel
-	*mysql.PermissionMenuModel
+	model   *mysql.RoleModel
+	initErr error
 }
 
-// NewGetRoleMenusLogic 初始化请求模型，取库错误保存在当前Logic并由业务入口返回。
+// NewGetRoleMenusLogic 初始化继承请求ctx的模板模型，不改变RPC metadata准入规则。
 func NewGetRoleMenusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetRoleMenusLogic {
-	logic := &GetRoleMenusLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
-	}
 	roleModel, err := mysql.NewRoleModel(ctx, svcCtx)
-	if err != nil {
-		logic.initErr = err
-		return logic
-	}
-	logic.RoleModel = roleModel
-
-	permissionMenuModel, err := mysql.NewPermissionMenuModel(ctx, svcCtx)
-	if err != nil {
-		logic.initErr = err
-		return logic
-	}
-	logic.PermissionMenuModel = permissionMenuModel
-	return logic
+	return &GetRoleMenusLogic{Logger: logx.WithContext(ctx), model: roleModel, initErr: err}
 }
 
+// GetRoleMenus 直接解析当前站点模板的逗号权限集合并返回来源版本；不从权限组展开、不保存用户权限。
 func (l *GetRoleMenusLogic) GetRoleMenus(in *authRpc.GetRoleMenusReq) (*authRpc.GetRoleMenusResp, error) {
+	if in == nil || in.Id <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "模板ID必须为正数")
+	}
 	if l.initErr != nil {
 		return nil, l.initErr
 	}
-
-	resp := &authRpc.GetRoleMenusResp{MenuIds: make([]int64, 0)}
-	if in.Id == 0 {
-		return resp, nil
-	}
-	roleInfo := l.RoleModel.FindOneById(in.Id)
-	if roleInfo.ID == 0 {
-		return nil, errors.New("RolePermission not found")
-	}
-
-	permissionIds := make([]int64, 0)
-	err := json.Unmarshal([]byte(roleInfo.PermissionIds), &permissionIds)
+	info, err := l.model.FindByID(in.Id, in.BusinessCode)
 	if err != nil {
-		return nil, errors.New("Unmarshal PermissionIds err," + err.Error())
+		return nil, err
 	}
-
-	if len(permissionIds) == 0 {
-		return resp, nil
+	ids, err := mysql.ParseMenuIDs(info.MenuIds)
+	if err != nil {
+		return nil, status.Error(codes.DataLoss, "模板菜单ID格式异常")
 	}
-
-	menuIds, err := l.PermissionMenuModel.GetMenuIds(permissionIds)
-	resp.MenuIds = append(resp.MenuIds, menuIds...)
-
-	return resp, nil
+	return &authRpc.GetRoleMenusResp{MenuIds: ids, Version: info.Version}, nil
 }

@@ -59,20 +59,24 @@ message GetPermissionListResp{
   int64 total =4;
 }
 
+// RoleItem 用于自定义模板新增、修改和列表筛选，不再表示账号身份或权限组继承。
 message RoleItem{
-  int64 id =1;
-  string roleName=2;
-  string permissionIds=3;
-  int64 createdAt=4;
-  string businessCode=5;
-  int32 isSuperRole=6;
+  int64 id =1; // 新增必须为0；修改及按ID筛选时为正数。
+  string roleName=2; // 新增、修改必填，最多255字符；列表按名称包含匹配。
+  reserved 3, 6; // 已移除的权限组及超级角色字段编号不再复用，不提供旧字段别名。
+  int64 createdAt=4; // 展示用Unix秒时间戳；写入时由服务端维护。
+  string businessCode=5; // 缺省使用当前business-code；显式传入必须与当前站点一致，不允许转移归属。
+  optional string menuIds=7; // 新增、修改必须显式提交具体菜单ID的逗号字符串；空字符串明确清空。
+  int32 templateType=8; // 1站点根模板、2自定义模板；普通增改仅允许2，列表0表示不按类型筛选。
+  optional int64 version=9; // 修改必填且为已读正数版本；新增可省略或传0，成功创建版本为1。
 }
 message AddRoleReq{
   RoleItem data =1;
 }
 
 message AddRoleResp{
-  int64 id =1;
+  int64 id =1; // 新建自定义模板ID。
+  int64 version=2; // 首次成功固定为1。
 }
 
 message UpdateRoleReq{
@@ -80,11 +84,12 @@ message UpdateRoleReq{
 }
 
 message UpdateRoleResp{
-
+  int64 version=1; // 成功覆盖后的新版本，供下一次修改使用。
 }
 
 message DeleteRoleReq{
-  int64 id =1;
+  int64 id =1; // 当前站点自定义模板ID；根模板不允许普通删除。
+  optional int64 version=2; // 必须显式提交已读正数版本；并发冲突拒绝删除。
 }
 
 message DeleteRoleResp{
@@ -93,24 +98,23 @@ message DeleteRoleResp{
 
 message GetRoleListReq{
   RoleItem data =1;
-  int64 page = 2;
-  int64 pageSize = 3;
-  int64 STime =4;
-  int64 ETime =5;
+  int64 page = 2; // 0默认第1页，不能为负数。
+  int64 pageSize = 3; // 0默认20，范围1..200。
+  int64 STime =4; // 创建时间下限，Unix秒，0表示不限制。
+  int64 ETime =5; // 创建时间上限，Unix秒，0表示不限制。
 }
 
 
-message RoleListPermissionItem{
-  int64 id =1;
-  string permissionName=2;
-}
+// RoleListItem 返回模板自身的权限快照，不展开菜单分组，不返回绑定用户。
 message RoleListItem{
   int64 id =1;
   string roleName=2;
-  repeated RoleListPermissionItem permissionIds=3;
+  reserved 3, 5;
   int64 createdAt=4;
-  int32 isSuperRole=5;
-  string businessCode=6;
+  string businessCode=6; // 模板所属站点。
+  string menuIds=7; // 规范化的逗号字符串，空字符串表示空模板。
+  int32 templateType=8; // 1站点根模板、2自定义模板，不是账号类型。
+  int64 version=9; // 当前模板版本，修改、删除或按模板复制时提交。
 }
 message GetRoleListResp{
   repeated RoleListItem list = 1;
@@ -120,11 +124,12 @@ message GetRoleListResp{
 }
 
 message GetRoleMenusReq{
-  int64 id =1;
-  string businessCode=2;
+  int64 id =1; // 必填正数，查询当前站点模板中的具体权限ID。
+  string businessCode=2; // 可省略；传入时必须等于当前business-code，不用于跨站点覆盖。
 }
 message GetRoleMenusResp{
-  repeated int64 menuIds = 1;
+  repeated int64 menuIds = 1; // 直接解析模板快照，不读取分组或动态替换成其他权限。
+  int64 version=2; // 此次读取的来源模板版本，便于后续覆盖复制时比较。
 }
 
 message GetOneRoleReq{
@@ -203,14 +208,6 @@ message DeleteMenuResp{
 
 }
 
-message initSuperRoleReq{
-  string businessCode=1;
-}
-
-message initSuperRoleResp{
-  RoleItem data =1;
-}
-
 // GetUserPermissionTreeReq 查询授权编辑页，userId是目标管理员，不作为RPC登录认证条件。
 message GetUserPermissionTreeReq {
   // 必填正数，对应admin_info.id；业务范围读取当前请求的business-code。
@@ -276,7 +273,7 @@ service RoleAuthService {
   rpc updatePermission(UpdatePermissionReq)returns(UpdatePermissionResp);
   rpc getPermissionList(GetPermissionListReq)returns(GetPermissionListResp);
 
-  //角色管理
+  // 权限模板管理：普通写接口只允许当前站点自定义模板，根模板由平台专用入口维护。
   rpc addRole(AddRoleReq)returns(AddRoleResp);
   rpc updateRole(UpdateRoleReq)returns(UpdateRoleResp);
   rpc deleteRole(DeleteRoleReq)returns(DeleteRoleResp);
@@ -300,5 +297,4 @@ service RoleAuthService {
   // 按用户独立菜单权限检查请求路径；仅放行有效用户明确获得的已启用页面或按钮。
   rpc checkUserPermission(CheckUserPermissionReq) returns(CheckUserPermissionResp);
 
-  rpc initSuperRole(initSuperRoleReq)returns(initSuperRoleResp);
 }

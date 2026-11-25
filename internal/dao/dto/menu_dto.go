@@ -10,14 +10,3 @@ type MenuTree struct {
 	ServiceName string `gorm:"column:service_name"`
 	Children    []*MenuTree
 }
-
-type LoginRoleMenuItem struct {
-	Id       int64  `json:"id"`       //菜单ID
-	MenuName string `json:"menuName"` //菜单名字
-	Path     string `json:"path"`     //菜单路径地址
-	MenuPid  int64  `json:"menuPid"`  //父级ID
-	MenuType int    `json:"menuType"` // 1=菜单，2=按钮
-	// ServiceName 为菜单所属API服务名，精确匹配，不提供默认值。
-	ServiceName string               `json:"serviceName"`
-	Children    []*LoginRoleMenuItem `json:"children"` //子级菜单
-}

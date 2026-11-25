@@ -1,56 +1,43 @@
 package roleauthservicelogic
 
 import (
+	"authRpc/authRpc"
 	"authRpc/internal/dao/model/mysql"
 	"authRpc/internal/dao/schema"
-	"context"
-	"github.com/jinzhu/copier"
-
-	"authRpc/authRpc"
 	"authRpc/internal/svc"
-
+	"context"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
+// AddRoleLogic 承载当前站点权限模板操作，模型构造错误由业务入口返回。
 type AddRoleLogic struct {
-	// initErr 防止模型取库失败后继续执行权限业务或解引用空模型。
-	initErr error
-	ctx     context.Context
-	svcCtx  *svc.ServiceContext
 	logx.Logger
-	*mysql.RoleModel
+	model   *mysql.RoleModel
+	initErr error
 }
 
-// NewAddRoleLogic 初始化请求模型，取库错误保存在当前Logic并由业务入口返回。
+// NewAddRoleLogic 初始化继承请求ctx的模板模型，不改变RPC metadata准入规则。
 func NewAddRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddRoleLogic {
-	logic := &AddRoleLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
-	}
 	roleModel, err := mysql.NewRoleModel(ctx, svcCtx)
-	if err != nil {
-		logic.initErr = err
-		return logic
-	}
-	logic.RoleModel = roleModel
-	return logic
+	return &AddRoleLogic{Logger: logx.WithContext(ctx), model: roleModel, initErr: err}
 }
 
-// 角色管理
+// AddRole 只新增当前站点自定义模板，menuIds须显式提供，空字符串表示空模板，首次版本为1。
 func (l *AddRoleLogic) AddRole(in *authRpc.AddRoleReq) (*authRpc.AddRoleResp, error) {
+	if in == nil || in.Data == nil || in.Data.MenuIds == nil {
+		return nil, status.Error(codes.InvalidArgument, "模板data和menuIds必须显式传入")
+	}
 	if l.initErr != nil {
 		return nil, l.initErr
 	}
-
-	ind := &schema.RolePermission{}
-	copier.Copy(ind, in.Data)
-	ind.BusinessCode = in.Data.BusinessCode
-	ind.IsSuperRole = int(in.Data.IsSuperRole)
-	err := l.RoleModel.InsertSchema(ind)
-	if err != nil {
+	data := &schema.RolePermission{
+		ID: in.Data.Id, RoleName: in.Data.RoleName, MenuIds: in.Data.GetMenuIds(),
+		BusinessCode: in.Data.BusinessCode, TemplateType: int(in.Data.TemplateType), Version: in.Data.GetVersion(),
+	}
+	if err := l.model.InsertSchema(data); err != nil {
 		return nil, err
 	}
-
-	return &authRpc.AddRoleResp{Id: ind.ID}, nil
+	return &authRpc.AddRoleResp{Id: data.ID, Version: data.Version}, nil
 }

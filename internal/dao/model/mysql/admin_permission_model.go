@@ -118,20 +118,17 @@ func (model *AdminPermissionModel) findUserPermission(userID int64, businessCode
 	return &permission, nil
 }
 
-// CheckPermission 按管理员ID、业务归属、API服务名及完整路径检查直接授权，不读角色或分组，不开事务。
-// 普通模型查询排除软删除数据；无有效用户、权限或菜单均拒绝，数据库和存储格式异常单独返回。
-func (model *AdminPermissionModel) CheckPermission(userID int64, serviceName, path, businessCode string) error {
-	if userID <= 0 || strings.TrimSpace(path) == "" {
-		return status.Error(codes.InvalidArgument, "userId必须为正数且path不能为空")
-	}
-	if err := ValidateServiceName(serviceName); err != nil {
-		return err
+// activeUserMenuIDs 为登录菜单及路径鉴权读取用户独立授权，不查询角色或分组，不开启事务。
+// 用户不存在、停用或业务归属不符时拒绝；权限未保存或已软删除时返回空集合，存储与数据库异常返回错误。
+func (model *AdminPermissionModel) activeUserMenuIDs(userID int64, businessCode string) ([]int64, error) {
+	if userID <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "userId必须为正数")
 	}
 	if strings.TrimSpace(businessCode) == "" {
-		return status.Error(codes.Unauthenticated, "business-code不能为空")
+		return nil, status.Error(codes.Unauthenticated, "business-code不能为空")
 	}
 	if model == nil || model.db == nil {
-		return errors.New("admin permission model is not initialized")
+		return nil, errors.New("admin permission model is not initialized")
 	}
 	denied := status.Error(codes.PermissionDenied, "没有访问权限")
 	// 只读取ID与状态，不载入管理员密码；停用用户不能因已保存菜单权限而继续放行。
@@ -142,13 +139,13 @@ func (model *AdminPermissionModel) CheckPermission(userID int64, serviceName, pa
 	err := model.db.Model(&schema.AdminInfo{}).Select("id", "status").
 		Where("id = ? AND business_code = ?", userID, businessCode).Take(&admin).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return denied
+		return nil, denied
 	}
 	if err != nil {
-		return fmt.Errorf("query permission check user: %w", err)
+		return nil, fmt.Errorf("query permission user: %w", err)
 	}
 	if admin.Status != schema.AdminInfoStatus1 {
-		return denied
+		return nil, denied
 	}
 
 	// 实际鉴权只读未删除权限；与编辑页保留软删除版本的查询分开，不使用Unscoped。
@@ -156,15 +153,52 @@ func (model *AdminPermissionModel) CheckPermission(userID int64, serviceName, pa
 	err = model.db.Model(&schema.AdminPermission{}).
 		Where("user_id = ? AND business_code = ?", userID, businessCode).Take(&permission).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return denied
+		return nil, nil
 	}
 	if err != nil {
-		return fmt.Errorf("query permission check grants: %w", err)
+		return nil, fmt.Errorf("query user grants: %w", err)
 	}
 	ids, err := ParseMenuIDs(permission.MenuIds)
 	if err != nil {
-		return status.Error(codes.DataLoss, "用户菜单ID格式异常")
+		return nil, status.Error(codes.DataLoss, "用户菜单ID格式异常")
 	}
+	return ids, nil
+}
+
+// GetGrantedMenus 返回当前业务正常用户直接获授的未删除、已启用页面或按钮，按sort、ID升序。
+// 不补授父子节点、不继承角色；空授权返回空切片，菜单树由对应RPC的Logic组装。
+func (model *AdminPermissionModel) GetGrantedMenus(userID int64, businessCode string) ([]*schema.Menu, error) {
+	ids, err := model.activeUserMenuIDs(userID, businessCode)
+	if err != nil {
+		return nil, err
+	}
+	menus := make([]*schema.Menu, 0)
+	if len(ids) == 0 {
+		return menus, nil
+	}
+	if err := model.db.Model(&schema.Menu{}).
+		Where("id IN ? AND business_code = ? AND status = ? AND menu_type IN ?",
+			ids, businessCode, schema.MenuStatus1, []int{schema.MenuMenuType1, schema.MenuMenuType2}).
+		Order("sort ASC").Order("id ASC").Find(&menus).Error; err != nil {
+		return nil, fmt.Errorf("query user granted menus: %w", err)
+	}
+	return menus, nil
+}
+
+// CheckPermission 按管理员ID、业务归属、API服务名及完整路径检查直接授权，不读角色或分组，不开事务。
+// 普通模型查询排除软删除数据；无有效用户、权限或菜单均拒绝，数据库和存储格式异常单独返回。
+func (model *AdminPermissionModel) CheckPermission(userID int64, serviceName, path, businessCode string) error {
+	if userID <= 0 || strings.TrimSpace(path) == "" {
+		return status.Error(codes.InvalidArgument, "userId必须为正数且path不能为空")
+	}
+	if err := ValidateServiceName(serviceName); err != nil {
+		return err
+	}
+	ids, err := model.activeUserMenuIDs(userID, businessCode)
+	if err != nil {
+		return err
+	}
+	denied := status.Error(codes.PermissionDenied, "没有访问权限")
 	if len(ids) == 0 {
 		return denied
 	}

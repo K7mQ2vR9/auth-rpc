@@ -78,6 +78,36 @@ func ValidateServiceName(value string) error {
 	return nil
 }
 
+// ValidateMenuParents 为授权编辑页和登录菜单树检查父级链，拒绝自身引用、负数父ID及集合内祖先循环。
+// 调用方先校验节点非空及ID唯一；集合外父级不展开、不额外查询或授予，保留当前节点作为展示根。
+func ValidateMenuParents(ctx context.Context, menus map[int64]*schema.Menu) error {
+	finished := make(map[int64]bool, len(menus))
+	for id := range menus {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		if finished[id] {
+			continue
+		}
+		path := make([]int64, 0)
+		visiting := make(map[int64]bool)
+		for current := id; current != 0 && menus[current] != nil && !finished[current]; current = menus[current].MenuPid {
+			if err := ctx.Err(); err != nil {
+				return err
+			}
+			if visiting[current] || menus[current].MenuPid < 0 {
+				return status.Error(codes.DataLoss, "菜单父级结构异常")
+			}
+			visiting[current] = true
+			path = append(path, current)
+		}
+		for _, current := range path {
+			finished[current] = true
+		}
+	}
+	return ctx.Err()
+}
+
 // validateWrite 校验所属服务、目标记录和父级，并按同一业务、服务及完整路径检查重复。
 // 保留普通查询方式；重复检查不替代数据库并发唯一约束，空路径目录不参与重复判断。
 func (model *MenuModel) validateWrite(data *schema.Menu, id int64) error {

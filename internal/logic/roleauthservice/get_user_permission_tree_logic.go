@@ -87,33 +87,6 @@ func parseGroupMenuIDs(value string) ([]int64, error) {
 	return ids, nil
 }
 
-// validateMenuParents 迭代检查父级链，阻止自身引用和祖先循环形成不可序列化的树。
-// 不在当前业务目录中的父级不展开，保留可见节点作为根，不读取其他业务或已删除菜单。
-func validateMenuParents(ctx context.Context, menus map[int64]*schema.Menu) error {
-	finished := make(map[int64]bool, len(menus))
-	for id := range menus {
-		if err := ctx.Err(); err != nil {
-			return err
-		}
-		if finished[id] {
-			continue
-		}
-		path := make([]int64, 0)
-		visiting := make(map[int64]bool)
-		for current := id; current != 0 && menus[current] != nil && !finished[current]; current = menus[current].MenuPid {
-			if visiting[current] || menus[current].MenuPid < 0 {
-				return status.Error(codes.DataLoss, "菜单父级结构异常")
-			}
-			visiting[current] = true
-			path = append(path, current)
-		}
-		for _, current := range path {
-			finished[current] = true
-		}
-	}
-	return nil
-}
-
 // buildUserPermissionGroups 为全部可见菜单标注用户已保存的选择，分组半选状态由前端计算。
 // 未分组菜单放入ID为0的虚拟分组；同一菜单跨组独立建树，勾选状态始终取同一ID集合。
 func buildUserPermissionGroups(ctx context.Context, data *mysql.UserPermissionTreeData) ([]*authRpc.UserPermissionGroup, error) {
@@ -133,7 +106,7 @@ func buildUserPermissionGroups(ctx context.Context, data *mysql.UserPermissionTr
 		}
 		menus[menu.ID] = menu
 	}
-	if err := validateMenuParents(ctx, menus); err != nil {
+	if err := mysql.ValidateMenuParents(ctx, menus); err != nil {
 		return nil, err
 	}
 	sort.Slice(ordered, func(i, j int) bool {

@@ -1,6 +1,6 @@
-# 用户权限查询接入
+# 用户独立权限与角色模板接入
 
-当前已实现授权编辑页查询GetUserPermissionTree、覆盖保存SaveUserPermission及实际鉴权CheckUserPermission。查询返回完整目录、勾选状态和版本；保存提交最终菜单IDs及版本；鉴权仅使用用户直接权限，不绑定角色。角色模板读写及其他项目调用方仍待后续调整。
+当前已实现授权编辑页查询GetUserPermissionTree、覆盖保存SaveUserPermission、实际鉴权CheckUserPermission及改为独立授权的GetMenuByAdminId。角色模板CRUD已改为同站点menuIds、templateType、version结构，迁移003已于2026-11-25在user_rpc执行；平台根模板管理入口、按模板直接覆盖用户及其他项目调用迁移尚未完成。用户权限仍独立保存，不持续绑定角色。
 
 旧按角色鉴权的CheckAdminRoleMenu已从协议、生成代码、本地Client/Server及Logic删除，不保留兼容分支。CheckUserPermission已实现并接入本地Client/Server。user-rpc中的parse_admin_token_logic.go仍依赖外部rpc-client并调用旧方法，需要同步客户端并迁移调用；本次未修改该项目，也未关闭其权限检查。
 
@@ -10,12 +10,93 @@
 
 | 文件 | 集中的内容 |
 |---|---|
-| internal/dao/model/mysql/admin_permission_model.go | 用户权限查询、保存、版本校验、菜单ID解析及规范化、查询结果结构 |
+| internal/dao/model/mysql/admin_permission_model.go | 用户权限查询、保存、版本校验、菜单ID解析及规范化、登录菜单及路径鉴权共用的有效用户授权读取 |
+| internal/dao/model/mysql/menu_model.go | 菜单读写及授权编辑树、登录菜单树共用的父级循环校验 |
+| internal/dao/model/mysql/role_permission_model.go | 同站点模板查询、保存、根权限子集及菜单校验、版本比较与模型软删除；不展开分组 |
 | internal/logic/roleauthservice/get_user_permission_tree_logic.go | 查询RPC入口、勾选状态及分组菜单树组装 |
 | internal/logic/roleauthservice/save_user_permission_logic.go | 保存RPC参数校验及模型调用 |
 | internal/logic/roleauthservice/check_user_permission_logic.go | 鉴权RPC参数校验及模型调用；数据库鉴权集中在admin_permission_model.go |
+| internal/logic/roleauthservice/get_menu_by_admin_id_logic.go | 登录菜单RPC参数校验、用户独立菜单查询及有序菜单树组装 |
 
 已删除原来单独拆出的admin_permission_save.go、menu_ids.go、dto/user_permission_tree.go和roleauthservice/user_permission_tree.go。schema字段映射及protobuf生成文件仍按现有项目结构维护。合并只调整文件归属和包内引用，接口、数据库及业务行为保持；下方此前的验证命令保留当时实际路径。
+
+## 用户角色解绑与登录菜单
+
+完整RPC方法：`/rpc.RoleAuthService/getMenuByAdminId`。请求继续使用adminId，响应结构不变，保留服务名及children，不再要求用户绑定角色。
+
+参数adminId须为正数，business-code读取现有上下文。模型校验目标管理员属于当前业务、未删除且正常，然后读取未删除的admin_permission；无记录、权限已软删除或空集合均返回空菜单列表。停用、已删除或跨业务管理员返回PermissionDenied；非法CSV返回DataLoss，数据库故障保留错误链，不伪装成空列表。缺少business-code返回Unauthenticated。此业务查询不改变RPC中间件仅做metadata准入的职责。
+
+菜单只查询该用户明确获授、属于当前业务、未删除、自身启用的页面或按钮，按sort、ID升序组装。不会因页面授权自动拥有按钮，也不加载角色、分组或管理员密码。父节点不在获授集合时，当前节点放入返回的根列表，MenuPid保持原值；不额外查询或补授父节点。集合内自身引用、负父ID、祖先循环或无效目录节点返回DataLoss，避免生成不可序列化的循环树。
+
+auth-rpc的AdminInfo.RoleId及按role_id筛选已删除；角色删除入口不再检查是否有用户绑定该角色，也不修改用户独立权限。旧admin_role.go、GetRolePermissionById和未使用的LoginRoleMenuItem已删除；菜单树辅助逻辑留在对应Logic，共用父级校验放在现有菜单模型文件。
+
+角色模板随后已完成下节所述结构改造，DeleteRole改为按templateType保护站点根模板，不再使用旧超级角色字段。登录菜单和路径鉴权仍限定当前业务，站点根模板上限、共享目录、完整祖先停用校验及平台跨站点身份分支尚未接入这两个用户查询入口。
+
+用户解绑阶段仅修改auth-rpc源码及文档，未修改数据库、user-rpc、JWT或后台，用户菜单RPC请求和响应字段保持；模板协议的后续变化见下节。解绑阶段只进行源码引用核对和gofmt格式化，未运行测试、构建、服务或联调，未新增测试用例、脚本、缓存或临时产物，无需清理；原有测试保留。
+
+## 权限模板接口
+
+以下为本地源码目标行为。[迁移003](database/migrations/003_role_template_type_and_version.sql)已于2026-11-25在user_rpc执行并核对新列、唯一索引和CHECK，角色表仍为0条。当前库不可重跑，其他环境先核对实际结构；根模板不由迁移自动创建。未进行业务调用、测试或构建，结构成功不等于接口已联调通过。
+
+RoleItem不再包含旧权限组或超级角色字段，新增menuIds、templateType、version；模板版本不是账号身份，account_type现有五种定义保持不变。RoleListItem直接返回具体menuIds字符串、类型、版本、名称及站点，不再展开权限组对象。已删除旧初始化RPC及其请求/响应、Logic、Client和Server入口，也删除了无人使用的dsl/rpc.proto副本；协议源为dsl/tpl/role.proto，聚合生成到dsl/auth_rpc.proto。
+
+所有模板操作严格限定ctx中的business-code；请求体businessCode可缺省，显式传入必须与ctx一致。平台业务编码也不自动取消过滤，不截取编码、不推导商户上级、不修改输入请求。普通写接口只维护templateType=2的自定义模板，templateType=1的站点根模板仅可读取，不能通过这些接口新增、修改、删除或转移归属。
+
+| RPC | 请求及行为 | 响应 |
+|---|---|---|
+| AddRole | data.roleName、显式data.menuIds、templateType=2；id必须为0，version可省略或传0 | 新模板id、version=1 |
+| UpdateRole | 正数id、完整roleName、显式menuIds、templateType=2及显式已读正数version；空menuIds清空，缺省拒绝 | 新version |
+| DeleteRole | 正数id及显式已读正数version；只软删除同站点自定义模板 | 空响应 |
+| GetOneRole | 正数id；普通查询当前站点未删除模板，不存在或跨站点返回NotFound | 模板完整快照 |
+| GetRoleMenus | 正数id，businessCode可省略；直接解析模板逗号集合，不读取分组，不保存用户权限 | 菜单ID数组及来源version |
+| GetRoleList | data支持id、roleName包含、templateType筛选及一致businessCode；STime/ETime为创建时间Unix秒闭区间，0不限制 | 模板快照列表、total及页码 |
+
+名称必填、最多255个UTF-8字符且不能含首尾空白。menuIds使用与用户授权相同的正数ID解析、去重和排序规则，规范化后最多65535字节；空字符串明确表示空模板。修改、删除的version须为1..MaxInt64-1，冲突返回Aborted且不自动重试覆盖。删除在短事务内先比较并递增版本，再使用模型Delete维护deleted_at和updated_at，任一步失败均回滚，不手写软删除时间、不修改用户权限。
+
+新增、修改在短写事务中先锁当前站点唯一有效根模板；缺失返回FailedPrecondition，重复根或损坏的根类型、版本及菜单格式返回数据异常，不从固定分组、自定义模板或全部菜单推导上限。所选集合必须完整包含在当前根权限内，任一越界项整体返回PermissionDenied。即使新增空模板或清空已有模板，也要求根模板存在且有效。
+
+通过根集合检查后，按具体ID查询共享菜单，菜单必须未删除、自身启用且类型为页面或按钮；不会为本站复制新菜单，也不会根据菜单分组扩大授权。修改再锁定目标记录，核对旧版本后完整覆盖名称、menuIds并递增版本；所有数据库操作使用同一tx。保存顺序为根记录、目标模板、按ID排序的菜单记录；新增没有目标旧记录。普通读取不额外开启事务，模板列表默认page=1、pageSize=20，每页最多200；负数、溢出分页或无效时间范围返回InvalidArgument。
+
+模板读取返回其保存快照及版本，不根据后来缩小的根集合清理或改写历史ID。模板修改或删除不联动已复制用户；根权限变化不触发本轮自动裁剪。普通选择器应使用templateType=2且当前站点范围，避免将根模板当作用户复制来源；GetRoleMenus读取本身不等于直接向用户授权，CopyRolePermissionToUser仍未实现。
+
+新增示例（仅说明请求，不执行调用）：
+
+```json
+{
+  "data": {
+    "roleName": "客服模板",
+    "menuIds": "1,2",
+    "templateType": 2
+  }
+}
+```
+
+修改示例（完整覆盖为空模板）：
+
+```json
+{
+  "data": {
+    "id": 10,
+    "roleName": "客服模板",
+    "menuIds": "",
+    "templateType": 2,
+    "version": 1
+  }
+}
+```
+
+删除提交 `{"id":10,"version":2}`。GetRoleMenus返回的version用于后续来源模板比较，不能代替目标用户权限版本。
+
+本阶段完成模板类型、站点边界、根集合及自身启用菜单检查和版本写入。API仍须执行身份及操作资格校验；模板写入的操作者自身权限上限、完整祖先停用校验、同事务审计、平台根模板专用管理和跨站点管理入口尚未接入，不能认定完整三级权限已具备上线条件。根模板未配置时新增、修改会拒绝，本轮不插入占位根模板或旧超级角色。
+
+实际只执行协议聚合、代码生成及格式化，协议生成命令为：
+
+```text
+sh ./dsl/main.sh
+protoc --plugin=protoc-gen-go=/Users/m/go/bin/protoc-gen-go --plugin=protoc-gen-go-grpc=/Users/m/go/bin/protoc-gen-go-grpc --go_out=. --go-grpc_out=. dsl/auth_rpc.proto
+```
+
+生成命令成功返回，只说明协议源码已生成，不代表通过编译或业务验证。源码阶段未运行测试、构建、示例、服务或数据库迁移；用户另行确认后已执行003，过程见DATABASE.md，未运行Go测试、构建或业务联调。迁移SQL、结构快照及生成源码作为正式交付保留，原有测试保留；未执行向外部rpc-client复制的Makefile目标，未修改其他项目。
 
 ## 实际请求权限校验
 
@@ -130,7 +211,7 @@ proto来自google.golang.org/protobuf/proto。缺省menuIds/version、非法菜�
 
 依次执行普通查询：校验目标管理员→读取用户权限及版本→读取全部分组→读取全部未删除菜单，不开启事务。所有查询继承请求ctx，但不保证使用同一数据库快照。管理员查询仅取id，不载入密码或其他个人资料；version保留供后续保存时做并发比较。
 
-用户admin_permission.menu_ids按英文逗号分隔正数ID解析；分组permission_menu.menu_ids继续按JSON数组解析，两种格式不混用。空用户字符串表示无权限，空分组或数据库NULL表示空组；非法CSV、JSON结构或非正数成员ID返回错误，不伪装成空授权。
+用户admin_permission.menu_ids按英文逗号分隔正数ID解析；分组menu_group.menu_ids继续按JSON数组解析，两种格式不混用。空用户字符串表示无权限，空分组或数据库NULL表示空组；非法CSV、JSON结构或非正数成员ID返回错误，不伪装成空授权。
 
 菜单中已删除或不在当前业务范围的记录不返回，过期分组引用不制造虚假节点。存在但尚未分组的菜单放入“未分组”，保证完整目录可以展示。只引用子菜单时补齐当前业务中可见的祖先，并标记displayOnly；父级不可见时保留子菜单作为根，不读取其他业务目录。检测到自身引用或父级循环时返回错误。
 
@@ -180,7 +261,7 @@ gofmt -w internal/dao/dto/user_permission_tree.go internal/dao/model/mysql/admin
 
 本轮仅进行生成、格式化和源码核对，未运行Go构建、测试、RPC调用、服务启动或数据库联调，不能据此认定运行行为已经验证。未新增测试文件、测试脚本、依赖缓存、用户样本或临时产物，无需清理；生成的pb.go属于接口交付源码，保留。原有测试和用户文件保留。
 
-旧角色接口尚未适配已经迁移的role_permission表，相关问题仍按数据库说明单独处理。本接口通过admin_permission直接读取用户配置，不依赖旧角色链。
+模板CRUD当前已按menuIds、templateType和version改造，依赖新增迁移003；本接口仍通过admin_permission直接读取用户配置，不依赖角色模板继承。
 
 模型软删除已统一为NULL约定，菜单、分组和角色的删除入口改用模型Delete；删除前的既有业务检查保持。此次只执行gofmt和源码核对，未运行构建、测试、RPC调用或数据库操作；未新增测试文件、测试脚本或临时产物，无需清理。
 

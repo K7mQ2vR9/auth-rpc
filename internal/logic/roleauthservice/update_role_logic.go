@@ -1,52 +1,43 @@
 package roleauthservicelogic
 
 import (
+	"authRpc/authRpc"
 	"authRpc/internal/dao/model/mysql"
 	"authRpc/internal/dao/schema"
-	"context"
-	"github.com/jinzhu/copier"
-
-	"authRpc/authRpc"
 	"authRpc/internal/svc"
-
+	"context"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
+// UpdateRoleLogic 承载当前站点权限模板操作，模型构造错误由业务入口返回。
 type UpdateRoleLogic struct {
-	// initErr 防止模型取库失败后继续执行权限业务或解引用空模型。
-	initErr error
-	ctx     context.Context
-	svcCtx  *svc.ServiceContext
 	logx.Logger
-	*mysql.RoleModel
+	model   *mysql.RoleModel
+	initErr error
 }
 
-// NewUpdateRoleLogic 初始化请求模型，取库错误保存在当前Logic并由业务入口返回。
+// NewUpdateRoleLogic 初始化继承请求ctx的模板模型，不改变RPC metadata准入规则。
 func NewUpdateRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateRoleLogic {
-	logic := &UpdateRoleLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
-	}
 	roleModel, err := mysql.NewRoleModel(ctx, svcCtx)
-	if err != nil {
-		logic.initErr = err
-		return logic
-	}
-	logic.RoleModel = roleModel
-	return logic
+	return &UpdateRoleLogic{Logger: logx.WithContext(ctx), model: roleModel, initErr: err}
 }
 
+// UpdateRole 完整覆盖当前站点自定义模板，menuIds和version必须显式提交，不接受根模板或归属转换。
 func (l *UpdateRoleLogic) UpdateRole(in *authRpc.UpdateRoleReq) (*authRpc.UpdateRoleResp, error) {
+	if in == nil || in.Data == nil || in.Data.MenuIds == nil || in.Data.Version == nil {
+		return nil, status.Error(codes.InvalidArgument, "模板data、menuIds和version必须显式传入")
+	}
 	if l.initErr != nil {
 		return nil, l.initErr
 	}
-
-	ind := &schema.RolePermission{}
-	copier.Copy(ind, in.Data)
-	err := l.RoleModel.UpdateByMap(ind.ID, ind)
+	version, err := l.model.UpdateSchema(&schema.RolePermission{
+		ID: in.Data.Id, RoleName: in.Data.RoleName, MenuIds: in.Data.GetMenuIds(),
+		BusinessCode: in.Data.BusinessCode, TemplateType: int(in.Data.TemplateType), Version: in.Data.GetVersion(),
+	})
 	if err != nil {
 		return nil, err
 	}
-	return &authRpc.UpdateRoleResp{}, nil
+	return &authRpc.UpdateRoleResp{Version: version}, nil
 }
