@@ -40,7 +40,7 @@ func NewAddMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddMenuLo
 	return logic
 }
 
-// AddMenu 新增菜单要求显式传入API服务名，路径检查集中由菜单模型按业务及服务处理。
+// AddMenu 仅平台账号10新增共享菜单，模型校验真实资格；API服务名必填，归属固定为平台。
 func (l *AddMenuLogic) AddMenu(in *authRpc.AddMenuReq) (*authRpc.AddMenuResp, error) {
 	if in == nil || in.Data == nil {
 		return nil, status.Error(codes.InvalidArgument, "菜单data不能为空")
@@ -55,10 +55,13 @@ func (l *AddMenuLogic) AddMenu(in *authRpc.AddMenuReq) (*authRpc.AddMenuResp, er
 
 	ind := &schema.Menu{}
 	copier.Copy(ind, in.Data)
+	// 写入仍为完整数据，省略父级按0（根菜单）保存，不受查询字段可选性的影响。
+	ind.MenuPid = in.Data.GetMenuPid()
+	ind.Version = in.Data.GetVersion()
 	ind.BusinessCode = headInfo.GetBusinessCode(l.ctx)
 	err := l.MenuModel.InsertSchema(ind)
 	if err != nil {
 		return nil, err
 	}
-	return &authRpc.AddMenuResp{Id: ind.ID}, nil
+	return &authRpc.AddMenuResp{Id: ind.ID, Version: ind.Version}, nil
 }

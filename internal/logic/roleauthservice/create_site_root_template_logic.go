@@ -24,7 +24,7 @@ func NewCreateSiteRootTemplateLogic(ctx context.Context, svcCtx *svc.ServiceCont
 	return &CreateSiteRootTemplateLogic{Logger: logx.WithContext(ctx), model: model, initErr: err}
 }
 
-// CreateSiteRootTemplate 要求显式menuIds；服务端固定名称、根类型1及初始版本1，成功仅返回已提交的ID和版本。
+// CreateSiteRootTemplate 要求显式menuIds；仅11操作，服务端固定名称、站点默认类型2及初始版本1，成功仅返回已提交的ID和版本。
 func (l *CreateSiteRootTemplateLogic) CreateSiteRootTemplate(in *authRpc.CreateSiteRootTemplateReq) (*authRpc.CreateSiteRootTemplateResp, error) {
 	if in == nil || in.MenuIds == nil {
 		return nil, status.Error(codes.InvalidArgument, "必须显式传入menuIds，空根权限请传空字符串")

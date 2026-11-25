@@ -6,16 +6,14 @@ import (
 	"authRpc/internal/svc"
 	"context"
 
-	"github.com/K7mQ2vR9/base-pkg/headInfo"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-// SaveUserPermissionLogic 将最终勾选结果覆盖到用户独立记录，不读取或绑定角色模板。
+// SaveUserPermissionLogic 将最终勾选覆盖到独立授权；10可给平台11赋权，站点目标读取默认上限，不绑定自定义模板。
 type SaveUserPermissionLogic struct {
 	logx.Logger
-	ctx     context.Context
 	model   *mysql.AdminPermissionModel
 	initErr error
 }
@@ -24,12 +22,12 @@ type SaveUserPermissionLogic struct {
 func NewSaveUserPermissionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SaveUserPermissionLogic {
 	model, err := mysql.NewAdminPermissionModel(ctx, svcCtx)
 	return &SaveUserPermissionLogic{
-		Logger: logx.WithContext(ctx), ctx: ctx, model: model, initErr: err,
+		Logger: logx.WithContext(ctx), model: model, initErr: err,
 	}
 }
 
 // SaveUserPermission 要求显式提供menuIds及version，避免字段缺失被误认为清空或首次创建。
-// 保存成功返回新版本；业务范围取请求上下文，菜单校验和并发保护由模型处理。
+// 平台须指定目标归属；10可配置自身菜单展示或给11赋权，站点限本站其他用户，同事务校验及审计。
 func (l *SaveUserPermissionLogic) SaveUserPermission(in *authRpc.SaveUserPermissionReq) (*authRpc.SaveUserPermissionResp, error) {
 	if in == nil || in.UserId <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "userId必须为正数")
@@ -43,7 +41,7 @@ func (l *SaveUserPermissionLogic) SaveUserPermission(in *authRpc.SaveUserPermiss
 	if l.initErr != nil {
 		return nil, l.initErr
 	}
-	version, err := l.model.Save(in.UserId, in.GetMenuIds(), in.GetVersion(), headInfo.GetBusinessCode(l.ctx))
+	version, err := l.model.Save(in.UserId, in.GetMenuIds(), in.GetVersion(), in.BusinessCode)
 	if err != nil {
 		return nil, err
 	}

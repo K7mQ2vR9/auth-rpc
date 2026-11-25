@@ -37,8 +37,8 @@ func NewGetMenuByAdminIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	return logic
 }
 
-// GetMenuByAdminId 读取当前business-code下用户独立获授的有效菜单，不再要求或读取用户绑定角色。
-// 无有效授权返回空列表；用户异常、存储损坏及数据库错误返回错误，不开启事务或通过角色回退。
+// GetMenuByAdminId 所有账号统一读取已配置菜单（包括10），共用身份、站点上限及祖先校验，不自动返回全量。
+// 无有效授权返回空列表；身份或根不可用、存储损坏及数据库错误返回错误，普通查询不加读事务。
 func (l *GetMenuByAdminIdLogic) GetMenuByAdminId(in *authRpc.GetMenuByAdminIdReq) (*authRpc.GetMenuByAdminIdResp, error) {
 	if in == nil || in.AdminId <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "adminId必须为正数")
@@ -58,8 +58,8 @@ func (l *GetMenuByAdminIdLogic) GetMenuByAdminId(in *authRpc.GetMenuByAdminIdReq
 	return &authRpc.GetMenuByAdminIdResp{List: list}, nil
 }
 
-// buildGrantedMenuTree 按模型给出的sort、ID顺序组装直接授权菜单，拒绝无效ID及祖先循环。
-// 父节点不在已授予集合时将当前节点放在返回根列表，不加载或补授父节点，MenuPid保留原值。
+// buildGrantedMenuTree 按模型给出的sort、ID顺序组装已通过完整有效性检查的菜单，拒绝无效ID及集合内循环。
+// 已校验有效但未获授的父节点不加入列表，子节点作为返回根并保留MenuPid；缺失或停用祖先已由模型过滤。
 func buildGrantedMenuTree(ctx context.Context, menus []*schema.Menu) ([]*authRpc.GetMenuByAdminIdItem, error) {
 	menuByID := make(map[int64]*schema.Menu, len(menus))
 	for _, menu := range menus {

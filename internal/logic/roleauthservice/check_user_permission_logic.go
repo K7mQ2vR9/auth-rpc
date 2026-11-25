@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// CheckUserPermissionLogic 仅检查用户直接授权，不改变RPC中间件的metadata准入规则。
+// CheckUserPermissionLogic 按身份、站点根上限及完整菜单链检查有效权限，不改变RPC中间件metadata准入规则。
 type CheckUserPermissionLogic struct {
 	logx.Logger
 	ctx     context.Context
@@ -31,6 +31,7 @@ func NewCheckUserPermissionLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // CheckUserPermission 成功返回空响应，无权限及数据库异常均返回错误，不默认放行。
 // userId由API从认证结果取得，不能直接采信前端任意指定的用户ID。
+// 平台与站点身份按数据库精确类型分支，10默认全操作；其他身份按serviceName、path及默认上限精确匹配，不使用自定义模板继承。
 func (l *CheckUserPermissionLogic) CheckUserPermission(in *authRpc.CheckUserPermissionReq) (*authRpc.CheckUserPermissionResp, error) {
 	if in == nil || in.UserId <= 0 || strings.TrimSpace(in.Path) == "" {
 		return nil, status.Error(codes.InvalidArgument, "userId必须为正数且path不能为空")

@@ -23,7 +23,8 @@ func NewGetRoleMenusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetR
 	return &GetRoleMenusLogic{Logger: logx.WithContext(ctx), model: roleModel, initErr: err}
 }
 
-// GetRoleMenus 直接解析当前站点模板的逗号权限集合并返回来源版本；不从权限组展开、不保存用户权限。
+// GetRoleMenus 返回本站普通模板中当前有效且在两级上限内的权限及来源版本；全部失效返回空ID列表。
+// 与直接复制共用过滤规则，不从权限组展开，不改写模板或用户；默认模板缺失及异常存储仍返回错误。
 func (l *GetRoleMenusLogic) GetRoleMenus(in *authRpc.GetRoleMenusReq) (*authRpc.GetRoleMenusResp, error) {
 	if in == nil || in.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "模板ID必须为正数")
@@ -31,13 +32,9 @@ func (l *GetRoleMenusLogic) GetRoleMenus(in *authRpc.GetRoleMenusReq) (*authRpc.
 	if l.initErr != nil {
 		return nil, l.initErr
 	}
-	info, err := l.model.FindByID(in.Id, in.BusinessCode)
+	ids, version, err := l.model.GetEffectiveMenuIDs(in.Id, in.BusinessCode)
 	if err != nil {
 		return nil, err
 	}
-	ids, err := mysql.ParseMenuIDs(info.MenuIds)
-	if err != nil {
-		return nil, status.Error(codes.DataLoss, "模板菜单ID格式异常")
-	}
-	return &authRpc.GetRoleMenusResp{MenuIds: ids, Version: info.Version}, nil
+	return &authRpc.GetRoleMenusResp{MenuIds: ids, Version: version}, nil
 }

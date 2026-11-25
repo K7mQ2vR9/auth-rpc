@@ -23,6 +23,11 @@ func NewRoleAuthServiceServer(svcCtx *svc.ServiceContext) *RoleAuthServiceServer
 	}
 }
 
+// GetPlatformDefaultTemplate 读取真实平台默认模板权限集合，仅10可维护，查询不自动初始化。
+func (s *RoleAuthServiceServer) GetPlatformDefaultTemplate(ctx context.Context, in *authRpc.GetPlatformDefaultTemplateReq) (*authRpc.GetPlatformDefaultTemplateResp, error) {
+	return roleauthservicelogic.NewPlatformDefaultTemplateLogic(ctx, s.svcCtx).GetPlatformDefaultTemplate(in)
+}
+
 // CreateSiteRootTemplate 进入平台专用根模板创建逻辑，不复用普通自定义模板写入口。
 func (s *RoleAuthServiceServer) CreateSiteRootTemplate(ctx context.Context, in *authRpc.CreateSiteRootTemplateReq) (*authRpc.CreateSiteRootTemplateResp, error) {
 	l := roleauthservicelogic.NewCreateSiteRootTemplateLogic(ctx, s.svcCtx)
@@ -125,6 +130,7 @@ func (s *RoleAuthServiceServer) GetMenuList(ctx context.Context, in *authRpc.Get
 	return l.GetMenuList(in)
 }
 
+// GetMenuByAdminId 所有账号（包括10）按已配置菜单返回树，不自动返回全量，不改写授权。
 func (s *RoleAuthServiceServer) GetMenuByAdminId(ctx context.Context, in *authRpc.GetMenuByAdminIdReq) (*authRpc.GetMenuByAdminIdResp, error) {
 	l := roleauthservicelogic.NewGetMenuByAdminIdLogic(ctx, s.svcCtx)
 	return l.GetMenuByAdminId(in)
@@ -136,14 +142,29 @@ func (s *RoleAuthServiceServer) GetUserPermissionTree(ctx context.Context, in *a
 	return l.GetUserPermissionTree(in)
 }
 
-// SaveUserPermission 覆盖保存目标用户权限，模板选择本身不会调用此入口或立即写库。
+// SaveUserPermission 按操作者及站点上限完整覆盖目标用户授权，与审计同事务；模板草稿预览不调用本入口。
 func (s *RoleAuthServiceServer) SaveUserPermission(ctx context.Context, in *authRpc.SaveUserPermissionReq) (*authRpc.SaveUserPermissionResp, error) {
 	l := roleauthservicelogic.NewSaveUserPermissionLogic(ctx, s.svcCtx)
 	return l.SaveUserPermission(in)
 }
 
-// CheckUserPermission 按用户ID检查明确授予的菜单或按钮，成功空响应，失败保留错误分类。
+// CheckUserPermission 按身份、站点根上限和完整菜单链校验服务/路径，普通读取，不恢复或改写授权。
 func (s *RoleAuthServiceServer) CheckUserPermission(ctx context.Context, in *authRpc.CheckUserPermissionReq) (*authRpc.CheckUserPermissionResp, error) {
 	l := roleauthservicelogic.NewCheckUserPermissionLogic(ctx, s.svcCtx)
 	return l.CheckUserPermission(in)
+}
+
+// CreatePlatformDefaultTemplate 进入平台10维护真实平台默认权限集合的显式创建入口。
+func (s *RoleAuthServiceServer) CreatePlatformDefaultTemplate(ctx context.Context, in *authRpc.CreatePlatformDefaultTemplateReq) (*authRpc.CreatePlatformDefaultTemplateResp, error) {
+	return roleauthservicelogic.NewPlatformDefaultTemplateLogic(ctx, s.svcCtx).CreatePlatformDefaultTemplate(in)
+}
+
+// UpdatePlatformDefaultTemplate 版本覆盖平台默认权限并同事务审计，立即约束下级实际访问。
+func (s *RoleAuthServiceServer) UpdatePlatformDefaultTemplate(ctx context.Context, in *authRpc.UpdatePlatformDefaultTemplateReq) (*authRpc.UpdatePlatformDefaultTemplateResp, error) {
+	return roleauthservicelogic.NewPlatformDefaultTemplateLogic(ctx, s.svcCtx).UpdatePlatformDefaultTemplate(in)
+}
+
+// GetTemplatePermissionTree 按维护资格独立查询模板配置，不通过用户授权树或初始化记录。
+func (s *RoleAuthServiceServer) GetTemplatePermissionTree(ctx context.Context, in *authRpc.GetTemplatePermissionTreeReq) (*authRpc.GetTemplatePermissionTreeResp, error) {
+	return roleauthservicelogic.NewGetTemplatePermissionTreeLogic(ctx, s.svcCtx).GetTemplatePermissionTree(in)
 }

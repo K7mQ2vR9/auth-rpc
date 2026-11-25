@@ -37,9 +37,18 @@ func (PermissionAudit) TableName() string {
 }
 
 const (
+	PermissionAuditCreateCustomTemplate  = "create_custom_template"           // 本站唯一20创建普通模板。
+	PermissionAuditUpdateCustomTemplate  = "update_custom_template"           // 本站唯一20按版本覆盖普通模板。
+	PermissionAuditDeleteCustomTemplate  = "delete_custom_template"           // 本站唯一20软删除普通模板，保留原CSV。
+	PermissionAuditTargetCustomTemplate  = "custom_template"                  // 普通模板实体，TargetID为模板主键。
+	PermissionAuditCreatePlatformDefault = "create_platform_default_template" // 10显式创建平台默认模板。
+	PermissionAuditUpdatePlatformDefault = "update_platform_default_template" // 10按版本覆盖平台默认模板，不级联裁剪。
+	PermissionAuditTargetPlatformDefault = "platform_default_template"        // 目标为平台默认模板实体，TargetID是模板主键。
+
 	PermissionAuditCreateSiteRootTemplate = "create_site_root_template"    // 平台显式创建站点根模板的成功变更。
 	PermissionAuditUpdateSiteRootTemplate = "update_site_root_template"    // 平台完整覆盖根权限，记录前后版本，不联动下级。
 	PermissionAuditCopyRoleToUser         = "copy_role_permission_to_user" // 自定义模板覆盖用户独立授权，记录来源快照版本。
+	PermissionAuditSaveUserPermission     = "save_user_permission"         // 手工完整覆盖站点用户授权，来源模板ID及版本均为0。
 	PermissionAuditTargetSiteRootTemplate = "site_root_template"           // 审计目标为站点根模板，TargetID对应其主键。
 	PermissionAuditTargetUserPermission   = "user_permission"              // 审计目标为用户独立授权，TargetID对应目标用户ID。
 )

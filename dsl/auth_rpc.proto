@@ -5,9 +5,10 @@ option go_package ="./authRpc";
 message PermissionItem{
   int64 id =1;
   string permissionName=2;
-  string menuIds=3;
+  string menuIds=3; // 分组成员为正整数JSON数组，[]清空；新增必填，修改缺省保持原值，最多65535字节。
   int64 createdAt=4;
-  string businessCode=5;
+  string businessCode=5; // 分组归属只能为空或平台99999999；新增由服务端固定，修改不能转移归属。
+  optional int64 version=6; // 修改必填已读正数版本；新增省略或0，创建后为1。
 }
 message AddPermissionReq{
     PermissionItem data = 1;
@@ -15,14 +16,16 @@ message AddPermissionReq{
 
 message AddPermissionResp{
   int64 id =1;
+  int64 version=2; // 首次成功固定1。
 }
 
 message DeletedPermissionReq{
   int64 id =1;
+  optional int64 version=2; // 删除必须显式提交已读正数版本，冲突返回Aborted。
 }
 
 message DeletedPermissionResp{
-
+  int64 version=1; // 成功软删除后的版本，原版本加1。
 }
 
 message UpdatePermissionReq{
@@ -30,7 +33,7 @@ message UpdatePermissionReq{
 }
 
 message UpdatePermissionResp{
-
+  int64 version=1; // 成功修改后的版本，供下次写入使用。
 }
 
 message GetPermissionListReq{
@@ -45,9 +48,11 @@ message GetPermissionListReq{
 message PermissionListMenuItem{
   int64 id=1;
   string menuName=2;
+  int32 status=3; // 分组维护完整回显：1启用、2禁用；已删除/不存在成员不返回，授权页另行过滤。
 }
 message PermissionListItem{
   int64 id =1;
+  int64 version=5; // 当前分组版本；修改和删除须回传。
   string permissionName=2;
   repeated PermissionListMenuItem menus=3;
   int64 createdAt=4;
@@ -67,7 +72,7 @@ message RoleItem{
   int64 createdAt=4; // 展示用Unix秒时间戳；写入时由服务端维护。
   string businessCode=5; // 缺省使用当前business-code；显式传入必须与当前站点一致，不允许转移归属。
   optional string menuIds=7; // 新增、修改必须显式提交具体菜单ID的逗号字符串；空字符串明确清空。
-  int32 templateType=8; // 1站点根模板、2自定义模板；普通增改仅允许2，列表0表示不按类型筛选。
+  int32 templateType=8; // 1平台默认、2站点默认、3站点自定义；普通CRUD仅本站唯一20操作类型3，默认模板使用专用入口。
   optional int64 version=9; // 修改必填且为已读正数版本；新增可省略或传0，成功创建版本为1。
 }
 message AddRoleReq{
@@ -113,7 +118,7 @@ message RoleListItem{
   int64 createdAt=4;
   string businessCode=6; // 模板所属站点。
   string menuIds=7; // 规范化的逗号字符串，空字符串表示空模板。
-  int32 templateType=8; // 1站点根模板、2自定义模板，不是账号类型。
+  int32 templateType=8; // 1平台默认、2站点默认、3站点自定义，不是账号类型10/11/30。
   int64 version=9; // 当前模板版本，修改、删除或按模板复制时提交。
 }
 message GetRoleListResp{
@@ -124,12 +129,12 @@ message GetRoleListResp{
 }
 
 message GetRoleMenusReq{
-  int64 id =1; // 必填正数，查询当前站点模板中的具体权限ID。
+  int64 id =1; // 必填正数，仅本站唯一20查询本站普通模板当前有效权限。
   string businessCode=2; // 可省略；传入时必须等于当前business-code，不用于跨站点覆盖。
 }
 message GetRoleMenusResp{
-  repeated int64 menuIds = 1; // 直接解析模板快照，不读取分组或动态替换成其他权限。
-  int64 version=2; // 此次读取的来源模板版本，便于后续覆盖复制时比较。
+  repeated int64 menuIds = 1; // 来源权限与两级默认上限、有效目录的交集；过滤删除/禁用/祖先失效项，全部失效为空。
+  int64 version=2; // 此次读取的来源模板版本，过滤不改写或递增版本；复制仍按其事务快照重新计算有效集合。
 }
 
 message GetOneRoleReq{
@@ -169,13 +174,33 @@ message UpdateSiteRootTemplateResp {
   int64 version = 1; // 成功提交后的新根模板版本。
 }
 
+// 平台默认模板1由10维护真实权限集合，超级管理员自身默认全权限不由该模板授予。
+message CreatePlatformDefaultTemplateReq {
+  optional string menuIds = 1; // 必须显式提交具体菜单ID的CSV；空字符串创建空权限，首次版本1。
+}
+message CreatePlatformDefaultTemplateResp {
+  int64 id = 1; // 全平台唯一默认模板ID，不由调用方指定。
+  int64 version = 2; // 创建成功固定1。
+}
+message GetPlatformDefaultTemplateReq {}
+message GetPlatformDefaultTemplateResp {
+  RoleListItem data = 1; // 类型1的真实快照及版本，不以固定allPermissions=true代替。
+}
+message UpdatePlatformDefaultTemplateReq {
+  optional string menuIds = 1; // 必须显式传入完整最终CSV，空字符串清空，不级联裁剪下级记录。
+  optional int64 version = 2; // 必须显式提交已读正数版本，冲突拒绝，不自动重试。
+}
+message UpdatePlatformDefaultTemplateResp {
+  int64 version = 1; // 成功覆盖后的新版本。
+}
+
 // CopyRolePermissionToUserReq 明确执行全量覆盖，不提供追加模式，也不形成用户角色绑定。
 message CopyRolePermissionToUserReq {
   int64 userId = 1; // 目标站点管理员ID，必须为正数，禁止修改操作者自己或平台账号。
-  int64 roleId = 2; // 目标站点自定义模板ID，必须为正数，不能选择根模板或跨站点模板。
+  int64 roleId = 2; // 本站自定义模板类型3的正数ID，仅20可复制，不选择默认模板或跨站点模板。
   optional int64 roleVersion = 3; // 必须显式提交预览时来源模板正数版本，变化后要求刷新。
   optional int64 version = 4; // 必须显式提交用户授权版本；从未保存为0，已有或恢复使用原版本。
-  string businessCode = 5; // 平台调用必填目标站点；站点调用可省略，传入时必须与当前站点一致。
+  string businessCode = 5; // 仅本站超级管理员20可复制，可省略使用ctx归属，传入时必须与当前站点一致。
 }
 message CopyRolePermissionToUserResp {
   int64 version = 1; // 成功覆盖后的用户授权版本，不是模板版本。
@@ -183,14 +208,16 @@ message CopyRolePermissionToUserResp {
 
 message MenuItem{
   int64 id =1;
-  int64 menuPid=2;
-  string menuName=3;
-  int32 menuType=4;
-  string path=5;
-  int32 status=6;
-  int32 sort=7;
+  optional int64 menuPid=2; // 查询：未传不限制，显式0只查根，正数查直接子级，负数拒绝；新增/修改省略按0保存。
+  // 写入检查完整祖先链，禁止自身及后代，不同菜单并发调整不作串行保证；列表始终回显实际父ID，包括0。
+  string menuName=3; // 必填，最多100个UTF-8字符，无首尾空白。
+  int32 menuType=4; // 必须为1页面或2按钮，允许修改，保留原菜单ID及授权关系。
+  string path=5; // 最多255个UTF-8字符；目录可为空，允许修改，原授权随菜单ID按新配置生效。
+  int32 status=6; // 必须为1启用或2禁用，不能缺省为0。
+  int32 sort=7; // 完整覆盖，0为合法排序值，按升序展示。
   int64 createdAt=8;
   string serviceName = 9; // 接口所属API服务名，新增和修改必填，最多64字符，精确匹配。
+  optional int64 version=10; // 修改必填已读正数版本；新增省略或0；列表返回实际版本。
 }
 message AddMenuReq{
   MenuItem data=1;
@@ -198,6 +225,7 @@ message AddMenuReq{
 
 message AddMenuResp{
   int64 id =1;
+  int64 version=2; // 首次成功固定1。
 }
 
 message UpdateMenuReq{
@@ -205,7 +233,7 @@ message UpdateMenuReq{
 }
 
 message UpdateMenuResp{
-
+  int64 version=1; // 成功修改后的版本，供后续修改或删除使用。
 }
 
 message GetMenuListReq{
@@ -244,53 +272,72 @@ message GetMenuByAdminIdResp{
 
 message DeleteMenuReq{
   int64 id = 1; //菜单ID
+  optional int64 version=2; // 必须显式提交已读正数版本。
 }
 
 message DeleteMenuResp{
-
+  int64 version=1; // 成功软删除后的版本，原版本加1。
 }
 
 // GetUserPermissionTreeReq 查询授权编辑页，userId是目标管理员，不作为RPC登录认证条件。
 message GetUserPermissionTreeReq {
-  // 必填正数，对应admin_info.id；业务范围读取当前请求的business-code。
+  // 必填目标用户ID；平台10可配置自身菜单展示或给11赋权，站点目标按默认模板限制。
   int64 userId = 1;
+  string businessCode = 2; // 平台调用明确目标归属，配置自身菜单或给11赋权传99999999；站点可省略使用ctx归属且不得跨站点。
 }
 
-// UserPermissionMenu 表示菜单树节点；勾选仅来自用户独立权限，不继承角色或父节点。
+// GetTemplatePermissionTreeReq 独立模板配置页，不依赖目标用户ID；只读，不创建或恢复模板。
+message GetTemplatePermissionTreeReq {
+  int32 templateType=1; // 必填：1平台默认仅10，2站点默认仅平台11，3本站普通仅本站唯一20。
+  string businessCode=2; // 类型1可省略或平台编码；类型2必填目标站点；类型3省略用本站，显式不能跨站点。
+  int64 templateId=3; // 0时类型1/2按归属定位或首次创建预览，类型3为空模板新建；正数编辑指定模板，负数拒绝。
+}
+message GetTemplatePermissionTreeResp {
+  int32 templateType=1; // 当前模板类型。
+  string businessCode=2; // 已校验的实际归属。
+  int64 templateId=3; // 尚未创建为0，不为查询初始化记录。
+  int64 version=4; // 尚未创建为0，已存在返回当前模板版本；不是用户授权版本。
+  repeated UserPermissionGroup groups=5; // 共享分组、上限内有效权限及当前勾选；越界项过滤，必要祖先仅补结构。
+  string templateName=6; // 当前模板名称，尚未创建为空。
+}
+
+// UserPermissionMenu 表示用户或模板配置节点；勾选来自当前实体的显式ID，不继承父子权限。
+
 message UserPermissionMenu {
   int64 id = 1; // 菜单ID，同一菜单跨组出现时前端按此ID同步勾选。
   int64 menuPid = 2; // 原父节点ID，0表示顶级。
   string menuName = 3; // 页面或按钮名称。
   int32 menuType = 4; // 1为页面，2为按钮，沿用菜单表定义。
   string path = 5; // 菜单或接口路径。
-  int32 status = 6; // 1为启用，其他状态作为停用项展示。
+  int32 status = 6; // 返回节点仅含1启用；删除、禁用及受无效祖先影响的菜单不展示。
   int32 sort = 7; // 升序排序，值相同时按ID升序。
-  bool checked = 8; // 用户已保存该菜单ID时为true，不代表接口实际鉴权结果。
-  bool disabled = 9; // 停用项或仅补齐结构的父节点为true，前端禁止直接勾选。
+  bool checked = 8; // 当前用户或模板已保存且仍在上限内的菜单ID为true；上限外的结构祖先不勾选，不代表接口实际鉴权结果。
+  bool disabled = 9; // 仅补齐结构的祖先为true；超出模板上限的权限项不返回，不用禁用勾选表达失效权限。
   repeated UserPermissionMenu children = 10; // 子节点；不自动授予子节点或父节点权限。
   bool displayOnly = 11; // true表示该组仅借此祖先节点组织展示，不属于本组直接成员。
   string serviceName = 12; // 菜单所属API服务名，与菜单列表、增改和实际鉴权使用同一值。
 }
 
-// UserPermissionGroup 保留菜单分组，包括没有勾选项的分组。
+// UserPermissionGroup 为用户/模板配置树共用展示分组，包括没有勾选项的分组。
 message UserPermissionGroup {
   int64 id = 1; // 分组ID；0专用于承载未分组菜单，不写入数据库。
   string permissionName = 2; // 分组名称，虚拟分组名为未分组。
-  repeated UserPermissionMenu menus = 3; // 本组完整菜单树，不按用户已有权限裁剪。
+  repeated UserPermissionMenu menus = 3; // 本组上限内有效权限及必要结构祖先，不按已有勾选缩减。
 }
 
 // GetUserPermissionTreeResp 一次返回目录和勾选状态，不提供单独的已选权限汇总。
 message GetUserPermissionTreeResp {
   int64 userId = 1; // 本次查询的管理员ID。
   int64 version = 2; // 无记录时为0；软删除记录返回原版本但不勾选权限，供后续恢复时比较。
-  repeated UserPermissionGroup groups = 3; // 当前business-code下全部未删除分组及菜单。
+  repeated UserPermissionGroup groups = 3; // 平台共享分组及可见有效菜单；不按目标用户已选项缩减目录。
 }
 
 // SaveUserPermissionReq 保存最终勾选结果，固定全量覆盖，不接收角色ID或追加模式。
 message SaveUserPermissionReq {
-  int64 userId = 1; // 必填正数，对应admin_info.id；业务归属从当前business-code读取。
+  int64 userId = 1; // 必填目标用户ID；10可配置自己的菜单展示或给平台11赋权，其他身份仍禁止自行修改权限。
   optional string menuIds = 2; // 必须显式传入，英文逗号分隔；空字符串明确清空，缺失则拒绝。
   optional int64 version = 3; // 必须显式传入；0仅用于首次创建，已有或软删除记录使用查询返回的版本。
+  string businessCode = 4; // 平台调用必填目标归属（10配置自身菜单或给11赋权传99999999）；站点可省略且不得跨站点，不覆盖操作者ctx。
 }
 
 // SaveUserPermissionResp 返回成功保存后的版本，前端后续保存需使用此值。
@@ -298,7 +345,7 @@ message SaveUserPermissionResp {
   int64 version = 1; // 首次成功为1，覆盖或恢复成功为原版本加1。
 }
 
-// CheckUserPermissionReq 由API认证完成后传入可信用户ID和当前完整接口路径，不使用角色ID。
+// CheckUserPermissionReq 由API认证后传入可信用户ID和实际服务/路径；站点校验当前根上限，不继承自定义模板。
 message CheckUserPermissionReq {
   int64 userId = 1; // 必填正数，对应admin_info.id；业务范围从当前business-code读取。
   string path = 2; // 必填完整路径，精确匹配；不包含查询参数，不支持通配、前缀或角色继承。
@@ -309,7 +356,7 @@ message CheckUserPermissionReq {
 message CheckUserPermissionResp {}
 
 service RoleAuthService {
-  //权限板块
+  // 展示分组：新增/修改/删除仅平台有效账号10，归属固定99999999；无固定ID特权。
   rpc addPermission(AddPermissionReq)returns(AddPermissionResp);
   rpc deletedPermission(DeletedPermissionReq)returns(DeletedPermissionResp);
   rpc updatePermission(UpdatePermissionReq)returns(UpdatePermissionResp);
@@ -323,29 +370,36 @@ service RoleAuthService {
   rpc getRoleMenus(GetRoleMenusReq)returns(GetRoleMenusResp);
   rpc getOneRole(GetOneRoleReq)returns(GetOneRoleResp);
 
-  // 显式创建站点根模板；平台账号业务校验、唯一性和成功审计在同一事务内完成，已存在直接拒绝。
+  // 仅账号类型11显式创建类型2站点默认模板，唯一性和审计同事务完成，已存在直接拒绝。
   rpc createSiteRootTemplate(CreateSiteRootTemplateReq) returns(CreateSiteRootTemplateResp);
-  // 平台专用普通查询，不开启读事务，不自动创建或恢复根模板。
+  // 仅账号类型11查询站点默认模板，不加读事务，不自动创建或恢复。
   rpc getSiteRootTemplate(GetSiteRootTemplateReq) returns(GetSiteRootTemplateResp);
-  // 平台按版本覆盖完整根集合，检查操作者上限，与成功审计同事务提交。
+  // 仅平台普通管理员11按版本覆盖站点默认集合，检查平台默认上限及目录有效性，与审计同事务提交。
   rpc updateSiteRootTemplate(UpdateSiteRootTemplateReq) returns(UpdateSiteRootTemplateResp);
-  // 按同站点自定义模板覆盖用户独立权限，校验双版本、根上限及操作者上限，同事务审计。
+  // 仅本站超级管理员20按本站普通模板覆盖用户，校验双版本、站点默认上限，同事务审计。
   rpc copyRolePermissionToUser(CopyRolePermissionToUserReq) returns(CopyRolePermissionToUserResp);
+  // 平台默认1由10维护具体集合，站点默认2由11维护且不超出1；本站普通3所有操作仅唯一20。
+  rpc createPlatformDefaultTemplate(CreatePlatformDefaultTemplateReq) returns(CreatePlatformDefaultTemplateResp);
+  rpc getPlatformDefaultTemplate(GetPlatformDefaultTemplateReq) returns(GetPlatformDefaultTemplateResp);
+  rpc updatePlatformDefaultTemplate(UpdatePlatformDefaultTemplateReq) returns(UpdatePlatformDefaultTemplateResp);
 
-  //菜单板块
+  // 共享菜单：新增/修改/删除仅平台有效账号10；修改完整覆盖，关键字段允许修改且保留授权。
   rpc addMenu(AddMenuReq)returns(AddMenuResp);
   rpc updateMenu(UpdateMenuReq)returns(UpdateMenuResp);
   rpc deleteMenu(DeleteMenuReq)returns(DeleteMenuResp);
   rpc getMenuList(GetMenuListReq)returns(GetMenuListResp);
+  // 所有身份（包括10）统一按已配置menuIds获取菜单树，检查当前站点上限及完整祖先链，无配置不返回全量。
   rpc getMenuByAdminId(GetMenuByAdminIdReq)returns(GetMenuByAdminIdResp);
 
-  // 授权编辑页一次获取全部菜单分组和用户勾选状态，只查询，不保存或复制模板。
+  // 授权编辑页返回分组及勾选；10配置自身可选全部有效目录，其余受默认模板上限限制。
   rpc getUserPermissionTree(GetUserPermissionTreeReq) returns(GetUserPermissionTreeResp);
+  // 独立模板配置树：1全部有效目录、2平台默认有效上限、3两级默认有效交集，不依赖用户也不写库。
+  rpc getTemplatePermissionTree(GetTemplatePermissionTreeReq) returns(GetTemplatePermissionTreeResp);
 
-  // 单条插入或版本条件更新，覆盖保存用户独立权限，不额外开启事务。
+  // 手工覆盖配置；10可配置自身菜单展示，不受模板1限制；其他目标检查默认上限，同事务版本及审计。
   rpc saveUserPermission(SaveUserPermissionReq) returns(SaveUserPermissionResp);
 
-  // 按用户独立菜单权限检查请求路径；仅放行有效用户明确获得的已启用页面或按钮。
+  // 按真实身份检查；10默认全操作，20按本站有效上限，其他按独立授权；10菜单展示配置不改变操作权限。
   rpc checkUserPermission(CheckUserPermissionReq) returns(CheckUserPermissionResp);
 
 }

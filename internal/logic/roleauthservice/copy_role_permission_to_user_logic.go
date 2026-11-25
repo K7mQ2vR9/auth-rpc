@@ -25,6 +25,7 @@ func NewCopyRolePermissionToUserLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 // CopyRolePermissionToUser 必须显式提交来源模板版本与用户版本，成功返回用户授权新版本。
+// 按复制事务快照过滤来源中失效和上限外项，全部失效明确覆盖为空；不改写来源模板，实际写入与审计同事务。
 func (l *CopyRolePermissionToUserLogic) CopyRolePermissionToUser(in *authRpc.CopyRolePermissionToUserReq) (*authRpc.CopyRolePermissionToUserResp, error) {
 	if in == nil || in.RoleVersion == nil || in.Version == nil {
 		return nil, status.Error(codes.InvalidArgument, "必须显式传入roleVersion及用户version")

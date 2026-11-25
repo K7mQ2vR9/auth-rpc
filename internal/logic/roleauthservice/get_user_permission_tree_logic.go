@@ -6,10 +6,8 @@ import (
 	"authRpc/internal/dao/schema"
 	"authRpc/internal/svc"
 	"context"
-	"encoding/json"
 	"sort"
 
-	"github.com/K7mQ2vR9/base-pkg/headInfo"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -31,8 +29,8 @@ func NewGetUserPermissionTreeLogic(ctx context.Context, svcCtx *svc.ServiceConte
 	}
 }
 
-// GetUserPermissionTree 按当前business-code返回全部分组及菜单，不以用户已有权限过滤目录。
-// 无权限记录返回version=0且全部未勾选；软删除记录只保留版本，停用菜单展示为disabled。
+// GetUserPermissionTree 返回共享分组及上限内有效菜单，删除、禁用、祖先失效或超出上限的权限项不展示。
+// 10配置自身展示可选全部有效目录；给11赋权受模板1限制，其余按站点默认上限，查询不写库。
 func (l *GetUserPermissionTreeLogic) GetUserPermissionTree(in *authRpc.GetUserPermissionTreeReq) (*authRpc.GetUserPermissionTreeResp, error) {
 	if in == nil || in.UserId <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "userId必须为正数")
@@ -40,11 +38,18 @@ func (l *GetUserPermissionTreeLogic) GetUserPermissionTree(in *authRpc.GetUserPe
 	if l.initErr != nil {
 		return nil, l.initErr
 	}
-	data, err := l.model.GetTreeData(in.UserId, headInfo.GetBusinessCode(l.ctx))
+	data, err := l.model.GetTreeData(in.UserId, in.BusinessCode)
 	if err != nil {
 		return nil, err
 	}
-	groups, err := buildUserPermissionGroups(l.ctx, data)
+	checked := make(map[int64]struct{})
+	if data.Permission != nil && data.Permission.DeletedAt == 0 {
+		checked, err = parseSelectedMenuIDs(data.Permission.MenuIds)
+		if err != nil {
+			return nil, err
+		}
+	}
+	groups, err := buildPermissionGroups(l.ctx, data.Groups, data.Menus, checked, data.Selectable)
 	if err != nil {
 		return nil, err
 	}
@@ -55,12 +60,12 @@ func (l *GetUserPermissionTreeLogic) GetUserPermissionTree(in *authRpc.GetUserPe
 	return resp, nil
 }
 
-// parseUserMenuIDs 仅解析用户记录中的英文逗号分隔正数ID，空字符串表示没有权限。
+// parseSelectedMenuIDs 共用用户/模板显式勾选CSV解析，空字符串表示没有勾选，不推导父子授权。
 // 重复ID合并；不接受空项、符号或int64越界，不把异常记录静默当作空权限。
-func parseUserMenuIDs(value string) (map[int64]struct{}, error) {
+func parseSelectedMenuIDs(value string) (map[int64]struct{}, error) {
 	parsed, err := mysql.ParseMenuIDs(value)
 	if err != nil {
-		return nil, status.Error(codes.DataLoss, "用户菜单ID格式异常")
+		return nil, status.Error(codes.DataLoss, "已选菜单ID格式异常")
 	}
 	ids := make(map[int64]struct{}, len(parsed))
 	for _, id := range parsed {
@@ -69,37 +74,12 @@ func parseUserMenuIDs(value string) (map[int64]struct{}, error) {
 	return ids, nil
 }
 
-// parseGroupMenuIDs 沿用分组表的JSON数组；数据库NULL映射的空字符串及JSON null均表示空组。
-// 分组仅组织展示，解析出的成员不能自动变成用户授权。
-func parseGroupMenuIDs(value string) ([]int64, error) {
-	if value == "" {
-		return nil, nil
-	}
-	var ids []int64
-	if err := json.Unmarshal([]byte(value), &ids); err != nil {
-		return nil, status.Error(codes.DataLoss, "菜单分组成员格式异常")
-	}
-	for _, id := range ids {
-		if id <= 0 {
-			return nil, status.Error(codes.DataLoss, "菜单分组成员格式异常")
-		}
-	}
-	return ids, nil
-}
-
-// buildUserPermissionGroups 为全部可见菜单标注用户已保存的选择，分组半选状态由前端计算。
-// 未分组菜单放入ID为0的虚拟分组；同一菜单跨组独立建树，勾选状态始终取同一ID集合。
-func buildUserPermissionGroups(ctx context.Context, data *mysql.UserPermissionTreeData) ([]*authRpc.UserPermissionGroup, error) {
-	checked := make(map[int64]struct{})
-	if data.Permission != nil && data.Permission.DeletedAt == 0 {
-		var err error
-		checked, err = parseUserMenuIDs(data.Permission.MenuIds)
-		if err != nil {
-			return nil, err
-		}
-	}
-	menus := make(map[int64]*schema.Menu, len(data.Menus))
-	ordered := append([]*schema.Menu(nil), data.Menus...)
+// buildPermissionGroups 为用户或模板配置页共用分组树组装，checked来自调用方已校验的独立集合。
+// 超出当前上限的权限项直接过滤，不保留禁用勾选；必要祖先仅补齐结构，不扩大权限或在查询时写库。
+// 未分组使用虚拟ID0，同一菜单跨组勾选一致，不初始化实体，也不自动扩展授权。
+func buildPermissionGroups(ctx context.Context, sourceGroups []*schema.PermissionMenu, sourceMenus []*schema.Menu, checked map[int64]struct{}, selectable map[int64]bool) ([]*authRpc.UserPermissionGroup, error) {
+	menus := make(map[int64]*schema.Menu, len(sourceMenus))
+	ordered := append([]*schema.Menu(nil), sourceMenus...)
 	for _, menu := range ordered {
 		if menu == nil || menu.ID <= 0 || menus[menu.ID] != nil {
 			return nil, status.Error(codes.DataLoss, "菜单目录数据异常")
@@ -115,42 +95,42 @@ func buildUserPermissionGroups(ctx context.Context, data *mysql.UserPermissionTr
 		}
 		return ordered[i].Sort < ordered[j].Sort
 	})
-	groups := make([]*authRpc.UserPermissionGroup, 0, len(data.Groups)+1)
+	groups := make([]*authRpc.UserPermissionGroup, 0, len(sourceGroups)+1)
 	assigned := make(map[int64]bool, len(menus))
-	for _, group := range data.Groups {
+	for _, group := range sourceGroups {
 		if err := ctx.Err(); err != nil {
 			return nil, err
 		}
 		if group == nil || group.ID <= 0 {
 			return nil, status.Error(codes.DataLoss, "菜单分组数据异常")
 		}
-		ids, err := parseGroupMenuIDs(group.MenuIds)
+		ids, err := mysql.ParseGroupMenuIDs(group.MenuIds)
 		if err != nil {
-			return nil, err
+			return nil, status.Error(codes.DataLoss, "菜单分组成员格式异常")
 		}
 		members := make(map[int64]bool, len(ids))
 		for _, id := range ids {
-			// 过期、已删除或其他业务的成员引用不带入当前目录，也不据此创建虚假菜单。
-			if menus[id] != nil {
+			// 仅把当前上限内有效菜单作为权限项，旧勾选不使越界、失效或其他业务的引用继续展示。
+			if menus[id] != nil && selectable[id] {
 				members[id] = true
 				assigned[id] = true
 			}
 		}
 		groups = append(groups, &authRpc.UserPermissionGroup{
 			Id: group.ID, PermissionName: group.PermissionName,
-			Menus: buildPermissionGroupTree(ordered, menus, members, checked),
+			Menus: buildPermissionGroupTree(ordered, menus, members, checked, selectable),
 		})
 	}
 	ungrouped := make(map[int64]bool)
 	for _, menu := range ordered {
-		if !assigned[menu.ID] {
+		if selectable[menu.ID] && !assigned[menu.ID] {
 			ungrouped[menu.ID] = true
 		}
 	}
 	if len(ungrouped) > 0 {
 		groups = append(groups, &authRpc.UserPermissionGroup{
 			Id: 0, PermissionName: "未分组",
-			Menus: buildPermissionGroupTree(ordered, menus, ungrouped, checked),
+			Menus: buildPermissionGroupTree(ordered, menus, ungrouped, checked, selectable),
 		})
 	}
 	if err := ctx.Err(); err != nil {
@@ -160,8 +140,8 @@ func buildUserPermissionGroups(ctx context.Context, data *mysql.UserPermissionTr
 }
 
 // buildPermissionGroupTree 在已校验无循环的目录中组装单个分组，按sort和ID保持稳定顺序。
-// 仅为补齐结构的祖先标记displayOnly和disabled，不自动改变其授权或授予其他按钮。
-func buildPermissionGroupTree(ordered []*schema.Menu, menus map[int64]*schema.Menu, members map[int64]bool, checked map[int64]struct{}) []*authRpc.UserPermissionMenu {
+// 权限成员已过滤到上限内，disabled仅用于补齐结构的祖先；上限外祖先不回显勾选或授予权限。
+func buildPermissionGroupTree(ordered []*schema.Menu, menus map[int64]*schema.Menu, members map[int64]bool, checked map[int64]struct{}, selectable map[int64]bool) []*authRpc.UserPermissionMenu {
 	included := make(map[int64]bool, len(members))
 	for id := range members {
 		for current := id; current != 0 && menus[current] != nil && !included[current]; current = menus[current].MenuPid {
@@ -179,7 +159,7 @@ func buildPermissionGroupTree(ordered []*schema.Menu, menus map[int64]*schema.Me
 			Id: menu.ID, MenuPid: menu.MenuPid, MenuName: menu.MenuName,
 			MenuType: int32(menu.MenuType), Path: menu.Path, Status: int32(menu.Status), Sort: int32(menu.Sort),
 			ServiceName: menu.ServiceName,
-			Checked:     selected, Disabled: menu.Status != schema.MenuStatus1 || displayOnly,
+			Checked:     selected && selectable[menu.ID], Disabled: displayOnly,
 			DisplayOnly: displayOnly, Children: make([]*authRpc.UserPermissionMenu, 0),
 		}
 	}

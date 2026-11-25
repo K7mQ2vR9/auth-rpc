@@ -40,10 +40,10 @@ func NewUpdateMenuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 	return logic
 }
 
-// UpdateMenu 修改菜单每次都须传入API服务名，避免服务字段缺失或被默认归入其他服务。
+// UpdateMenu 仅平台账号10修改共享菜单，模型校验真实资格和目标归属；必须提交原version，成功返回新版本。
 func (l *UpdateMenuLogic) UpdateMenu(in *authRpc.UpdateMenuReq) (*authRpc.UpdateMenuResp, error) {
-	if in == nil || in.Data == nil {
-		return nil, status.Error(codes.InvalidArgument, "菜单data不能为空")
+	if in == nil || in.Data == nil || in.Data.Version == nil {
+		return nil, status.Error(codes.InvalidArgument, "菜单data不能为空且必须显式提交version")
 	}
 	if err := mysql.ValidateServiceName(in.Data.ServiceName); err != nil {
 		return nil, err
@@ -58,11 +58,14 @@ func (l *UpdateMenuLogic) UpdateMenu(in *authRpc.UpdateMenuReq) (*authRpc.Update
 
 	ind := &schema.Menu{}
 	copier.Copy(ind, in.Data)
+	// 修改仍完整覆盖父级，省略或显式0均移动到根，不表示保留原父级。
+	ind.MenuPid = in.Data.GetMenuPid()
+	ind.Version = in.Data.GetVersion()
 	ind.BusinessCode = headInfo.GetBusinessCode(l.ctx)
 	err := l.MenuModel.UpdateAll(ind.ID, ind)
 	if err != nil {
 		return nil, err
 	}
 
-	return &authRpc.UpdateMenuResp{}, nil
+	return &authRpc.UpdateMenuResp{Version: ind.Version}, nil
 }
