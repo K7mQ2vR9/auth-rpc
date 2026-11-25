@@ -23,6 +23,30 @@ func NewRoleAuthServiceServer(svcCtx *svc.ServiceContext) *RoleAuthServiceServer
 	}
 }
 
+// CreateSiteRootTemplate 进入平台专用根模板创建逻辑，不复用普通自定义模板写入口。
+func (s *RoleAuthServiceServer) CreateSiteRootTemplate(ctx context.Context, in *authRpc.CreateSiteRootTemplateReq) (*authRpc.CreateSiteRootTemplateResp, error) {
+	l := roleauthservicelogic.NewCreateSiteRootTemplateLogic(ctx, s.svcCtx)
+	return l.CreateSiteRootTemplate(in)
+}
+
+// GetSiteRootTemplate 使用平台专用只读入口，不通过查询初始化根模板。
+func (s *RoleAuthServiceServer) GetSiteRootTemplate(ctx context.Context, in *authRpc.GetSiteRootTemplateReq) (*authRpc.GetSiteRootTemplateResp, error) {
+	l := roleauthservicelogic.NewGetSiteRootTemplateLogic(ctx, s.svcCtx)
+	return l.GetSiteRootTemplate(in)
+}
+
+// UpdateSiteRootTemplate 进入带版本、操作者上限及同事务审计的根更新逻辑。
+func (s *RoleAuthServiceServer) UpdateSiteRootTemplate(ctx context.Context, in *authRpc.UpdateSiteRootTemplateReq) (*authRpc.UpdateSiteRootTemplateResp, error) {
+	l := roleauthservicelogic.NewUpdateSiteRootTemplateLogic(ctx, s.svcCtx)
+	return l.UpdateSiteRootTemplate(in)
+}
+
+// CopyRolePermissionToUser 直接提交同站点模板覆盖，不保存角色绑定或提供追加模式。
+func (s *RoleAuthServiceServer) CopyRolePermissionToUser(ctx context.Context, in *authRpc.CopyRolePermissionToUserReq) (*authRpc.CopyRolePermissionToUserResp, error) {
+	l := roleauthservicelogic.NewCopyRolePermissionToUserLogic(ctx, s.svcCtx)
+	return l.CopyRolePermissionToUser(in)
+}
+
 // 权限板块
 func (s *RoleAuthServiceServer) AddPermission(ctx context.Context, in *authRpc.AddPermissionReq) (*authRpc.AddPermissionResp, error) {
 	l := roleauthservicelogic.NewAddPermissionLogic(ctx, s.svcCtx)

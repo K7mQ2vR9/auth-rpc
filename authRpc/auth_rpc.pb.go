@@ -1403,6 +1403,427 @@ func (x *GetOneRoleResp) GetData() *RoleListItem {
 	return nil
 }
 
+// CreateSiteRootTemplateReq 显式创建目标站点根模板，不兼任查询、更新或已删除模板恢复。
+type CreateSiteRootTemplateReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BusinessCode  string                 `protobuf:"bytes,1,opt,name=businessCode,proto3" json:"businessCode,omitempty"` // 目标站点编码，必填且最多10字符，不能为平台编码；不覆盖操作者上下文。
+	MenuIds       *string                `protobuf:"bytes,2,opt,name=menuIds,proto3,oneof" json:"menuIds,omitempty"`     // 必须显式提交具体菜单ID的逗号字符串；空字符串明确创建空根权限。
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateSiteRootTemplateReq) Reset() {
+	*x = CreateSiteRootTemplateReq{}
+	mi := &file_dsl_auth_rpc_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateSiteRootTemplateReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSiteRootTemplateReq) ProtoMessage() {}
+
+func (x *CreateSiteRootTemplateReq) ProtoReflect() protoreflect.Message {
+	mi := &file_dsl_auth_rpc_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSiteRootTemplateReq.ProtoReflect.Descriptor instead.
+func (*CreateSiteRootTemplateReq) Descriptor() ([]byte, []int) {
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *CreateSiteRootTemplateReq) GetBusinessCode() string {
+	if x != nil {
+		return x.BusinessCode
+	}
+	return ""
+}
+
+func (x *CreateSiteRootTemplateReq) GetMenuIds() string {
+	if x != nil && x.MenuIds != nil {
+		return *x.MenuIds
+	}
+	return ""
+}
+
+// CreateSiteRootTemplateResp 只返回已提交的根模板标识和初始版本，不返回操作者资料。
+type CreateSiteRootTemplateResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`           // 服务端生成的站点根模板ID，每站点唯一，不由调用方指定。
+	Version       int64                  `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"` // 首次创建固定为1；后续更新使用单独接口，不在本接口自动覆盖。
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateSiteRootTemplateResp) Reset() {
+	*x = CreateSiteRootTemplateResp{}
+	mi := &file_dsl_auth_rpc_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateSiteRootTemplateResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSiteRootTemplateResp) ProtoMessage() {}
+
+func (x *CreateSiteRootTemplateResp) ProtoReflect() protoreflect.Message {
+	mi := &file_dsl_auth_rpc_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSiteRootTemplateResp.ProtoReflect.Descriptor instead.
+func (*CreateSiteRootTemplateResp) Descriptor() ([]byte, []int) {
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *CreateSiteRootTemplateResp) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CreateSiteRootTemplateResp) GetVersion() int64 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
+// GetSiteRootTemplateReq 由平台管理入口按目标站点查询根模板，不在查询时初始化。
+type GetSiteRootTemplateReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BusinessCode  string                 `protobuf:"bytes,1,opt,name=businessCode,proto3" json:"businessCode,omitempty"` // 必填目标站点编码，最多10字符，不允许平台编码。
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSiteRootTemplateReq) Reset() {
+	*x = GetSiteRootTemplateReq{}
+	mi := &file_dsl_auth_rpc_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSiteRootTemplateReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSiteRootTemplateReq) ProtoMessage() {}
+
+func (x *GetSiteRootTemplateReq) ProtoReflect() protoreflect.Message {
+	mi := &file_dsl_auth_rpc_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSiteRootTemplateReq.ProtoReflect.Descriptor instead.
+func (*GetSiteRootTemplateReq) Descriptor() ([]byte, []int) {
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *GetSiteRootTemplateReq) GetBusinessCode() string {
+	if x != nil {
+		return x.BusinessCode
+	}
+	return ""
+}
+
+type GetSiteRootTemplateResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *RoleListItem          `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"` // 根模板保存快照和版本；缺失返回前置条件错误，不返回虚构空模板。
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSiteRootTemplateResp) Reset() {
+	*x = GetSiteRootTemplateResp{}
+	mi := &file_dsl_auth_rpc_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSiteRootTemplateResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSiteRootTemplateResp) ProtoMessage() {}
+
+func (x *GetSiteRootTemplateResp) ProtoReflect() protoreflect.Message {
+	mi := &file_dsl_auth_rpc_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSiteRootTemplateResp.ProtoReflect.Descriptor instead.
+func (*GetSiteRootTemplateResp) Descriptor() ([]byte, []int) {
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *GetSiteRootTemplateResp) GetData() *RoleListItem {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// UpdateSiteRootTemplateReq 仅覆盖既有根权限，不修改名称、类型、归属，不恢复已删除根模板。
+type UpdateSiteRootTemplateReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BusinessCode  string                 `protobuf:"bytes,1,opt,name=businessCode,proto3" json:"businessCode,omitempty"` // 必填目标站点编码，不覆盖平台操作者上下文。
+	MenuIds       *string                `protobuf:"bytes,2,opt,name=menuIds,proto3,oneof" json:"menuIds,omitempty"`     // 必须显式提交最终CSV集合；空字符串清空根权限，不裁剪下级记录。
+	Version       *int64                 `protobuf:"varint,3,opt,name=version,proto3,oneof" json:"version,omitempty"`    // 必须显式提交已读版本1..MaxInt64-1，冲突拒绝，不自动重试。
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateSiteRootTemplateReq) Reset() {
+	*x = UpdateSiteRootTemplateReq{}
+	mi := &file_dsl_auth_rpc_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSiteRootTemplateReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSiteRootTemplateReq) ProtoMessage() {}
+
+func (x *UpdateSiteRootTemplateReq) ProtoReflect() protoreflect.Message {
+	mi := &file_dsl_auth_rpc_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSiteRootTemplateReq.ProtoReflect.Descriptor instead.
+func (*UpdateSiteRootTemplateReq) Descriptor() ([]byte, []int) {
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *UpdateSiteRootTemplateReq) GetBusinessCode() string {
+	if x != nil {
+		return x.BusinessCode
+	}
+	return ""
+}
+
+func (x *UpdateSiteRootTemplateReq) GetMenuIds() string {
+	if x != nil && x.MenuIds != nil {
+		return *x.MenuIds
+	}
+	return ""
+}
+
+func (x *UpdateSiteRootTemplateReq) GetVersion() int64 {
+	if x != nil && x.Version != nil {
+		return *x.Version
+	}
+	return 0
+}
+
+type UpdateSiteRootTemplateResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Version       int64                  `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"` // 成功提交后的新根模板版本。
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateSiteRootTemplateResp) Reset() {
+	*x = UpdateSiteRootTemplateResp{}
+	mi := &file_dsl_auth_rpc_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSiteRootTemplateResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSiteRootTemplateResp) ProtoMessage() {}
+
+func (x *UpdateSiteRootTemplateResp) ProtoReflect() protoreflect.Message {
+	mi := &file_dsl_auth_rpc_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSiteRootTemplateResp.ProtoReflect.Descriptor instead.
+func (*UpdateSiteRootTemplateResp) Descriptor() ([]byte, []int) {
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *UpdateSiteRootTemplateResp) GetVersion() int64 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
+// CopyRolePermissionToUserReq 明确执行全量覆盖，不提供追加模式，也不形成用户角色绑定。
+type CopyRolePermissionToUserReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=userId,proto3" json:"userId,omitempty"`                 // 目标站点管理员ID，必须为正数，禁止修改操作者自己或平台账号。
+	RoleId        int64                  `protobuf:"varint,2,opt,name=roleId,proto3" json:"roleId,omitempty"`                 // 目标站点自定义模板ID，必须为正数，不能选择根模板或跨站点模板。
+	RoleVersion   *int64                 `protobuf:"varint,3,opt,name=roleVersion,proto3,oneof" json:"roleVersion,omitempty"` // 必须显式提交预览时来源模板正数版本，变化后要求刷新。
+	Version       *int64                 `protobuf:"varint,4,opt,name=version,proto3,oneof" json:"version,omitempty"`         // 必须显式提交用户授权版本；从未保存为0，已有或恢复使用原版本。
+	BusinessCode  string                 `protobuf:"bytes,5,opt,name=businessCode,proto3" json:"businessCode,omitempty"`      // 平台调用必填目标站点；站点调用可省略，传入时必须与当前站点一致。
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CopyRolePermissionToUserReq) Reset() {
+	*x = CopyRolePermissionToUserReq{}
+	mi := &file_dsl_auth_rpc_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CopyRolePermissionToUserReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CopyRolePermissionToUserReq) ProtoMessage() {}
+
+func (x *CopyRolePermissionToUserReq) ProtoReflect() protoreflect.Message {
+	mi := &file_dsl_auth_rpc_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CopyRolePermissionToUserReq.ProtoReflect.Descriptor instead.
+func (*CopyRolePermissionToUserReq) Descriptor() ([]byte, []int) {
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *CopyRolePermissionToUserReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *CopyRolePermissionToUserReq) GetRoleId() int64 {
+	if x != nil {
+		return x.RoleId
+	}
+	return 0
+}
+
+func (x *CopyRolePermissionToUserReq) GetRoleVersion() int64 {
+	if x != nil && x.RoleVersion != nil {
+		return *x.RoleVersion
+	}
+	return 0
+}
+
+func (x *CopyRolePermissionToUserReq) GetVersion() int64 {
+	if x != nil && x.Version != nil {
+		return *x.Version
+	}
+	return 0
+}
+
+func (x *CopyRolePermissionToUserReq) GetBusinessCode() string {
+	if x != nil {
+		return x.BusinessCode
+	}
+	return ""
+}
+
+type CopyRolePermissionToUserResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Version       int64                  `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"` // 成功覆盖后的用户授权版本，不是模板版本。
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CopyRolePermissionToUserResp) Reset() {
+	*x = CopyRolePermissionToUserResp{}
+	mi := &file_dsl_auth_rpc_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CopyRolePermissionToUserResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CopyRolePermissionToUserResp) ProtoMessage() {}
+
+func (x *CopyRolePermissionToUserResp) ProtoReflect() protoreflect.Message {
+	mi := &file_dsl_auth_rpc_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CopyRolePermissionToUserResp.ProtoReflect.Descriptor instead.
+func (*CopyRolePermissionToUserResp) Descriptor() ([]byte, []int) {
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *CopyRolePermissionToUserResp) GetVersion() int64 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
 type MenuItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1420,7 +1841,7 @@ type MenuItem struct {
 
 func (x *MenuItem) Reset() {
 	*x = MenuItem{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[25]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1432,7 +1853,7 @@ func (x *MenuItem) String() string {
 func (*MenuItem) ProtoMessage() {}
 
 func (x *MenuItem) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[25]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1445,7 +1866,7 @@ func (x *MenuItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MenuItem.ProtoReflect.Descriptor instead.
 func (*MenuItem) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{25}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *MenuItem) GetId() int64 {
@@ -1520,7 +1941,7 @@ type AddMenuReq struct {
 
 func (x *AddMenuReq) Reset() {
 	*x = AddMenuReq{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[26]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1532,7 +1953,7 @@ func (x *AddMenuReq) String() string {
 func (*AddMenuReq) ProtoMessage() {}
 
 func (x *AddMenuReq) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[26]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1545,7 +1966,7 @@ func (x *AddMenuReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddMenuReq.ProtoReflect.Descriptor instead.
 func (*AddMenuReq) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{26}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *AddMenuReq) GetData() *MenuItem {
@@ -1564,7 +1985,7 @@ type AddMenuResp struct {
 
 func (x *AddMenuResp) Reset() {
 	*x = AddMenuResp{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[27]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1576,7 +1997,7 @@ func (x *AddMenuResp) String() string {
 func (*AddMenuResp) ProtoMessage() {}
 
 func (x *AddMenuResp) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[27]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1589,7 +2010,7 @@ func (x *AddMenuResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddMenuResp.ProtoReflect.Descriptor instead.
 func (*AddMenuResp) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{27}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *AddMenuResp) GetId() int64 {
@@ -1608,7 +2029,7 @@ type UpdateMenuReq struct {
 
 func (x *UpdateMenuReq) Reset() {
 	*x = UpdateMenuReq{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[28]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1620,7 +2041,7 @@ func (x *UpdateMenuReq) String() string {
 func (*UpdateMenuReq) ProtoMessage() {}
 
 func (x *UpdateMenuReq) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[28]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1633,7 +2054,7 @@ func (x *UpdateMenuReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMenuReq.ProtoReflect.Descriptor instead.
 func (*UpdateMenuReq) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{28}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *UpdateMenuReq) GetData() *MenuItem {
@@ -1651,7 +2072,7 @@ type UpdateMenuResp struct {
 
 func (x *UpdateMenuResp) Reset() {
 	*x = UpdateMenuResp{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[29]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1663,7 +2084,7 @@ func (x *UpdateMenuResp) String() string {
 func (*UpdateMenuResp) ProtoMessage() {}
 
 func (x *UpdateMenuResp) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[29]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1676,7 +2097,7 @@ func (x *UpdateMenuResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMenuResp.ProtoReflect.Descriptor instead.
 func (*UpdateMenuResp) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{29}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{37}
 }
 
 type GetMenuListReq struct {
@@ -1693,7 +2114,7 @@ type GetMenuListReq struct {
 
 func (x *GetMenuListReq) Reset() {
 	*x = GetMenuListReq{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[30]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1705,7 +2126,7 @@ func (x *GetMenuListReq) String() string {
 func (*GetMenuListReq) ProtoMessage() {}
 
 func (x *GetMenuListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[30]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1718,7 +2139,7 @@ func (x *GetMenuListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMenuListReq.ProtoReflect.Descriptor instead.
 func (*GetMenuListReq) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{30}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *GetMenuListReq) GetData() *MenuItem {
@@ -1775,7 +2196,7 @@ type GetMenuListResp struct {
 
 func (x *GetMenuListResp) Reset() {
 	*x = GetMenuListResp{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[31]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1787,7 +2208,7 @@ func (x *GetMenuListResp) String() string {
 func (*GetMenuListResp) ProtoMessage() {}
 
 func (x *GetMenuListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[31]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1800,7 +2221,7 @@ func (x *GetMenuListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMenuListResp.ProtoReflect.Descriptor instead.
 func (*GetMenuListResp) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{31}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *GetMenuListResp) GetList() []*MenuItem {
@@ -1840,7 +2261,7 @@ type GetMenuByAdminIdReq struct {
 
 func (x *GetMenuByAdminIdReq) Reset() {
 	*x = GetMenuByAdminIdReq{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[32]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1852,7 +2273,7 @@ func (x *GetMenuByAdminIdReq) String() string {
 func (*GetMenuByAdminIdReq) ProtoMessage() {}
 
 func (x *GetMenuByAdminIdReq) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[32]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1865,7 +2286,7 @@ func (x *GetMenuByAdminIdReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMenuByAdminIdReq.ProtoReflect.Descriptor instead.
 func (*GetMenuByAdminIdReq) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{32}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *GetMenuByAdminIdReq) GetAdminId() int64 {
@@ -1890,7 +2311,7 @@ type GetMenuByAdminIdItem struct {
 
 func (x *GetMenuByAdminIdItem) Reset() {
 	*x = GetMenuByAdminIdItem{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[33]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1902,7 +2323,7 @@ func (x *GetMenuByAdminIdItem) String() string {
 func (*GetMenuByAdminIdItem) ProtoMessage() {}
 
 func (x *GetMenuByAdminIdItem) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[33]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1915,7 +2336,7 @@ func (x *GetMenuByAdminIdItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMenuByAdminIdItem.ProtoReflect.Descriptor instead.
 func (*GetMenuByAdminIdItem) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{33}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetMenuByAdminIdItem) GetId() int64 {
@@ -1976,7 +2397,7 @@ type GetMenuByAdminIdResp struct {
 
 func (x *GetMenuByAdminIdResp) Reset() {
 	*x = GetMenuByAdminIdResp{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[34]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1988,7 +2409,7 @@ func (x *GetMenuByAdminIdResp) String() string {
 func (*GetMenuByAdminIdResp) ProtoMessage() {}
 
 func (x *GetMenuByAdminIdResp) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[34]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2001,7 +2422,7 @@ func (x *GetMenuByAdminIdResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMenuByAdminIdResp.ProtoReflect.Descriptor instead.
 func (*GetMenuByAdminIdResp) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{34}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *GetMenuByAdminIdResp) GetList() []*GetMenuByAdminIdItem {
@@ -2020,7 +2441,7 @@ type DeleteMenuReq struct {
 
 func (x *DeleteMenuReq) Reset() {
 	*x = DeleteMenuReq{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[35]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2032,7 +2453,7 @@ func (x *DeleteMenuReq) String() string {
 func (*DeleteMenuReq) ProtoMessage() {}
 
 func (x *DeleteMenuReq) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[35]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2045,7 +2466,7 @@ func (x *DeleteMenuReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteMenuReq.ProtoReflect.Descriptor instead.
 func (*DeleteMenuReq) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{35}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *DeleteMenuReq) GetId() int64 {
@@ -2063,7 +2484,7 @@ type DeleteMenuResp struct {
 
 func (x *DeleteMenuResp) Reset() {
 	*x = DeleteMenuResp{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[36]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2075,7 +2496,7 @@ func (x *DeleteMenuResp) String() string {
 func (*DeleteMenuResp) ProtoMessage() {}
 
 func (x *DeleteMenuResp) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[36]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2088,7 +2509,7 @@ func (x *DeleteMenuResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteMenuResp.ProtoReflect.Descriptor instead.
 func (*DeleteMenuResp) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{36}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{44}
 }
 
 // GetUserPermissionTreeReq 查询授权编辑页，userId是目标管理员，不作为RPC登录认证条件。
@@ -2102,7 +2523,7 @@ type GetUserPermissionTreeReq struct {
 
 func (x *GetUserPermissionTreeReq) Reset() {
 	*x = GetUserPermissionTreeReq{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[37]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2114,7 +2535,7 @@ func (x *GetUserPermissionTreeReq) String() string {
 func (*GetUserPermissionTreeReq) ProtoMessage() {}
 
 func (x *GetUserPermissionTreeReq) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[37]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2127,7 +2548,7 @@ func (x *GetUserPermissionTreeReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserPermissionTreeReq.ProtoReflect.Descriptor instead.
 func (*GetUserPermissionTreeReq) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{37}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *GetUserPermissionTreeReq) GetUserId() int64 {
@@ -2158,7 +2579,7 @@ type UserPermissionMenu struct {
 
 func (x *UserPermissionMenu) Reset() {
 	*x = UserPermissionMenu{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[38]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2170,7 +2591,7 @@ func (x *UserPermissionMenu) String() string {
 func (*UserPermissionMenu) ProtoMessage() {}
 
 func (x *UserPermissionMenu) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[38]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2183,7 +2604,7 @@ func (x *UserPermissionMenu) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserPermissionMenu.ProtoReflect.Descriptor instead.
 func (*UserPermissionMenu) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{38}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *UserPermissionMenu) GetId() int64 {
@@ -2282,7 +2703,7 @@ type UserPermissionGroup struct {
 
 func (x *UserPermissionGroup) Reset() {
 	*x = UserPermissionGroup{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[39]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2294,7 +2715,7 @@ func (x *UserPermissionGroup) String() string {
 func (*UserPermissionGroup) ProtoMessage() {}
 
 func (x *UserPermissionGroup) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[39]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2307,7 +2728,7 @@ func (x *UserPermissionGroup) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserPermissionGroup.ProtoReflect.Descriptor instead.
 func (*UserPermissionGroup) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{39}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *UserPermissionGroup) GetId() int64 {
@@ -2343,7 +2764,7 @@ type GetUserPermissionTreeResp struct {
 
 func (x *GetUserPermissionTreeResp) Reset() {
 	*x = GetUserPermissionTreeResp{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[40]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2355,7 +2776,7 @@ func (x *GetUserPermissionTreeResp) String() string {
 func (*GetUserPermissionTreeResp) ProtoMessage() {}
 
 func (x *GetUserPermissionTreeResp) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[40]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2368,7 +2789,7 @@ func (x *GetUserPermissionTreeResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserPermissionTreeResp.ProtoReflect.Descriptor instead.
 func (*GetUserPermissionTreeResp) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{40}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *GetUserPermissionTreeResp) GetUserId() int64 {
@@ -2404,7 +2825,7 @@ type SaveUserPermissionReq struct {
 
 func (x *SaveUserPermissionReq) Reset() {
 	*x = SaveUserPermissionReq{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[41]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2416,7 +2837,7 @@ func (x *SaveUserPermissionReq) String() string {
 func (*SaveUserPermissionReq) ProtoMessage() {}
 
 func (x *SaveUserPermissionReq) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[41]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2429,7 +2850,7 @@ func (x *SaveUserPermissionReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveUserPermissionReq.ProtoReflect.Descriptor instead.
 func (*SaveUserPermissionReq) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{41}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *SaveUserPermissionReq) GetUserId() int64 {
@@ -2463,7 +2884,7 @@ type SaveUserPermissionResp struct {
 
 func (x *SaveUserPermissionResp) Reset() {
 	*x = SaveUserPermissionResp{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[42]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2475,7 +2896,7 @@ func (x *SaveUserPermissionResp) String() string {
 func (*SaveUserPermissionResp) ProtoMessage() {}
 
 func (x *SaveUserPermissionResp) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[42]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2488,7 +2909,7 @@ func (x *SaveUserPermissionResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveUserPermissionResp.ProtoReflect.Descriptor instead.
 func (*SaveUserPermissionResp) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{42}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *SaveUserPermissionResp) GetVersion() int64 {
@@ -2510,7 +2931,7 @@ type CheckUserPermissionReq struct {
 
 func (x *CheckUserPermissionReq) Reset() {
 	*x = CheckUserPermissionReq{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[43]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2522,7 +2943,7 @@ func (x *CheckUserPermissionReq) String() string {
 func (*CheckUserPermissionReq) ProtoMessage() {}
 
 func (x *CheckUserPermissionReq) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[43]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2535,7 +2956,7 @@ func (x *CheckUserPermissionReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckUserPermissionReq.ProtoReflect.Descriptor instead.
 func (*CheckUserPermissionReq) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{43}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *CheckUserPermissionReq) GetUserId() int64 {
@@ -2568,7 +2989,7 @@ type CheckUserPermissionResp struct {
 
 func (x *CheckUserPermissionResp) Reset() {
 	*x = CheckUserPermissionResp{}
-	mi := &file_dsl_auth_rpc_proto_msgTypes[44]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2580,7 +3001,7 @@ func (x *CheckUserPermissionResp) String() string {
 func (*CheckUserPermissionResp) ProtoMessage() {}
 
 func (x *CheckUserPermissionResp) ProtoReflect() protoreflect.Message {
-	mi := &file_dsl_auth_rpc_proto_msgTypes[44]
+	mi := &file_dsl_auth_rpc_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2593,7 +3014,7 @@ func (x *CheckUserPermissionResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckUserPermissionResp.ProtoReflect.Descriptor instead.
 func (*CheckUserPermissionResp) Descriptor() ([]byte, []int) {
-	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{44}
+	return file_dsl_auth_rpc_proto_rawDescGZIP(), []int{52}
 }
 
 var File_dsl_auth_rpc_proto protoreflect.FileDescriptor
@@ -2692,7 +3113,40 @@ const file_dsl_auth_rpc_proto_rawDesc = "" +
 	"\rGetOneRoleReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"7\n" +
 	"\x0eGetOneRoleResp\x12%\n" +
-	"\x04data\x18\x01 \x01(\v2\x11.rpc.RoleListItemR\x04data\"\xec\x01\n" +
+	"\x04data\x18\x01 \x01(\v2\x11.rpc.RoleListItemR\x04data\"j\n" +
+	"\x19CreateSiteRootTemplateReq\x12\"\n" +
+	"\fbusinessCode\x18\x01 \x01(\tR\fbusinessCode\x12\x1d\n" +
+	"\amenuIds\x18\x02 \x01(\tH\x00R\amenuIds\x88\x01\x01B\n" +
+	"\n" +
+	"\b_menuIds\"F\n" +
+	"\x1aCreateSiteRootTemplateResp\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x18\n" +
+	"\aversion\x18\x02 \x01(\x03R\aversion\"<\n" +
+	"\x16GetSiteRootTemplateReq\x12\"\n" +
+	"\fbusinessCode\x18\x01 \x01(\tR\fbusinessCode\"@\n" +
+	"\x17GetSiteRootTemplateResp\x12%\n" +
+	"\x04data\x18\x01 \x01(\v2\x11.rpc.RoleListItemR\x04data\"\x95\x01\n" +
+	"\x19UpdateSiteRootTemplateReq\x12\"\n" +
+	"\fbusinessCode\x18\x01 \x01(\tR\fbusinessCode\x12\x1d\n" +
+	"\amenuIds\x18\x02 \x01(\tH\x00R\amenuIds\x88\x01\x01\x12\x1d\n" +
+	"\aversion\x18\x03 \x01(\x03H\x01R\aversion\x88\x01\x01B\n" +
+	"\n" +
+	"\b_menuIdsB\n" +
+	"\n" +
+	"\b_version\"6\n" +
+	"\x1aUpdateSiteRootTemplateResp\x12\x18\n" +
+	"\aversion\x18\x01 \x01(\x03R\aversion\"\xd3\x01\n" +
+	"\x1bCopyRolePermissionToUserReq\x12\x16\n" +
+	"\x06userId\x18\x01 \x01(\x03R\x06userId\x12\x16\n" +
+	"\x06roleId\x18\x02 \x01(\x03R\x06roleId\x12%\n" +
+	"\vroleVersion\x18\x03 \x01(\x03H\x00R\vroleVersion\x88\x01\x01\x12\x1d\n" +
+	"\aversion\x18\x04 \x01(\x03H\x01R\aversion\x88\x01\x01\x12\"\n" +
+	"\fbusinessCode\x18\x05 \x01(\tR\fbusinessCodeB\x0e\n" +
+	"\f_roleVersionB\n" +
+	"\n" +
+	"\b_version\"8\n" +
+	"\x1cCopyRolePermissionToUserResp\x12\x18\n" +
+	"\aversion\x18\x01 \x01(\x03R\aversion\"\xec\x01\n" +
 	"\bMenuItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x18\n" +
 	"\amenuPid\x18\x02 \x01(\x03R\amenuPid\x12\x1a\n" +
@@ -2776,7 +3230,7 @@ const file_dsl_auth_rpc_proto_rawDesc = "" +
 	"\x06userId\x18\x01 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04path\x18\x02 \x01(\tR\x04path\x12 \n" +
 	"\vserviceName\x18\x03 \x01(\tR\vserviceName\"\x19\n" +
-	"\x17CheckUserPermissionResp2\x94\t\n" +
+	"\x17CheckUserPermissionResp2\xfd\v\n" +
 	"\x0fRoleAuthService\x12>\n" +
 	"\raddPermission\x12\x15.rpc.AddPermissionReq\x1a\x16.rpc.AddPermissionResp\x12J\n" +
 	"\x11deletedPermission\x12\x19.rpc.DeletedPermissionReq\x1a\x1a.rpc.DeletedPermissionResp\x12G\n" +
@@ -2790,7 +3244,11 @@ const file_dsl_auth_rpc_proto_rawDesc = "" +
 	"\vgetRoleList\x12\x13.rpc.GetRoleListReq\x1a\x14.rpc.GetRoleListResp\x12;\n" +
 	"\fgetRoleMenus\x12\x14.rpc.GetRoleMenusReq\x1a\x15.rpc.GetRoleMenusResp\x125\n" +
 	"\n" +
-	"getOneRole\x12\x12.rpc.GetOneRoleReq\x1a\x13.rpc.GetOneRoleResp\x12,\n" +
+	"getOneRole\x12\x12.rpc.GetOneRoleReq\x1a\x13.rpc.GetOneRoleResp\x12Y\n" +
+	"\x16createSiteRootTemplate\x12\x1e.rpc.CreateSiteRootTemplateReq\x1a\x1f.rpc.CreateSiteRootTemplateResp\x12P\n" +
+	"\x13getSiteRootTemplate\x12\x1b.rpc.GetSiteRootTemplateReq\x1a\x1c.rpc.GetSiteRootTemplateResp\x12Y\n" +
+	"\x16updateSiteRootTemplate\x12\x1e.rpc.UpdateSiteRootTemplateReq\x1a\x1f.rpc.UpdateSiteRootTemplateResp\x12_\n" +
+	"\x18copyRolePermissionToUser\x12 .rpc.CopyRolePermissionToUserReq\x1a!.rpc.CopyRolePermissionToUserResp\x12,\n" +
 	"\aaddMenu\x12\x0f.rpc.AddMenuReq\x1a\x10.rpc.AddMenuResp\x125\n" +
 	"\n" +
 	"updateMenu\x12\x12.rpc.UpdateMenuReq\x1a\x13.rpc.UpdateMenuResp\x125\n" +
@@ -2814,53 +3272,61 @@ func file_dsl_auth_rpc_proto_rawDescGZIP() []byte {
 	return file_dsl_auth_rpc_proto_rawDescData
 }
 
-var file_dsl_auth_rpc_proto_msgTypes = make([]protoimpl.MessageInfo, 45)
+var file_dsl_auth_rpc_proto_msgTypes = make([]protoimpl.MessageInfo, 53)
 var file_dsl_auth_rpc_proto_goTypes = []any{
-	(*PermissionItem)(nil),            // 0: rpc.PermissionItem
-	(*AddPermissionReq)(nil),          // 1: rpc.AddPermissionReq
-	(*AddPermissionResp)(nil),         // 2: rpc.AddPermissionResp
-	(*DeletedPermissionReq)(nil),      // 3: rpc.DeletedPermissionReq
-	(*DeletedPermissionResp)(nil),     // 4: rpc.DeletedPermissionResp
-	(*UpdatePermissionReq)(nil),       // 5: rpc.UpdatePermissionReq
-	(*UpdatePermissionResp)(nil),      // 6: rpc.UpdatePermissionResp
-	(*GetPermissionListReq)(nil),      // 7: rpc.GetPermissionListReq
-	(*PermissionListMenuItem)(nil),    // 8: rpc.PermissionListMenuItem
-	(*PermissionListItem)(nil),        // 9: rpc.PermissionListItem
-	(*GetPermissionListResp)(nil),     // 10: rpc.GetPermissionListResp
-	(*RoleItem)(nil),                  // 11: rpc.RoleItem
-	(*AddRoleReq)(nil),                // 12: rpc.AddRoleReq
-	(*AddRoleResp)(nil),               // 13: rpc.AddRoleResp
-	(*UpdateRoleReq)(nil),             // 14: rpc.UpdateRoleReq
-	(*UpdateRoleResp)(nil),            // 15: rpc.UpdateRoleResp
-	(*DeleteRoleReq)(nil),             // 16: rpc.DeleteRoleReq
-	(*DeleteRoleResp)(nil),            // 17: rpc.DeleteRoleResp
-	(*GetRoleListReq)(nil),            // 18: rpc.GetRoleListReq
-	(*RoleListItem)(nil),              // 19: rpc.RoleListItem
-	(*GetRoleListResp)(nil),           // 20: rpc.GetRoleListResp
-	(*GetRoleMenusReq)(nil),           // 21: rpc.GetRoleMenusReq
-	(*GetRoleMenusResp)(nil),          // 22: rpc.GetRoleMenusResp
-	(*GetOneRoleReq)(nil),             // 23: rpc.GetOneRoleReq
-	(*GetOneRoleResp)(nil),            // 24: rpc.GetOneRoleResp
-	(*MenuItem)(nil),                  // 25: rpc.MenuItem
-	(*AddMenuReq)(nil),                // 26: rpc.AddMenuReq
-	(*AddMenuResp)(nil),               // 27: rpc.AddMenuResp
-	(*UpdateMenuReq)(nil),             // 28: rpc.UpdateMenuReq
-	(*UpdateMenuResp)(nil),            // 29: rpc.UpdateMenuResp
-	(*GetMenuListReq)(nil),            // 30: rpc.GetMenuListReq
-	(*GetMenuListResp)(nil),           // 31: rpc.GetMenuListResp
-	(*GetMenuByAdminIdReq)(nil),       // 32: rpc.GetMenuByAdminIdReq
-	(*GetMenuByAdminIdItem)(nil),      // 33: rpc.GetMenuByAdminIdItem
-	(*GetMenuByAdminIdResp)(nil),      // 34: rpc.GetMenuByAdminIdResp
-	(*DeleteMenuReq)(nil),             // 35: rpc.DeleteMenuReq
-	(*DeleteMenuResp)(nil),            // 36: rpc.DeleteMenuResp
-	(*GetUserPermissionTreeReq)(nil),  // 37: rpc.GetUserPermissionTreeReq
-	(*UserPermissionMenu)(nil),        // 38: rpc.UserPermissionMenu
-	(*UserPermissionGroup)(nil),       // 39: rpc.UserPermissionGroup
-	(*GetUserPermissionTreeResp)(nil), // 40: rpc.GetUserPermissionTreeResp
-	(*SaveUserPermissionReq)(nil),     // 41: rpc.SaveUserPermissionReq
-	(*SaveUserPermissionResp)(nil),    // 42: rpc.SaveUserPermissionResp
-	(*CheckUserPermissionReq)(nil),    // 43: rpc.CheckUserPermissionReq
-	(*CheckUserPermissionResp)(nil),   // 44: rpc.CheckUserPermissionResp
+	(*PermissionItem)(nil),               // 0: rpc.PermissionItem
+	(*AddPermissionReq)(nil),             // 1: rpc.AddPermissionReq
+	(*AddPermissionResp)(nil),            // 2: rpc.AddPermissionResp
+	(*DeletedPermissionReq)(nil),         // 3: rpc.DeletedPermissionReq
+	(*DeletedPermissionResp)(nil),        // 4: rpc.DeletedPermissionResp
+	(*UpdatePermissionReq)(nil),          // 5: rpc.UpdatePermissionReq
+	(*UpdatePermissionResp)(nil),         // 6: rpc.UpdatePermissionResp
+	(*GetPermissionListReq)(nil),         // 7: rpc.GetPermissionListReq
+	(*PermissionListMenuItem)(nil),       // 8: rpc.PermissionListMenuItem
+	(*PermissionListItem)(nil),           // 9: rpc.PermissionListItem
+	(*GetPermissionListResp)(nil),        // 10: rpc.GetPermissionListResp
+	(*RoleItem)(nil),                     // 11: rpc.RoleItem
+	(*AddRoleReq)(nil),                   // 12: rpc.AddRoleReq
+	(*AddRoleResp)(nil),                  // 13: rpc.AddRoleResp
+	(*UpdateRoleReq)(nil),                // 14: rpc.UpdateRoleReq
+	(*UpdateRoleResp)(nil),               // 15: rpc.UpdateRoleResp
+	(*DeleteRoleReq)(nil),                // 16: rpc.DeleteRoleReq
+	(*DeleteRoleResp)(nil),               // 17: rpc.DeleteRoleResp
+	(*GetRoleListReq)(nil),               // 18: rpc.GetRoleListReq
+	(*RoleListItem)(nil),                 // 19: rpc.RoleListItem
+	(*GetRoleListResp)(nil),              // 20: rpc.GetRoleListResp
+	(*GetRoleMenusReq)(nil),              // 21: rpc.GetRoleMenusReq
+	(*GetRoleMenusResp)(nil),             // 22: rpc.GetRoleMenusResp
+	(*GetOneRoleReq)(nil),                // 23: rpc.GetOneRoleReq
+	(*GetOneRoleResp)(nil),               // 24: rpc.GetOneRoleResp
+	(*CreateSiteRootTemplateReq)(nil),    // 25: rpc.CreateSiteRootTemplateReq
+	(*CreateSiteRootTemplateResp)(nil),   // 26: rpc.CreateSiteRootTemplateResp
+	(*GetSiteRootTemplateReq)(nil),       // 27: rpc.GetSiteRootTemplateReq
+	(*GetSiteRootTemplateResp)(nil),      // 28: rpc.GetSiteRootTemplateResp
+	(*UpdateSiteRootTemplateReq)(nil),    // 29: rpc.UpdateSiteRootTemplateReq
+	(*UpdateSiteRootTemplateResp)(nil),   // 30: rpc.UpdateSiteRootTemplateResp
+	(*CopyRolePermissionToUserReq)(nil),  // 31: rpc.CopyRolePermissionToUserReq
+	(*CopyRolePermissionToUserResp)(nil), // 32: rpc.CopyRolePermissionToUserResp
+	(*MenuItem)(nil),                     // 33: rpc.MenuItem
+	(*AddMenuReq)(nil),                   // 34: rpc.AddMenuReq
+	(*AddMenuResp)(nil),                  // 35: rpc.AddMenuResp
+	(*UpdateMenuReq)(nil),                // 36: rpc.UpdateMenuReq
+	(*UpdateMenuResp)(nil),               // 37: rpc.UpdateMenuResp
+	(*GetMenuListReq)(nil),               // 38: rpc.GetMenuListReq
+	(*GetMenuListResp)(nil),              // 39: rpc.GetMenuListResp
+	(*GetMenuByAdminIdReq)(nil),          // 40: rpc.GetMenuByAdminIdReq
+	(*GetMenuByAdminIdItem)(nil),         // 41: rpc.GetMenuByAdminIdItem
+	(*GetMenuByAdminIdResp)(nil),         // 42: rpc.GetMenuByAdminIdResp
+	(*DeleteMenuReq)(nil),                // 43: rpc.DeleteMenuReq
+	(*DeleteMenuResp)(nil),               // 44: rpc.DeleteMenuResp
+	(*GetUserPermissionTreeReq)(nil),     // 45: rpc.GetUserPermissionTreeReq
+	(*UserPermissionMenu)(nil),           // 46: rpc.UserPermissionMenu
+	(*UserPermissionGroup)(nil),          // 47: rpc.UserPermissionGroup
+	(*GetUserPermissionTreeResp)(nil),    // 48: rpc.GetUserPermissionTreeResp
+	(*SaveUserPermissionReq)(nil),        // 49: rpc.SaveUserPermissionReq
+	(*SaveUserPermissionResp)(nil),       // 50: rpc.SaveUserPermissionResp
+	(*CheckUserPermissionReq)(nil),       // 51: rpc.CheckUserPermissionReq
+	(*CheckUserPermissionResp)(nil),      // 52: rpc.CheckUserPermissionResp
 }
 var file_dsl_auth_rpc_proto_depIdxs = []int32{
 	0,  // 0: rpc.AddPermissionReq.data:type_name -> rpc.PermissionItem
@@ -2873,56 +3339,65 @@ var file_dsl_auth_rpc_proto_depIdxs = []int32{
 	11, // 7: rpc.GetRoleListReq.data:type_name -> rpc.RoleItem
 	19, // 8: rpc.GetRoleListResp.list:type_name -> rpc.RoleListItem
 	19, // 9: rpc.GetOneRoleResp.data:type_name -> rpc.RoleListItem
-	25, // 10: rpc.AddMenuReq.data:type_name -> rpc.MenuItem
-	25, // 11: rpc.UpdateMenuReq.data:type_name -> rpc.MenuItem
-	25, // 12: rpc.GetMenuListReq.data:type_name -> rpc.MenuItem
-	25, // 13: rpc.GetMenuListResp.list:type_name -> rpc.MenuItem
-	33, // 14: rpc.GetMenuByAdminIdItem.children:type_name -> rpc.GetMenuByAdminIdItem
-	33, // 15: rpc.GetMenuByAdminIdResp.List:type_name -> rpc.GetMenuByAdminIdItem
-	38, // 16: rpc.UserPermissionMenu.children:type_name -> rpc.UserPermissionMenu
-	38, // 17: rpc.UserPermissionGroup.menus:type_name -> rpc.UserPermissionMenu
-	39, // 18: rpc.GetUserPermissionTreeResp.groups:type_name -> rpc.UserPermissionGroup
-	1,  // 19: rpc.RoleAuthService.addPermission:input_type -> rpc.AddPermissionReq
-	3,  // 20: rpc.RoleAuthService.deletedPermission:input_type -> rpc.DeletedPermissionReq
-	5,  // 21: rpc.RoleAuthService.updatePermission:input_type -> rpc.UpdatePermissionReq
-	7,  // 22: rpc.RoleAuthService.getPermissionList:input_type -> rpc.GetPermissionListReq
-	12, // 23: rpc.RoleAuthService.addRole:input_type -> rpc.AddRoleReq
-	14, // 24: rpc.RoleAuthService.updateRole:input_type -> rpc.UpdateRoleReq
-	16, // 25: rpc.RoleAuthService.deleteRole:input_type -> rpc.DeleteRoleReq
-	18, // 26: rpc.RoleAuthService.getRoleList:input_type -> rpc.GetRoleListReq
-	21, // 27: rpc.RoleAuthService.getRoleMenus:input_type -> rpc.GetRoleMenusReq
-	23, // 28: rpc.RoleAuthService.getOneRole:input_type -> rpc.GetOneRoleReq
-	26, // 29: rpc.RoleAuthService.addMenu:input_type -> rpc.AddMenuReq
-	28, // 30: rpc.RoleAuthService.updateMenu:input_type -> rpc.UpdateMenuReq
-	35, // 31: rpc.RoleAuthService.deleteMenu:input_type -> rpc.DeleteMenuReq
-	30, // 32: rpc.RoleAuthService.getMenuList:input_type -> rpc.GetMenuListReq
-	32, // 33: rpc.RoleAuthService.getMenuByAdminId:input_type -> rpc.GetMenuByAdminIdReq
-	37, // 34: rpc.RoleAuthService.getUserPermissionTree:input_type -> rpc.GetUserPermissionTreeReq
-	41, // 35: rpc.RoleAuthService.saveUserPermission:input_type -> rpc.SaveUserPermissionReq
-	43, // 36: rpc.RoleAuthService.checkUserPermission:input_type -> rpc.CheckUserPermissionReq
-	2,  // 37: rpc.RoleAuthService.addPermission:output_type -> rpc.AddPermissionResp
-	4,  // 38: rpc.RoleAuthService.deletedPermission:output_type -> rpc.DeletedPermissionResp
-	6,  // 39: rpc.RoleAuthService.updatePermission:output_type -> rpc.UpdatePermissionResp
-	10, // 40: rpc.RoleAuthService.getPermissionList:output_type -> rpc.GetPermissionListResp
-	13, // 41: rpc.RoleAuthService.addRole:output_type -> rpc.AddRoleResp
-	15, // 42: rpc.RoleAuthService.updateRole:output_type -> rpc.UpdateRoleResp
-	17, // 43: rpc.RoleAuthService.deleteRole:output_type -> rpc.DeleteRoleResp
-	20, // 44: rpc.RoleAuthService.getRoleList:output_type -> rpc.GetRoleListResp
-	22, // 45: rpc.RoleAuthService.getRoleMenus:output_type -> rpc.GetRoleMenusResp
-	24, // 46: rpc.RoleAuthService.getOneRole:output_type -> rpc.GetOneRoleResp
-	27, // 47: rpc.RoleAuthService.addMenu:output_type -> rpc.AddMenuResp
-	29, // 48: rpc.RoleAuthService.updateMenu:output_type -> rpc.UpdateMenuResp
-	36, // 49: rpc.RoleAuthService.deleteMenu:output_type -> rpc.DeleteMenuResp
-	31, // 50: rpc.RoleAuthService.getMenuList:output_type -> rpc.GetMenuListResp
-	34, // 51: rpc.RoleAuthService.getMenuByAdminId:output_type -> rpc.GetMenuByAdminIdResp
-	40, // 52: rpc.RoleAuthService.getUserPermissionTree:output_type -> rpc.GetUserPermissionTreeResp
-	42, // 53: rpc.RoleAuthService.saveUserPermission:output_type -> rpc.SaveUserPermissionResp
-	44, // 54: rpc.RoleAuthService.checkUserPermission:output_type -> rpc.CheckUserPermissionResp
-	37, // [37:55] is the sub-list for method output_type
-	19, // [19:37] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	19, // 10: rpc.GetSiteRootTemplateResp.data:type_name -> rpc.RoleListItem
+	33, // 11: rpc.AddMenuReq.data:type_name -> rpc.MenuItem
+	33, // 12: rpc.UpdateMenuReq.data:type_name -> rpc.MenuItem
+	33, // 13: rpc.GetMenuListReq.data:type_name -> rpc.MenuItem
+	33, // 14: rpc.GetMenuListResp.list:type_name -> rpc.MenuItem
+	41, // 15: rpc.GetMenuByAdminIdItem.children:type_name -> rpc.GetMenuByAdminIdItem
+	41, // 16: rpc.GetMenuByAdminIdResp.List:type_name -> rpc.GetMenuByAdminIdItem
+	46, // 17: rpc.UserPermissionMenu.children:type_name -> rpc.UserPermissionMenu
+	46, // 18: rpc.UserPermissionGroup.menus:type_name -> rpc.UserPermissionMenu
+	47, // 19: rpc.GetUserPermissionTreeResp.groups:type_name -> rpc.UserPermissionGroup
+	1,  // 20: rpc.RoleAuthService.addPermission:input_type -> rpc.AddPermissionReq
+	3,  // 21: rpc.RoleAuthService.deletedPermission:input_type -> rpc.DeletedPermissionReq
+	5,  // 22: rpc.RoleAuthService.updatePermission:input_type -> rpc.UpdatePermissionReq
+	7,  // 23: rpc.RoleAuthService.getPermissionList:input_type -> rpc.GetPermissionListReq
+	12, // 24: rpc.RoleAuthService.addRole:input_type -> rpc.AddRoleReq
+	14, // 25: rpc.RoleAuthService.updateRole:input_type -> rpc.UpdateRoleReq
+	16, // 26: rpc.RoleAuthService.deleteRole:input_type -> rpc.DeleteRoleReq
+	18, // 27: rpc.RoleAuthService.getRoleList:input_type -> rpc.GetRoleListReq
+	21, // 28: rpc.RoleAuthService.getRoleMenus:input_type -> rpc.GetRoleMenusReq
+	23, // 29: rpc.RoleAuthService.getOneRole:input_type -> rpc.GetOneRoleReq
+	25, // 30: rpc.RoleAuthService.createSiteRootTemplate:input_type -> rpc.CreateSiteRootTemplateReq
+	27, // 31: rpc.RoleAuthService.getSiteRootTemplate:input_type -> rpc.GetSiteRootTemplateReq
+	29, // 32: rpc.RoleAuthService.updateSiteRootTemplate:input_type -> rpc.UpdateSiteRootTemplateReq
+	31, // 33: rpc.RoleAuthService.copyRolePermissionToUser:input_type -> rpc.CopyRolePermissionToUserReq
+	34, // 34: rpc.RoleAuthService.addMenu:input_type -> rpc.AddMenuReq
+	36, // 35: rpc.RoleAuthService.updateMenu:input_type -> rpc.UpdateMenuReq
+	43, // 36: rpc.RoleAuthService.deleteMenu:input_type -> rpc.DeleteMenuReq
+	38, // 37: rpc.RoleAuthService.getMenuList:input_type -> rpc.GetMenuListReq
+	40, // 38: rpc.RoleAuthService.getMenuByAdminId:input_type -> rpc.GetMenuByAdminIdReq
+	45, // 39: rpc.RoleAuthService.getUserPermissionTree:input_type -> rpc.GetUserPermissionTreeReq
+	49, // 40: rpc.RoleAuthService.saveUserPermission:input_type -> rpc.SaveUserPermissionReq
+	51, // 41: rpc.RoleAuthService.checkUserPermission:input_type -> rpc.CheckUserPermissionReq
+	2,  // 42: rpc.RoleAuthService.addPermission:output_type -> rpc.AddPermissionResp
+	4,  // 43: rpc.RoleAuthService.deletedPermission:output_type -> rpc.DeletedPermissionResp
+	6,  // 44: rpc.RoleAuthService.updatePermission:output_type -> rpc.UpdatePermissionResp
+	10, // 45: rpc.RoleAuthService.getPermissionList:output_type -> rpc.GetPermissionListResp
+	13, // 46: rpc.RoleAuthService.addRole:output_type -> rpc.AddRoleResp
+	15, // 47: rpc.RoleAuthService.updateRole:output_type -> rpc.UpdateRoleResp
+	17, // 48: rpc.RoleAuthService.deleteRole:output_type -> rpc.DeleteRoleResp
+	20, // 49: rpc.RoleAuthService.getRoleList:output_type -> rpc.GetRoleListResp
+	22, // 50: rpc.RoleAuthService.getRoleMenus:output_type -> rpc.GetRoleMenusResp
+	24, // 51: rpc.RoleAuthService.getOneRole:output_type -> rpc.GetOneRoleResp
+	26, // 52: rpc.RoleAuthService.createSiteRootTemplate:output_type -> rpc.CreateSiteRootTemplateResp
+	28, // 53: rpc.RoleAuthService.getSiteRootTemplate:output_type -> rpc.GetSiteRootTemplateResp
+	30, // 54: rpc.RoleAuthService.updateSiteRootTemplate:output_type -> rpc.UpdateSiteRootTemplateResp
+	32, // 55: rpc.RoleAuthService.copyRolePermissionToUser:output_type -> rpc.CopyRolePermissionToUserResp
+	35, // 56: rpc.RoleAuthService.addMenu:output_type -> rpc.AddMenuResp
+	37, // 57: rpc.RoleAuthService.updateMenu:output_type -> rpc.UpdateMenuResp
+	44, // 58: rpc.RoleAuthService.deleteMenu:output_type -> rpc.DeleteMenuResp
+	39, // 59: rpc.RoleAuthService.getMenuList:output_type -> rpc.GetMenuListResp
+	42, // 60: rpc.RoleAuthService.getMenuByAdminId:output_type -> rpc.GetMenuByAdminIdResp
+	48, // 61: rpc.RoleAuthService.getUserPermissionTree:output_type -> rpc.GetUserPermissionTreeResp
+	50, // 62: rpc.RoleAuthService.saveUserPermission:output_type -> rpc.SaveUserPermissionResp
+	52, // 63: rpc.RoleAuthService.checkUserPermission:output_type -> rpc.CheckUserPermissionResp
+	42, // [42:64] is the sub-list for method output_type
+	20, // [20:42] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_dsl_auth_rpc_proto_init() }
@@ -2932,14 +3407,17 @@ func file_dsl_auth_rpc_proto_init() {
 	}
 	file_dsl_auth_rpc_proto_msgTypes[11].OneofWrappers = []any{}
 	file_dsl_auth_rpc_proto_msgTypes[16].OneofWrappers = []any{}
-	file_dsl_auth_rpc_proto_msgTypes[41].OneofWrappers = []any{}
+	file_dsl_auth_rpc_proto_msgTypes[25].OneofWrappers = []any{}
+	file_dsl_auth_rpc_proto_msgTypes[29].OneofWrappers = []any{}
+	file_dsl_auth_rpc_proto_msgTypes[31].OneofWrappers = []any{}
+	file_dsl_auth_rpc_proto_msgTypes[49].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_dsl_auth_rpc_proto_rawDesc), len(file_dsl_auth_rpc_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   45,
+			NumMessages:   53,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

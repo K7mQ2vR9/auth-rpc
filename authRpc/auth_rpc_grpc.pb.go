@@ -19,24 +19,28 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RoleAuthService_AddPermission_FullMethodName         = "/rpc.RoleAuthService/addPermission"
-	RoleAuthService_DeletedPermission_FullMethodName     = "/rpc.RoleAuthService/deletedPermission"
-	RoleAuthService_UpdatePermission_FullMethodName      = "/rpc.RoleAuthService/updatePermission"
-	RoleAuthService_GetPermissionList_FullMethodName     = "/rpc.RoleAuthService/getPermissionList"
-	RoleAuthService_AddRole_FullMethodName               = "/rpc.RoleAuthService/addRole"
-	RoleAuthService_UpdateRole_FullMethodName            = "/rpc.RoleAuthService/updateRole"
-	RoleAuthService_DeleteRole_FullMethodName            = "/rpc.RoleAuthService/deleteRole"
-	RoleAuthService_GetRoleList_FullMethodName           = "/rpc.RoleAuthService/getRoleList"
-	RoleAuthService_GetRoleMenus_FullMethodName          = "/rpc.RoleAuthService/getRoleMenus"
-	RoleAuthService_GetOneRole_FullMethodName            = "/rpc.RoleAuthService/getOneRole"
-	RoleAuthService_AddMenu_FullMethodName               = "/rpc.RoleAuthService/addMenu"
-	RoleAuthService_UpdateMenu_FullMethodName            = "/rpc.RoleAuthService/updateMenu"
-	RoleAuthService_DeleteMenu_FullMethodName            = "/rpc.RoleAuthService/deleteMenu"
-	RoleAuthService_GetMenuList_FullMethodName           = "/rpc.RoleAuthService/getMenuList"
-	RoleAuthService_GetMenuByAdminId_FullMethodName      = "/rpc.RoleAuthService/getMenuByAdminId"
-	RoleAuthService_GetUserPermissionTree_FullMethodName = "/rpc.RoleAuthService/getUserPermissionTree"
-	RoleAuthService_SaveUserPermission_FullMethodName    = "/rpc.RoleAuthService/saveUserPermission"
-	RoleAuthService_CheckUserPermission_FullMethodName   = "/rpc.RoleAuthService/checkUserPermission"
+	RoleAuthService_AddPermission_FullMethodName            = "/rpc.RoleAuthService/addPermission"
+	RoleAuthService_DeletedPermission_FullMethodName        = "/rpc.RoleAuthService/deletedPermission"
+	RoleAuthService_UpdatePermission_FullMethodName         = "/rpc.RoleAuthService/updatePermission"
+	RoleAuthService_GetPermissionList_FullMethodName        = "/rpc.RoleAuthService/getPermissionList"
+	RoleAuthService_AddRole_FullMethodName                  = "/rpc.RoleAuthService/addRole"
+	RoleAuthService_UpdateRole_FullMethodName               = "/rpc.RoleAuthService/updateRole"
+	RoleAuthService_DeleteRole_FullMethodName               = "/rpc.RoleAuthService/deleteRole"
+	RoleAuthService_GetRoleList_FullMethodName              = "/rpc.RoleAuthService/getRoleList"
+	RoleAuthService_GetRoleMenus_FullMethodName             = "/rpc.RoleAuthService/getRoleMenus"
+	RoleAuthService_GetOneRole_FullMethodName               = "/rpc.RoleAuthService/getOneRole"
+	RoleAuthService_CreateSiteRootTemplate_FullMethodName   = "/rpc.RoleAuthService/createSiteRootTemplate"
+	RoleAuthService_GetSiteRootTemplate_FullMethodName      = "/rpc.RoleAuthService/getSiteRootTemplate"
+	RoleAuthService_UpdateSiteRootTemplate_FullMethodName   = "/rpc.RoleAuthService/updateSiteRootTemplate"
+	RoleAuthService_CopyRolePermissionToUser_FullMethodName = "/rpc.RoleAuthService/copyRolePermissionToUser"
+	RoleAuthService_AddMenu_FullMethodName                  = "/rpc.RoleAuthService/addMenu"
+	RoleAuthService_UpdateMenu_FullMethodName               = "/rpc.RoleAuthService/updateMenu"
+	RoleAuthService_DeleteMenu_FullMethodName               = "/rpc.RoleAuthService/deleteMenu"
+	RoleAuthService_GetMenuList_FullMethodName              = "/rpc.RoleAuthService/getMenuList"
+	RoleAuthService_GetMenuByAdminId_FullMethodName         = "/rpc.RoleAuthService/getMenuByAdminId"
+	RoleAuthService_GetUserPermissionTree_FullMethodName    = "/rpc.RoleAuthService/getUserPermissionTree"
+	RoleAuthService_SaveUserPermission_FullMethodName       = "/rpc.RoleAuthService/saveUserPermission"
+	RoleAuthService_CheckUserPermission_FullMethodName      = "/rpc.RoleAuthService/checkUserPermission"
 )
 
 // RoleAuthServiceClient is the client API for RoleAuthService service.
@@ -55,6 +59,14 @@ type RoleAuthServiceClient interface {
 	GetRoleList(ctx context.Context, in *GetRoleListReq, opts ...grpc.CallOption) (*GetRoleListResp, error)
 	GetRoleMenus(ctx context.Context, in *GetRoleMenusReq, opts ...grpc.CallOption) (*GetRoleMenusResp, error)
 	GetOneRole(ctx context.Context, in *GetOneRoleReq, opts ...grpc.CallOption) (*GetOneRoleResp, error)
+	// 显式创建站点根模板；平台账号业务校验、唯一性和成功审计在同一事务内完成，已存在直接拒绝。
+	CreateSiteRootTemplate(ctx context.Context, in *CreateSiteRootTemplateReq, opts ...grpc.CallOption) (*CreateSiteRootTemplateResp, error)
+	// 平台专用普通查询，不开启读事务，不自动创建或恢复根模板。
+	GetSiteRootTemplate(ctx context.Context, in *GetSiteRootTemplateReq, opts ...grpc.CallOption) (*GetSiteRootTemplateResp, error)
+	// 平台按版本覆盖完整根集合，检查操作者上限，与成功审计同事务提交。
+	UpdateSiteRootTemplate(ctx context.Context, in *UpdateSiteRootTemplateReq, opts ...grpc.CallOption) (*UpdateSiteRootTemplateResp, error)
+	// 按同站点自定义模板覆盖用户独立权限，校验双版本、根上限及操作者上限，同事务审计。
+	CopyRolePermissionToUser(ctx context.Context, in *CopyRolePermissionToUserReq, opts ...grpc.CallOption) (*CopyRolePermissionToUserResp, error)
 	// 菜单板块
 	AddMenu(ctx context.Context, in *AddMenuReq, opts ...grpc.CallOption) (*AddMenuResp, error)
 	UpdateMenu(ctx context.Context, in *UpdateMenuReq, opts ...grpc.CallOption) (*UpdateMenuResp, error)
@@ -177,6 +189,46 @@ func (c *roleAuthServiceClient) GetOneRole(ctx context.Context, in *GetOneRoleRe
 	return out, nil
 }
 
+func (c *roleAuthServiceClient) CreateSiteRootTemplate(ctx context.Context, in *CreateSiteRootTemplateReq, opts ...grpc.CallOption) (*CreateSiteRootTemplateResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateSiteRootTemplateResp)
+	err := c.cc.Invoke(ctx, RoleAuthService_CreateSiteRootTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleAuthServiceClient) GetSiteRootTemplate(ctx context.Context, in *GetSiteRootTemplateReq, opts ...grpc.CallOption) (*GetSiteRootTemplateResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSiteRootTemplateResp)
+	err := c.cc.Invoke(ctx, RoleAuthService_GetSiteRootTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleAuthServiceClient) UpdateSiteRootTemplate(ctx context.Context, in *UpdateSiteRootTemplateReq, opts ...grpc.CallOption) (*UpdateSiteRootTemplateResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateSiteRootTemplateResp)
+	err := c.cc.Invoke(ctx, RoleAuthService_UpdateSiteRootTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleAuthServiceClient) CopyRolePermissionToUser(ctx context.Context, in *CopyRolePermissionToUserReq, opts ...grpc.CallOption) (*CopyRolePermissionToUserResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CopyRolePermissionToUserResp)
+	err := c.cc.Invoke(ctx, RoleAuthService_CopyRolePermissionToUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *roleAuthServiceClient) AddMenu(ctx context.Context, in *AddMenuReq, opts ...grpc.CallOption) (*AddMenuResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddMenuResp)
@@ -273,6 +325,14 @@ type RoleAuthServiceServer interface {
 	GetRoleList(context.Context, *GetRoleListReq) (*GetRoleListResp, error)
 	GetRoleMenus(context.Context, *GetRoleMenusReq) (*GetRoleMenusResp, error)
 	GetOneRole(context.Context, *GetOneRoleReq) (*GetOneRoleResp, error)
+	// 显式创建站点根模板；平台账号业务校验、唯一性和成功审计在同一事务内完成，已存在直接拒绝。
+	CreateSiteRootTemplate(context.Context, *CreateSiteRootTemplateReq) (*CreateSiteRootTemplateResp, error)
+	// 平台专用普通查询，不开启读事务，不自动创建或恢复根模板。
+	GetSiteRootTemplate(context.Context, *GetSiteRootTemplateReq) (*GetSiteRootTemplateResp, error)
+	// 平台按版本覆盖完整根集合，检查操作者上限，与成功审计同事务提交。
+	UpdateSiteRootTemplate(context.Context, *UpdateSiteRootTemplateReq) (*UpdateSiteRootTemplateResp, error)
+	// 按同站点自定义模板覆盖用户独立权限，校验双版本、根上限及操作者上限，同事务审计。
+	CopyRolePermissionToUser(context.Context, *CopyRolePermissionToUserReq) (*CopyRolePermissionToUserResp, error)
 	// 菜单板块
 	AddMenu(context.Context, *AddMenuReq) (*AddMenuResp, error)
 	UpdateMenu(context.Context, *UpdateMenuReq) (*UpdateMenuResp, error)
@@ -324,6 +384,18 @@ func (UnimplementedRoleAuthServiceServer) GetRoleMenus(context.Context, *GetRole
 }
 func (UnimplementedRoleAuthServiceServer) GetOneRole(context.Context, *GetOneRoleReq) (*GetOneRoleResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOneRole not implemented")
+}
+func (UnimplementedRoleAuthServiceServer) CreateSiteRootTemplate(context.Context, *CreateSiteRootTemplateReq) (*CreateSiteRootTemplateResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateSiteRootTemplate not implemented")
+}
+func (UnimplementedRoleAuthServiceServer) GetSiteRootTemplate(context.Context, *GetSiteRootTemplateReq) (*GetSiteRootTemplateResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSiteRootTemplate not implemented")
+}
+func (UnimplementedRoleAuthServiceServer) UpdateSiteRootTemplate(context.Context, *UpdateSiteRootTemplateReq) (*UpdateSiteRootTemplateResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateSiteRootTemplate not implemented")
+}
+func (UnimplementedRoleAuthServiceServer) CopyRolePermissionToUser(context.Context, *CopyRolePermissionToUserReq) (*CopyRolePermissionToUserResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CopyRolePermissionToUser not implemented")
 }
 func (UnimplementedRoleAuthServiceServer) AddMenu(context.Context, *AddMenuReq) (*AddMenuResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddMenu not implemented")
@@ -550,6 +622,78 @@ func _RoleAuthService_GetOneRole_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RoleAuthService_CreateSiteRootTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSiteRootTemplateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleAuthServiceServer).CreateSiteRootTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoleAuthService_CreateSiteRootTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleAuthServiceServer).CreateSiteRootTemplate(ctx, req.(*CreateSiteRootTemplateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoleAuthService_GetSiteRootTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSiteRootTemplateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleAuthServiceServer).GetSiteRootTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoleAuthService_GetSiteRootTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleAuthServiceServer).GetSiteRootTemplate(ctx, req.(*GetSiteRootTemplateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoleAuthService_UpdateSiteRootTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateSiteRootTemplateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleAuthServiceServer).UpdateSiteRootTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoleAuthService_UpdateSiteRootTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleAuthServiceServer).UpdateSiteRootTemplate(ctx, req.(*UpdateSiteRootTemplateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoleAuthService_CopyRolePermissionToUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CopyRolePermissionToUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleAuthServiceServer).CopyRolePermissionToUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoleAuthService_CopyRolePermissionToUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleAuthServiceServer).CopyRolePermissionToUser(ctx, req.(*CopyRolePermissionToUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RoleAuthService_AddMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddMenuReq)
 	if err := dec(in); err != nil {
@@ -740,6 +884,22 @@ var RoleAuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "getOneRole",
 			Handler:    _RoleAuthService_GetOneRole_Handler,
+		},
+		{
+			MethodName: "createSiteRootTemplate",
+			Handler:    _RoleAuthService_CreateSiteRootTemplate_Handler,
+		},
+		{
+			MethodName: "getSiteRootTemplate",
+			Handler:    _RoleAuthService_GetSiteRootTemplate_Handler,
+		},
+		{
+			MethodName: "updateSiteRootTemplate",
+			Handler:    _RoleAuthService_UpdateSiteRootTemplate_Handler,
+		},
+		{
+			MethodName: "copyRolePermissionToUser",
+			Handler:    _RoleAuthService_CopyRolePermissionToUser_Handler,
 		},
 		{
 			MethodName: "addMenu",

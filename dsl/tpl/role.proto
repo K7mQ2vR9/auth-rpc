@@ -137,6 +137,48 @@ message GetOneRoleResp{
   RoleListItem data = 1;
 }
 
+// CreateSiteRootTemplateReq 显式创建目标站点根模板，不兼任查询、更新或已删除模板恢复。
+message CreateSiteRootTemplateReq {
+  string businessCode = 1; // 目标站点编码，必填且最多10字符，不能为平台编码；不覆盖操作者上下文。
+  optional string menuIds = 2; // 必须显式提交具体菜单ID的逗号字符串；空字符串明确创建空根权限。
+}
+
+// CreateSiteRootTemplateResp 只返回已提交的根模板标识和初始版本，不返回操作者资料。
+message CreateSiteRootTemplateResp {
+  int64 id = 1; // 服务端生成的站点根模板ID，每站点唯一，不由调用方指定。
+  int64 version = 2; // 首次创建固定为1；后续更新使用单独接口，不在本接口自动覆盖。
+}
+
+// GetSiteRootTemplateReq 由平台管理入口按目标站点查询根模板，不在查询时初始化。
+message GetSiteRootTemplateReq {
+  string businessCode = 1; // 必填目标站点编码，最多10字符，不允许平台编码。
+}
+message GetSiteRootTemplateResp {
+  RoleListItem data = 1; // 根模板保存快照和版本；缺失返回前置条件错误，不返回虚构空模板。
+}
+
+// UpdateSiteRootTemplateReq 仅覆盖既有根权限，不修改名称、类型、归属，不恢复已删除根模板。
+message UpdateSiteRootTemplateReq {
+  string businessCode = 1; // 必填目标站点编码，不覆盖平台操作者上下文。
+  optional string menuIds = 2; // 必须显式提交最终CSV集合；空字符串清空根权限，不裁剪下级记录。
+  optional int64 version = 3; // 必须显式提交已读版本1..MaxInt64-1，冲突拒绝，不自动重试。
+}
+message UpdateSiteRootTemplateResp {
+  int64 version = 1; // 成功提交后的新根模板版本。
+}
+
+// CopyRolePermissionToUserReq 明确执行全量覆盖，不提供追加模式，也不形成用户角色绑定。
+message CopyRolePermissionToUserReq {
+  int64 userId = 1; // 目标站点管理员ID，必须为正数，禁止修改操作者自己或平台账号。
+  int64 roleId = 2; // 目标站点自定义模板ID，必须为正数，不能选择根模板或跨站点模板。
+  optional int64 roleVersion = 3; // 必须显式提交预览时来源模板正数版本，变化后要求刷新。
+  optional int64 version = 4; // 必须显式提交用户授权版本；从未保存为0，已有或恢复使用原版本。
+  string businessCode = 5; // 平台调用必填目标站点；站点调用可省略，传入时必须与当前站点一致。
+}
+message CopyRolePermissionToUserResp {
+  int64 version = 1; // 成功覆盖后的用户授权版本，不是模板版本。
+}
+
 message MenuItem{
   int64 id =1;
   int64 menuPid=2;
@@ -278,6 +320,15 @@ service RoleAuthService {
   rpc getRoleList(GetRoleListReq)returns(GetRoleListResp);
   rpc getRoleMenus(GetRoleMenusReq)returns(GetRoleMenusResp);
   rpc getOneRole(GetOneRoleReq)returns(GetOneRoleResp);
+
+  // 显式创建站点根模板；平台账号业务校验、唯一性和成功审计在同一事务内完成，已存在直接拒绝。
+  rpc createSiteRootTemplate(CreateSiteRootTemplateReq) returns(CreateSiteRootTemplateResp);
+  // 平台专用普通查询，不开启读事务，不自动创建或恢复根模板。
+  rpc getSiteRootTemplate(GetSiteRootTemplateReq) returns(GetSiteRootTemplateResp);
+  // 平台按版本覆盖完整根集合，检查操作者上限，与成功审计同事务提交。
+  rpc updateSiteRootTemplate(UpdateSiteRootTemplateReq) returns(UpdateSiteRootTemplateResp);
+  // 按同站点自定义模板覆盖用户独立权限，校验双版本、根上限及操作者上限，同事务审计。
+  rpc copyRolePermissionToUser(CopyRolePermissionToUserReq) returns(CopyRolePermissionToUserResp);
 
   //菜单板块
   rpc addMenu(AddMenuReq)returns(AddMenuResp);

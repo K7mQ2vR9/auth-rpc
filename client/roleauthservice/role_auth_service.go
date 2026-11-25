@@ -14,51 +14,59 @@ import (
 )
 
 type (
-	AddMenuReq                = authRpc.AddMenuReq
-	AddMenuResp               = authRpc.AddMenuResp
-	AddPermissionReq          = authRpc.AddPermissionReq
-	AddPermissionResp         = authRpc.AddPermissionResp
-	AddRoleReq                = authRpc.AddRoleReq
-	AddRoleResp               = authRpc.AddRoleResp
-	DeleteMenuReq             = authRpc.DeleteMenuReq
-	DeleteMenuResp            = authRpc.DeleteMenuResp
-	DeleteRoleReq             = authRpc.DeleteRoleReq
-	DeleteRoleResp            = authRpc.DeleteRoleResp
-	DeletedPermissionReq      = authRpc.DeletedPermissionReq
-	DeletedPermissionResp     = authRpc.DeletedPermissionResp
-	GetMenuByAdminIdItem      = authRpc.GetMenuByAdminIdItem
-	GetMenuByAdminIdReq       = authRpc.GetMenuByAdminIdReq
-	GetMenuByAdminIdResp      = authRpc.GetMenuByAdminIdResp
-	GetMenuListReq            = authRpc.GetMenuListReq
-	GetMenuListResp           = authRpc.GetMenuListResp
-	GetOneRoleReq             = authRpc.GetOneRoleReq
-	GetOneRoleResp            = authRpc.GetOneRoleResp
-	GetPermissionListReq      = authRpc.GetPermissionListReq
-	GetPermissionListResp     = authRpc.GetPermissionListResp
-	GetRoleListReq            = authRpc.GetRoleListReq
-	GetRoleListResp           = authRpc.GetRoleListResp
-	GetRoleMenusReq           = authRpc.GetRoleMenusReq
-	GetRoleMenusResp          = authRpc.GetRoleMenusResp
-	GetUserPermissionTreeReq  = authRpc.GetUserPermissionTreeReq
-	GetUserPermissionTreeResp = authRpc.GetUserPermissionTreeResp
-	SaveUserPermissionReq     = authRpc.SaveUserPermissionReq
-	SaveUserPermissionResp    = authRpc.SaveUserPermissionResp
-	CheckUserPermissionReq    = authRpc.CheckUserPermissionReq
-	CheckUserPermissionResp   = authRpc.CheckUserPermissionResp
-	UserPermissionGroup       = authRpc.UserPermissionGroup
-	UserPermissionMenu        = authRpc.UserPermissionMenu
-	MenuItem                  = authRpc.MenuItem
-	PermissionItem            = authRpc.PermissionItem
-	PermissionListItem        = authRpc.PermissionListItem
-	PermissionListMenuItem    = authRpc.PermissionListMenuItem
-	RoleItem                  = authRpc.RoleItem
-	RoleListItem              = authRpc.RoleListItem
-	UpdateMenuReq             = authRpc.UpdateMenuReq
-	UpdateMenuResp            = authRpc.UpdateMenuResp
-	UpdatePermissionReq       = authRpc.UpdatePermissionReq
-	UpdatePermissionResp      = authRpc.UpdatePermissionResp
-	UpdateRoleReq             = authRpc.UpdateRoleReq
-	UpdateRoleResp            = authRpc.UpdateRoleResp
+	AddMenuReq                   = authRpc.AddMenuReq
+	AddMenuResp                  = authRpc.AddMenuResp
+	AddPermissionReq             = authRpc.AddPermissionReq
+	AddPermissionResp            = authRpc.AddPermissionResp
+	AddRoleReq                   = authRpc.AddRoleReq
+	AddRoleResp                  = authRpc.AddRoleResp
+	CreateSiteRootTemplateReq    = authRpc.CreateSiteRootTemplateReq
+	CreateSiteRootTemplateResp   = authRpc.CreateSiteRootTemplateResp
+	GetSiteRootTemplateReq       = authRpc.GetSiteRootTemplateReq
+	GetSiteRootTemplateResp      = authRpc.GetSiteRootTemplateResp
+	UpdateSiteRootTemplateReq    = authRpc.UpdateSiteRootTemplateReq
+	UpdateSiteRootTemplateResp   = authRpc.UpdateSiteRootTemplateResp
+	CopyRolePermissionToUserReq  = authRpc.CopyRolePermissionToUserReq
+	CopyRolePermissionToUserResp = authRpc.CopyRolePermissionToUserResp
+	DeleteMenuReq                = authRpc.DeleteMenuReq
+	DeleteMenuResp               = authRpc.DeleteMenuResp
+	DeleteRoleReq                = authRpc.DeleteRoleReq
+	DeleteRoleResp               = authRpc.DeleteRoleResp
+	DeletedPermissionReq         = authRpc.DeletedPermissionReq
+	DeletedPermissionResp        = authRpc.DeletedPermissionResp
+	GetMenuByAdminIdItem         = authRpc.GetMenuByAdminIdItem
+	GetMenuByAdminIdReq          = authRpc.GetMenuByAdminIdReq
+	GetMenuByAdminIdResp         = authRpc.GetMenuByAdminIdResp
+	GetMenuListReq               = authRpc.GetMenuListReq
+	GetMenuListResp              = authRpc.GetMenuListResp
+	GetOneRoleReq                = authRpc.GetOneRoleReq
+	GetOneRoleResp               = authRpc.GetOneRoleResp
+	GetPermissionListReq         = authRpc.GetPermissionListReq
+	GetPermissionListResp        = authRpc.GetPermissionListResp
+	GetRoleListReq               = authRpc.GetRoleListReq
+	GetRoleListResp              = authRpc.GetRoleListResp
+	GetRoleMenusReq              = authRpc.GetRoleMenusReq
+	GetRoleMenusResp             = authRpc.GetRoleMenusResp
+	GetUserPermissionTreeReq     = authRpc.GetUserPermissionTreeReq
+	GetUserPermissionTreeResp    = authRpc.GetUserPermissionTreeResp
+	SaveUserPermissionReq        = authRpc.SaveUserPermissionReq
+	SaveUserPermissionResp       = authRpc.SaveUserPermissionResp
+	CheckUserPermissionReq       = authRpc.CheckUserPermissionReq
+	CheckUserPermissionResp      = authRpc.CheckUserPermissionResp
+	UserPermissionGroup          = authRpc.UserPermissionGroup
+	UserPermissionMenu           = authRpc.UserPermissionMenu
+	MenuItem                     = authRpc.MenuItem
+	PermissionItem               = authRpc.PermissionItem
+	PermissionListItem           = authRpc.PermissionListItem
+	PermissionListMenuItem       = authRpc.PermissionListMenuItem
+	RoleItem                     = authRpc.RoleItem
+	RoleListItem                 = authRpc.RoleListItem
+	UpdateMenuReq                = authRpc.UpdateMenuReq
+	UpdateMenuResp               = authRpc.UpdateMenuResp
+	UpdatePermissionReq          = authRpc.UpdatePermissionReq
+	UpdatePermissionResp         = authRpc.UpdatePermissionResp
+	UpdateRoleReq                = authRpc.UpdateRoleReq
+	UpdateRoleResp               = authRpc.UpdateRoleResp
 
 	RoleAuthService interface {
 		// 权限板块
@@ -73,6 +81,14 @@ type (
 		GetRoleList(ctx context.Context, in *GetRoleListReq, opts ...grpc.CallOption) (*GetRoleListResp, error)
 		GetRoleMenus(ctx context.Context, in *GetRoleMenusReq, opts ...grpc.CallOption) (*GetRoleMenusResp, error)
 		GetOneRole(ctx context.Context, in *GetOneRoleReq, opts ...grpc.CallOption) (*GetOneRoleResp, error)
+		// CreateSiteRootTemplate 平台显式创建目标站点唯一根模板，重复创建拒绝，不改变调用上下文归属。
+		CreateSiteRootTemplate(ctx context.Context, in *CreateSiteRootTemplateReq, opts ...grpc.CallOption) (*CreateSiteRootTemplateResp, error)
+		// GetSiteRootTemplate 平台按目标站点读取实际根快照，不自动创建。
+		GetSiteRootTemplate(ctx context.Context, in *GetSiteRootTemplateReq, opts ...grpc.CallOption) (*GetSiteRootTemplateResp, error)
+		// UpdateSiteRootTemplate 按已读版本完整覆盖根集合，不裁剪下级授权。
+		UpdateSiteRootTemplate(ctx context.Context, in *UpdateSiteRootTemplateReq, opts ...grpc.CallOption) (*UpdateSiteRootTemplateResp, error)
+		// CopyRolePermissionToUser 校验来源及用户双版本，覆盖同站点用户独立授权。
+		CopyRolePermissionToUser(ctx context.Context, in *CopyRolePermissionToUserReq, opts ...grpc.CallOption) (*CopyRolePermissionToUserResp, error)
 		// 菜单板块
 		AddMenu(ctx context.Context, in *AddMenuReq, opts ...grpc.CallOption) (*AddMenuResp, error)
 		UpdateMenu(ctx context.Context, in *UpdateMenuReq, opts ...grpc.CallOption) (*UpdateMenuResp, error)
@@ -153,6 +169,27 @@ func (m *defaultRoleAuthService) GetRoleMenus(ctx context.Context, in *GetRoleMe
 func (m *defaultRoleAuthService) GetOneRole(ctx context.Context, in *GetOneRoleReq, opts ...grpc.CallOption) (*GetOneRoleResp, error) {
 	client := authRpc.NewRoleAuthServiceClient(m.cli.Conn())
 	return client.GetOneRole(ctx, in, opts...)
+}
+
+// CreateSiteRootTemplate 提交目标站点及显式menuIds，成功返回新根模板ID和初始版本1。
+func (m *defaultRoleAuthService) CreateSiteRootTemplate(ctx context.Context, in *CreateSiteRootTemplateReq, opts ...grpc.CallOption) (*CreateSiteRootTemplateResp, error) {
+	client := authRpc.NewRoleAuthServiceClient(m.cli.Conn())
+	return client.CreateSiteRootTemplate(ctx, in, opts...)
+}
+
+// GetSiteRootTemplate 平台读取根模板保存快照，缺失返回错误，不生成占位模板。
+func (m *defaultRoleAuthService) GetSiteRootTemplate(ctx context.Context, in *GetSiteRootTemplateReq, opts ...grpc.CallOption) (*GetSiteRootTemplateResp, error) {
+	return authRpc.NewRoleAuthServiceClient(m.cli.Conn()).GetSiteRootTemplate(ctx, in, opts...)
+}
+
+// UpdateSiteRootTemplate 显式提交最终根集合及版本，成功返回新版本。
+func (m *defaultRoleAuthService) UpdateSiteRootTemplate(ctx context.Context, in *UpdateSiteRootTemplateReq, opts ...grpc.CallOption) (*UpdateSiteRootTemplateResp, error) {
+	return authRpc.NewRoleAuthServiceClient(m.cli.Conn()).UpdateSiteRootTemplate(ctx, in, opts...)
+}
+
+// CopyRolePermissionToUser 覆盖用户独立授权，空来源模板明确清空，角色不与用户持续绑定。
+func (m *defaultRoleAuthService) CopyRolePermissionToUser(ctx context.Context, in *CopyRolePermissionToUserReq, opts ...grpc.CallOption) (*CopyRolePermissionToUserResp, error) {
+	return authRpc.NewRoleAuthServiceClient(m.cli.Conn()).CopyRolePermissionToUser(ctx, in, opts...)
 }
 
 // 菜单板块

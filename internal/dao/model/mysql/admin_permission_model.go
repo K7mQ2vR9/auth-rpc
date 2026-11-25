@@ -12,15 +12,18 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/K7mQ2vR9/base-pkg/headInfo"
 	mysqlDriver "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
-// AdminPermissionModel 持有绑定请求上下文的会话，不读角色权限，不关闭共享连接池。
+// AdminPermissionModel 持有请求上下文及数据库会话；日常鉴权不继承模板，仅显式复制入口读取来源模板快照。
 type AdminPermissionModel struct {
-	db *gorm.DB
+	ctx context.Context
+	db  *gorm.DB
 }
 
 // UserPermissionTreeData 汇总依次普通查询取得的用户权限和完整目录，不承诺跨查询快照一致。
@@ -42,7 +45,166 @@ func NewAdminPermissionModel(ctx context.Context, svcCtx *svc.ServiceContext) (*
 	if err != nil {
 		return nil, err
 	}
-	return &AdminPermissionModel{db: db}, nil
+	return &AdminPermissionModel{ctx: ctx, db: db}, nil
+}
+
+// CopyRolePermissionToUser 按来源模板及用户双版本完整覆盖独立授权，不追加、不绑定角色，不自动重试。
+// 平台使用显式目标站点，站点只能操作本站其他非平台用户；根、本人上限、来源及审计均在同一事务检查。
+func (model *AdminPermissionModel) CopyRolePermissionToUser(userID, roleID, roleVersion, version int64, requestedBusinessCode string) (int64, error) {
+	if model == nil || model.db == nil || model.ctx == nil {
+		return 0, errors.New("admin permission model is not initialized")
+	}
+	if userID <= 0 || roleID <= 0 || roleVersion <= 0 || version < 0 || version == math.MaxInt64 {
+		return 0, status.Error(codes.InvalidArgument, "用户及模板ID、来源版本须为正数，用户version范围为0到MaxInt64-1")
+	}
+	roles := &RoleModel{ctx: model.ctx, db: model.db}
+	current, err := roles.businessCode("")
+	if err != nil {
+		return 0, err
+	}
+	target := requestedBusinessCode
+	if current != headInfo.PLATFORM_BUSINESS_CODE {
+		if target == "" {
+			target = current
+		} else if target != current {
+			return 0, status.Error(codes.PermissionDenied, "站点操作者只能覆盖本站用户权限")
+		}
+	}
+	if err := validateTargetSiteCode(target); err != nil {
+		return 0, err
+	}
+	operatorID, traceID := headInfo.GetTokenUid(model.ctx), headInfo.GetTrace(model.ctx)
+	if operatorID <= 0 || traceID == "" {
+		return 0, status.Error(codes.Unauthenticated, "缺少有效操作者或Trace上下文")
+	}
+	if operatorID == userID {
+		return 0, status.Error(codes.PermissionDenied, "不能覆盖自己的权限")
+	}
+	err = model.db.Transaction(func(tx *gorm.DB) error {
+		// 先按ID顺序锁操作者和目标账号，双向授权不采用相反的账号锁顺序；不加载任何密码字段。
+		accountIDs := []int64{operatorID, userID}
+		sort.Slice(accountIDs, func(i, j int) bool { return accountIDs[i] < accountIDs[j] })
+		var accounts []schema.AdminInfo
+		if err := tx.Model(&schema.AdminInfo{}).Select("id", "status", "account_type", "business_code").
+			Where("id IN ?", accountIDs).Order("id ASC").Clauses(clause.Locking{Strength: "UPDATE"}).Find(&accounts).Error; err != nil {
+			return fmt.Errorf("lock permission copy accounts: %w", err)
+		}
+		var operator, targetUser *schema.AdminInfo
+		for i := range accounts {
+			if accounts[i].ID == operatorID {
+				operator = &accounts[i]
+			} else if accounts[i].ID == userID {
+				targetUser = &accounts[i]
+			}
+		}
+		if err := validatePermissionOperator(operator, current); err != nil {
+			return err
+		}
+		// 目标可处于停用状态，但须存在、未删除、归属精确且为既有非平台身份；复制不改变其身份或状态。
+		if targetUser == nil || targetUser.BusinessCode != target ||
+			targetUser.AccountType != schema.AdminInfoAccountType20 && targetUser.AccountType != schema.AdminInfoAccountType30 &&
+				targetUser.AccountType != schema.AdminInfoAccountType40 {
+			return status.Error(codes.PermissionDenied, "目标用户不存在、跨站点或为不可复制的账号身份")
+		}
+		root, err := roles.findRoot(tx, target, true)
+		if err != nil {
+			return err
+		}
+		source, err := roles.findByID(tx, roleID, target, true)
+		if err != nil {
+			return err
+		}
+		if source.TemplateType != schema.RoleTemplateTypeCustom {
+			return status.Error(codes.PermissionDenied, "只能复制目标站点自定义模板，不能复制根模板")
+		}
+		if source.Version != roleVersion {
+			return roleVersionConflict()
+		}
+		_, ids, err := NormalizeMenuIDs(source.MenuIds)
+		if err != nil {
+			return status.Error(codes.DataLoss, "来源模板菜单ID格式异常")
+		}
+		rootIDs, err := ParseMenuIDs(root.MenuIds)
+		if err != nil {
+			return status.Error(codes.DataLoss, "根模板菜单ID格式异常")
+		}
+		allowed := make(map[int64]bool, len(rootIDs))
+		for _, id := range rootIDs {
+			allowed[id] = true
+		}
+		for _, id := range ids {
+			if !allowed[id] {
+				return status.Error(codes.PermissionDenied, "模板完整权限不能超过目标站点当前根权限")
+			}
+		}
+		if operator.AccountType != schema.AdminInfoAccountType10 {
+			if err := roles.validateOperatorMenus(tx, operator.ID, current, ids); err != nil {
+				return err
+			}
+		}
+		if err := roles.validateRootMenuTree(tx, ids); err != nil {
+			return err
+		}
+		// 先普通查询是否有唯一记录，避免缺失记录的间隙锁；存在则加锁重新读当前版本，恢复保留原ID。
+		var previous schema.AdminPermission
+		err = tx.Unscoped().Model(&schema.AdminPermission{}).Where("user_id = ?", userID).Take(&previous).Error
+		missing := errors.Is(err, gorm.ErrRecordNotFound)
+		if err != nil && !missing {
+			return fmt.Errorf("query permission copy target: %w", err)
+		}
+		if !missing {
+			if err := tx.Unscoped().Model(&schema.AdminPermission{}).Where("user_id = ?", userID).
+				Clauses(clause.Locking{Strength: "UPDATE"}).Take(&previous).Error; err != nil {
+				return fmt.Errorf("lock permission copy target: %w", err)
+			}
+			if previous.BusinessCode != target || previous.ID <= 0 || previous.Version <= 0 {
+				return status.Error(codes.DataLoss, "目标用户授权归属或版本异常")
+			}
+			before, _, err := NormalizeMenuIDs(previous.MenuIds)
+			if err != nil {
+				return status.Error(codes.DataLoss, "目标用户原授权菜单格式异常")
+			}
+			previous.MenuIds = before
+		}
+		if missing && version != 0 || !missing && previous.Version != version {
+			return permissionVersionConflict()
+		}
+		if missing {
+			grant := &schema.AdminPermission{UserId: userID, BusinessCode: target, MenuIds: source.MenuIds, Version: 1}
+			if err := tx.Create(grant).Error; err != nil {
+				var duplicate *mysqlDriver.MySQLError
+				if errors.Is(err, gorm.ErrDuplicatedKey) || errors.As(err, &duplicate) && duplicate.Number == 1062 {
+					return permissionVersionConflict()
+				}
+				return fmt.Errorf("create copied user permission: %w", err)
+			}
+		} else {
+			result := tx.Unscoped().Model(&schema.AdminPermission{}).
+				Where("id = ? AND user_id = ? AND business_code = ? AND version = ?", previous.ID, userID, target, version).
+				Updates(map[string]interface{}{"menu_ids": source.MenuIds, "version": gorm.Expr("version + 1"), "deleted_at": nil})
+			if result.Error != nil {
+				return fmt.Errorf("overwrite copied user permission: %w", result.Error)
+			}
+			if result.RowsAffected != 1 {
+				return permissionVersionConflict()
+			}
+		}
+		audit := &schema.PermissionAudit{
+			Operation:  schema.PermissionAuditCopyRoleToUser,
+			OperatorID: operator.ID, OperatorAccountType: operator.AccountType, OperatorBusinessCode: operator.BusinessCode,
+			BusinessCode: target, TargetType: schema.PermissionAuditTargetUserPermission, TargetID: userID,
+			BeforeMenuIDs: previous.MenuIds, AfterMenuIDs: source.MenuIds, BeforeVersion: version, AfterVersion: version + 1,
+			SourceTemplateID: source.ID, SourceTemplateVersion: source.Version, TraceID: traceID,
+		}
+		if err := tx.Create(audit).Error; err != nil {
+			return fmt.Errorf("audit copied user permission: %w", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	return version + 1, nil
 }
 
 // GetTreeData 依次执行普通查询，校验目标管理员并读取菜单目录及权限版本，不开启事务。

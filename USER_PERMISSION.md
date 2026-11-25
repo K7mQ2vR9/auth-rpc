@@ -1,6 +1,6 @@
 # 用户独立权限与角色模板接入
 
-当前已实现授权编辑页查询GetUserPermissionTree、覆盖保存SaveUserPermission、实际鉴权CheckUserPermission及改为独立授权的GetMenuByAdminId。角色模板CRUD已改为同站点menuIds、templateType、version结构，迁移003已于2026-11-25在user_rpc执行；平台根模板管理入口、按模板直接覆盖用户及其他项目调用迁移尚未完成。用户权限仍独立保存，不持续绑定角色。
+当前已实现授权编辑页查询GetUserPermissionTree、覆盖保存SaveUserPermission、实际鉴权CheckUserPermission及改为独立授权的GetMenuByAdminId。角色模板CRUD已改为同站点menuIds、templateType、version结构，迁移003已于2026-11-25在user_rpc执行。平台根模板创建、查询、更新和按模板直接覆盖用户的本地源码已完成，三个权限写RPC所需的审计迁移004已于2026-11-25在user_rpc执行并核对；其他项目调用尚未迁移。用户权限仍独立保存，不持续绑定角色。
 
 旧按角色鉴权的CheckAdminRoleMenu已从协议、生成代码、本地Client/Server及Logic删除，不保留兼容分支。CheckUserPermission已实现并接入本地Client/Server。user-rpc中的parse_admin_token_logic.go仍依赖外部rpc-client并调用旧方法，需要同步客户端并迁移调用；本次未修改该项目，也未关闭其权限检查。
 
@@ -10,9 +10,10 @@
 
 | 文件 | 集中的内容 |
 |---|---|
-| internal/dao/model/mysql/admin_permission_model.go | 用户权限查询、保存、版本校验、菜单ID解析及规范化、登录菜单及路径鉴权共用的有效用户授权读取 |
+| internal/dao/model/mysql/admin_permission_model.go | 用户权限查询、保存、按模板覆盖、版本校验、菜单ID解析及规范化、登录菜单及路径鉴权共用的有效用户授权读取 |
 | internal/dao/model/mysql/menu_model.go | 菜单读写及授权编辑树、登录菜单树共用的父级循环校验 |
-| internal/dao/model/mysql/role_permission_model.go | 同站点模板查询、保存、根权限子集及菜单校验、版本比较与模型软删除；不展开分组 |
+| internal/dao/model/mysql/role_permission_model.go | 同站点模板CRUD及平台根模板创建/查询/更新、操作者身份与上限、完整菜单链及同事务审计；不展开分组 |
+| internal/logic/roleauthservice/create_site_root_template_logic.go | 根模板创建RPC入口，校验显式menuIds并组装提交成功的ID和版本 |
 | internal/logic/roleauthservice/get_user_permission_tree_logic.go | 查询RPC入口、勾选状态及分组菜单树组装 |
 | internal/logic/roleauthservice/save_user_permission_logic.go | 保存RPC参数校验及模型调用 |
 | internal/logic/roleauthservice/check_user_permission_logic.go | 鉴权RPC参数校验及模型调用；数据库鉴权集中在admin_permission_model.go |
@@ -40,7 +41,7 @@ auth-rpc的AdminInfo.RoleId及按role_id筛选已删除；角色删除入口不�
 
 RoleItem不再包含旧权限组或超级角色字段，新增menuIds、templateType、version；模板版本不是账号身份，account_type现有五种定义保持不变。RoleListItem直接返回具体menuIds字符串、类型、版本、名称及站点，不再展开权限组对象。已删除旧初始化RPC及其请求/响应、Logic、Client和Server入口，也删除了无人使用的dsl/rpc.proto副本；协议源为dsl/tpl/role.proto，聚合生成到dsl/auth_rpc.proto。
 
-所有模板操作严格限定ctx中的business-code；请求体businessCode可缺省，显式传入必须与ctx一致。平台业务编码也不自动取消过滤，不截取编码、不推导商户上级、不修改输入请求。普通写接口只维护templateType=2的自定义模板，templateType=1的站点根模板仅可读取，不能通过这些接口新增、修改、删除或转移归属。
+本节普通模板CRUD严格限定ctx中的business-code；请求体businessCode可缺省，显式传入必须与ctx一致。平台业务编码也不自动取消过滤，不截取编码、不推导商户上级、不修改输入请求。普通写接口只维护templateType=2的自定义模板，templateType=1的站点根模板仅可读取，不能通过这些接口新增、修改、删除或转移归属。跨站点根模板创建仅通过下节专用接口接入。
 
 | RPC | 请求及行为 | 响应 |
 |---|---|---|
@@ -57,7 +58,7 @@ RoleItem不再包含旧权限组或超级角色字段，新增menuIds、template
 
 通过根集合检查后，按具体ID查询共享菜单，菜单必须未删除、自身启用且类型为页面或按钮；不会为本站复制新菜单，也不会根据菜单分组扩大授权。修改再锁定目标记录，核对旧版本后完整覆盖名称、menuIds并递增版本；所有数据库操作使用同一tx。保存顺序为根记录、目标模板、按ID排序的菜单记录；新增没有目标旧记录。普通读取不额外开启事务，模板列表默认page=1、pageSize=20，每页最多200；负数、溢出分页或无效时间范围返回InvalidArgument。
 
-模板读取返回其保存快照及版本，不根据后来缩小的根集合清理或改写历史ID。模板修改或删除不联动已复制用户；根权限变化不触发本轮自动裁剪。普通选择器应使用templateType=2且当前站点范围，避免将根模板当作用户复制来源；GetRoleMenus读取本身不等于直接向用户授权，CopyRolePermissionToUser仍未实现。
+模板读取返回其保存快照及版本，不根据后来缩小的根集合清理或改写历史ID。模板修改或删除不联动已复制用户；根权限变化不触发本轮自动裁剪。普通选择器应使用templateType=2且当前站点范围，避免将根模板当作用户复制来源；GetRoleMenus读取本身不等于直接向用户授权，实际直接复制使用下节CopyRolePermissionToUser。
 
 新增示例（仅说明请求，不执行调用）：
 
@@ -87,7 +88,7 @@ RoleItem不再包含旧权限组或超级角色字段，新增menuIds、template
 
 删除提交 `{"id":10,"version":2}`。GetRoleMenus返回的version用于后续来源模板比较，不能代替目标用户权限版本。
 
-本阶段完成模板类型、站点边界、根集合及自身启用菜单检查和版本写入。API仍须执行身份及操作资格校验；模板写入的操作者自身权限上限、完整祖先停用校验、同事务审计、平台根模板专用管理和跨站点管理入口尚未接入，不能认定完整三级权限已具备上线条件。根模板未配置时新增、修改会拒绝，本轮不插入占位根模板或旧超级角色。
+普通模板CRUD阶段完成模板类型、站点边界、根集合及自身启用菜单检查和版本写入。API仍须执行身份及操作资格校验；这些普通写接口的操作者自身权限上限、完整祖先停用校验及同事务审计尚未接入。平台根模板管理及直接模板复制的实现见下节，不能据此认定其他入口和完整三级权限已具备上线条件。根模板未配置时普通新增、修改会拒绝，本轮不插入占位根模板或旧超级角色。
 
 实际只执行协议聚合、代码生成及格式化，协议生成命令为：
 
@@ -97,6 +98,78 @@ protoc --plugin=protoc-gen-go=/Users/m/go/bin/protoc-gen-go --plugin=protoc-gen-
 ```
 
 生成命令成功返回，只说明协议源码已生成，不代表通过编译或业务验证。源码阶段未运行测试、构建、示例、服务或数据库迁移；用户另行确认后已执行003，过程见DATABASE.md，未运行Go测试、构建或业务联调。迁移SQL、结构快照及生成源码作为正式交付保留，原有测试保留；未执行向外部rpc-client复制的Makefile目标，未修改其他项目。
+
+## 显式创建站点根模板
+
+完整RPC方法：`/rpc.RoleAuthService/createSiteRootTemplate`，本地客户端为CreateSiteRootTemplate。此接口只创建，不兼任查询、更新、恢复或用户授权；不会自动创建站点账号或自定义模板。
+
+| 请求字段 | 规则 |
+|---|---|
+| businessCode | 必填目标站点编码，无首尾空白，最多10个UTF-8字符，不能为平台编码99999999 |
+| menuIds | optional string但必须显式提交；具体正数ID用英文逗号分隔，规范化去重升序且最多65535字节；空字符串创建空根权限 |
+
+请求示例，仅说明格式，不执行调用：
+
+```json
+{"businessCode":"100001","menuIds":"1,2"}
+```
+
+成功响应包含新id及version=1；名称固定“站点根模板”，template_type固定1。操作者ID、类型、名称、版本和模板ID不由请求体指定。空权限须传`{"businessCode":"100001","menuIds":""}`，缺省menuIds拒绝。
+
+调用上下文须保持平台business-code=99999999，携带已认证操作者的token-uid及合法Trace；不能将ctx切换为目标站点。API负责认证和“创建站点根模板”的操作权限，内部调用方须可信，不得直接转发前端伪造的UID。RPC公共中间件仍仅做metadata及Trace准入，不新增JWT或用户登录认证；本业务会按ctx UID在事务中查询数据库身份，不采信请求体账号类型。
+
+事务内先锁定未删除且正常的平台管理员账号，只允许account_type=10或11且数据库归属为平台。10不要求独立菜单授权记录，仍须通过目录有效性、唯一性及审计；11还锁定当前未删除的admin_permission，要求归属及版本有效，所授集合不能超过本人直接授权。随后检查所选菜单及完整祖先链均为平台共享目录中未删除、启用且服务名有效的页面或按钮；祖先只参与有效性检查，不自动加入授权。所选ID同时满足本人授权和目录有效性才可下发，空集合不表示全部权限。
+
+已存在或已软删除的根模板都返回AlreadyExists，不恢复、不覆盖。预检查不对缺失根加间隙锁，迁移003的uniq_site_root保证并发创建唯一，并将重复键转换为AlreadyExists。创建和permission_audit插入在同一事务，审计失败整体回滚；仅事务提交后返回ID。审计保存操作者数据库身份、目标站点、前后权限/版本及当前Trace，不保存凭证。不会级联修改用户或自定义模板记录。
+
+缺少操作者/Trace返回Unauthenticated；非法参数或缺省menuIds返回InvalidArgument；身份不符或超出本人权限返回PermissionDenied；目录或祖先无效返回FailedPrecondition；损坏的授权/父级结构返回DataLoss；数据库错误单独返回，不伪装成成功。请求取消和超时由原ctx传递，服务端不自动重试创建。
+
+auth-rpc没有站点实体模型，本接口只检查目标编码格式，不判断站点是否真实存在；站点管理调用方应在站点创建成功后显式调用，并处理创建失败。[审计迁移004](database/migrations/004_permission_audit.sql)已于2026-11-25在user_rpc执行并核对，当前库禁止重跑；其他环境须核对迁移状态。审计失败仍须回滚根创建，结构落库未创建实际业务数据。
+
+本轮同步协议源、聚合协议、protobuf、本地Client/Server和中文注释；仅运行上述协议生成、gofmt及源码引用核对，未运行测试、构建、示例、服务、RPC或数据库操作。未新增测试用例、测试脚本、验证缓存或临时产物，无需清理；原有测试保留。正式迁移文件和生成源码保留，其他项目及外部rpc-client未改动。
+
+## 根模板查询与更新
+
+两个RPC均要求平台business-code=99999999、可信操作者token-uid及合法Trace，查询数据库确认操作者正常、未删除且为平台账号10/11，不能直接将ctx切换为目标站点。API另外校验对应操作许可；auth-rpc未增加JWT认证，也没有站点实体模型，调用方负责确认目标站点存在。
+
+| RPC | 请求 | 响应与边界 |
+|---|---|---|
+| `/rpc.RoleAuthService/getSiteRootTemplate` | `{"businessCode":"100001"}` | data返回RoleListItem根模板保存快照及version，不裁剪历史集合；缺失/已删除返回FailedPrecondition，不自动创建 |
+| `/rpc.RoleAuthService/updateSiteRootTemplate` | `{"businessCode":"100001","menuIds":"1,2","version":1}` | 成功返回version=2；最终menuIds和已读version必须显式提交，空字符串清空，版本冲突Aborted |
+
+查询通过普通模型依次读取操作者和根模板，不加读事务，不承诺跨查询一致快照。读取不要求根集合属于当前普通管理员本人，读取资格由API控制；能看到不表示能修改。
+
+更新在短事务内按操作者账号、根模板、本人授权、菜单及祖先链的顺序取得相应行锁。平台管理员11的本人授权必须同时覆盖根模板现有完整集合与提交完整集合，现有根集合超出其范围时，即使只删除部分权限也拒绝；不存在只检查新增项、静默缩小或按差集绕过规则。超级管理员10免本人独立授权集合检查，仍检查版本、新集合目录有效性并保存审计。
+
+所选菜单及祖先必须属于平台共享目录、未删除、启用且为有效页面或按钮，校验不自动授予祖先。根记录不存在不自动新增，已删除不恢复；只更新menu_ids及version，时间由模型维护，不改名称、归属、类型，不提供删除根模板的入口。即使集合相同，显式成功更新也递增版本并写审计。空根集合清空本站上限，但不裁剪用户或自定义模板CSV、不增加下级版本；运行时根上限接入情况见实际鉴权章节，不能假定现有CheckUserPermission已接入完整根检查。
+
+根更新和审计同事务，审计失败整体回滚。迁移004已于2026-11-25执行并核对审计表结构，不新增其他迁移，未进行业务调用或联调；结构完成不代表事务行为已验证。
+
+## 按模板覆盖用户权限
+
+完整RPC方法：`/rpc.RoleAuthService/copyRolePermissionToUser`。接口直接写入最终授权，只有覆盖模式，不用于本地草稿预览，不保存角色绑定。模板预览后手工调整，应调用SaveUserPermission提交手工草稿，不能再用复制接口覆盖草稿。
+
+```json
+{
+  "userId": 1001,
+  "roleId": 10,
+  "roleVersion": 2,
+  "version": 3,
+  "businessCode": "100001"
+}
+```
+
+userId、roleId、roleVersion必须为正数；roleVersion和用户version必须显式提交。用户从未保存时version=0，已有或恢复软删除授权时提交原正数版本，最大写入请求版本为MaxInt64-1。成功响应`{"version":4}`为用户授权新版本，不是模板版本；首次成功为1。来源模板与用户任一版本已改变均返回Aborted，不自动重新读取并覆盖。
+
+平台账号10/11保持平台ctx，businessCode必须明确指定目标站点；站点账号20/30/40的businessCode可省略使用当前站点，显式传入必须与ctx精确一致。这三个非平台身份沿用现有定义，不增加内部等级或豁免；API必须校验登录及“给该目标用户覆盖权限”的操作许可。操作者须正常、未删除且数据库归属与ctx一致，禁止修改自己。目标须未删除且为该目标站点的20/30/40账号，可在停用期间调整授权，接口不启用账号或改变身份。禁止操作平台账号、跨站点用户或跨站点来源模板。
+
+来源只允许目标站点未删除的自定义模板2，根模板1拒绝直接复制。完整来源集合必须属于当前站点根集合，并属于操作者本人当前独立授权；站点操作者的有效可下发集合因此为本人授权与根的交集。平台超级管理员10免本人授权检查，但仍受目标根集合及菜单有效性约束。所选菜单及完整祖先链还须通过共享平台目录有效性检查，任何越界、删除、停用或异常整体失败，不静默取交集，不保留未通过检查的旧授权。空来源模板明确清空用户权限，但根必须存在且有效；普通操作者仍须有有效独立授权记录及操作许可。
+
+写事务先按ID升序锁操作者和目标账号，再锁根模板、来源模板及操作者独立授权，随后锁所选菜单和祖先。目标已有授权在写入前重新加锁读取版本；缺失记录由唯一user_id与首次版本0保护，并发首次保存的重复键转换为版本冲突。恢复使用原记录ID和created_at，按原版本递增，deleted_at恢复NULL，updated_at由模型维护；不会新增第二份授权或回退版本。
+
+复制和permission_audit同事务提交，审计失败整体回滚。审计target_type=user_permission，target_id为用户ID，记录原存储授权与覆盖后集合、用户前后版本、来源模板ID/版本、操作者身份、目标站点及Trace；软删除授权恢复时也保留原存储快照用于审计。其他用户和来源模板均不修改，不形成后续继承关系。
+
+缺省版本/非法参数返回InvalidArgument，身份/本人上限/根上限越界返回PermissionDenied，缺失根或无效目录返回FailedPrecondition，来源缺失或不属于目标站点返回NotFound，版本冲突返回Aborted；损坏存储返回DataLoss，数据库故障独立返回，取消和超时沿用原ctx。本轮只完成本地源码、协议生成、格式化和引用核对，未测试、构建、运行示例、联调或操作数据库；无新增测试及临时产物，原有测试保留。其他项目和外部rpc-client未同步。
 
 ## 实际请求权限校验
 

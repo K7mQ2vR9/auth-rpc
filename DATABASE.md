@@ -1,6 +1,6 @@
 # auth-rpc 数据库设计
 
-2026-11-24已在user_rpc执行迁移001、002；2026-11-25已执行迁移003并核对新列、根模板唯一索引及三个启用的CHECK约束。当前角色表结构已对齐本地模板模型、协议及CRUD，仍为0条记录，未创建根模板或授权数据。其他项目及前端未改动。
+2026-11-24已在user_rpc执行迁移001、002；2026-11-25已执行迁移003及004，核对模板类型、根唯一约束及permission_audit审计表。当前模板表和审计表均为0条记录，未创建根模板或授权数据。其他项目及前端未改动。
 
 ## 当前表结构与职责
 
@@ -11,10 +11,44 @@
 | menu_group | 本次实际数据库与模型均使用此表名，成员为JSON格式，仅用于菜单展示；旧快照中的permission_menu不是本轮修改对象 |
 | menu | 在原页面、按钮等字段基础上新增必填service_name及业务/服务/路径普通查询索引，其他原字段保持 |
 | admin_info | auth-rpc已补齐AccountType映射及五种类型常量，并移除RoleId映射和按role_id筛选；数据库role_id列本轮未删除，其他项目引用未改动 |
+| permission_audit | 迁移004已执行并核对16字段、4索引及空表；CreateSiteRootTemplate、UpdateSiteRootTemplate、CopyRolePermissionToUser已接入同事务成功审计源码 |
 
 admin_info.account_type沿用：10=平台超级管理员、11=平台管理员、20=商户超级管理员、30=站点管理员、40=代理管理员。auth-rpc的schema.AdminInfo已映射AccountType，并定义与user-rpc数值一致的AdminInfoAccountType10/11/20/30/40常量及中文注释；0表示未设置，不属于这五种有效类型。不增加新的身份字段，不压缩为三种类型，不自动转换现有账号类型；字段映射本身不新增身份鉴权或自动授予权限。账号身份与角色权限模板分别管理。
 
-源码阶段已完成账号类型映射、用户角色解绑、独立授权登录菜单及模板基础CRUD。用户确认后，本轮在user_rpc仅执行迁移003，未插入、更新或删除业务记录，未删除admin_info.role_id，未修改其他项目。未运行Go测试、构建、服务、RPC或业务联调。平台根模板管理、操作者自身上限及审计仍待实施，结构迁移成功不代表完整三级权限业务可用。
+源码阶段已完成账号类型映射、用户角色解绑、独立授权登录菜单及模板基础CRUD。平台根模板创建、查询、更新和按模板覆盖用户的源码已同步，权限写入同事务审计。用户授权后已完成迁移003及004，未插入、更新或删除业务记录，未删除admin_info.role_id；其他既有权限入口尚未接入完整层级约束与审计。未修改其他项目，未运行Go测试、构建、服务、RPC或业务联调，结构迁移成功不代表完整三级权限业务可用。
+
+### permission_audit（迁移004已执行）
+
+[004_permission_audit.sql](database/migrations/004_permission_audit.sql)已于2026-11-25在user_rpc执行。前置核对003结构及同名表不存在后，仅创建空表，不新增根模板、账号、菜单或授权。当前库禁止重跑；其他环境先核对实际迁移状态和结构，不忽略已有表差异。
+
+表使用InnoDB，无软删除和自动清理策略。字段包括自增id、服务端operation、操作者id/account_type/business_code、目标站点business_code、target_type/target_id、前后menu_ids及version、source_template_id/source_template_version、trace_id和created_at（Unix秒）。创建根模板时前集合为空、前版本0，后版本1；根更新及复制用户后版本递增1。复制记录目标用户ID、用户授权前后快照和来源模板ID/版本，其他操作来源字段为0。菜单集合使用规范化CSV，trace_id复用当前32位链路ID，不保存密码、Token或配置密钥。
+
+索引为主键id、(business_code,created_at,id)、(operator_id,created_at,id)及trace_id；Trace列使用ascii_bin，其余默认utf8mb4_unicode_ci。根模板创建、更新及按模板覆盖用户分别与审计插入使用同一tx：审计表缺失或写入失败均返回错误并回滚权限写入，不降级跳过审计。普通用户保存SaveUserPermission和普通模板增改删尚未接入审计。剩余三个RPC无需新增其他DDL，复制使用已有admin_permission唯一user_id及版本列；004结构落库后仍未执行这些业务调用。
+
+### 迁移004执行状态
+
+2026-11-25使用auth-rpc当前配置连接user_rpc，MySQL版本9.7.1。执行前保存[现有权限表结构快照](database/snapshots/20261125_before_004.sql)，仅含DDL和精确记录数，不含业务记录、连接信息、凭证或密钥，也不是可直接执行的回滚脚本。
+
+| 操作 | 实际结果 |
+|---|---|
+| 前置核对 | permission_audit不存在；003类型、版本、根生成列、唯一索引及三个启用CHECK均符合预期 |
+| 执行004 | 成功，仅CREATE TABLE permission_audit，不重跑001—003 |
+| 字段 | 16个字段，逐项核对类型、非空、默认值及注释；id自增，trace_id为CHAR(32)、ascii_bin |
+| 索引及引擎 | 主键及3个查询索引符合SQL；InnoDB，表排序规则utf8mb4_unicode_ci |
+| 审计表记录数 | 精确COUNT为0，无样本写入或业务调用 |
+| 非目标表 | admin_info、admin_permission、role_permission、menu、menu_group的结构摘要（不含AUTO_INCREMENT计数）和精确COUNT均未变化，均为0条 |
+
+实际执行命令如下，临时目录用占位符表示：
+
+```text
+python3 <临时目录>/migrate.py inspect
+python3 <临时目录>/migrate.py apply
+python3 <临时目录>/migrate.py verify
+```
+
+首次沙箱内inspect连接返回MySQL 2003，未执行DDL；获准联网后inspect、apply和verify均成功。执行器从项目配置读取当前连接，使用0600临时凭证文件，密码不出现在命令参数或输出；SQL通过标准输入提交。连接超时8秒，DDL会话元数据锁及行锁等待均为10秒，客户端预算45秒，不自动重试DDL。SQL执行后只更新迁移文件头部状态注释，当前库不可重跑。
+
+核对仅使用SHOW CREATE TABLE、information_schema及精确COUNT，未写入测试样本，未运行Go测试、构建、服务、RPC或业务联调，不能将结构完成视为事务回滚或业务逻辑已验证。正式迁移SQL和结构快照保留。结果登记后，已删除本次临时执行器、0600连接凭证、状态文件及其目录，并核对目录不存在；未新增Go测试、测试样本或验证缓存，原有测试与用户文件保留。
 
 ### admin_permission
 
@@ -65,7 +99,7 @@ menu_ids为TEXT NOT NULL，写入时显式提供英文逗号分隔的具体菜�
 | uniq_site_root | 生成列唯一索引，每站点最多一条根模板，普通自定义模板可多条，软删除不释放根槽位 |
 | chk_role_template_business | 要求business_code非NULL、非空白，避免空归属绕过根模板唯一性 |
 
-保留现有主键、业务索引和其他字段。根模板由未来平台专用入口初始化，普通CRUD不能创建、修改或删除根模板；本轮SQL不插入占位数据。普通自定义模板写入锁定当前站点根模板检查子集，再检查具体菜单存在、启用且为页面或按钮，不继承菜单分组。完整接口和失败语义见 [权限模板接口](USER_PERMISSION.md#权限模板接口)。
+保留现有主键、业务索引和其他字段。根模板由平台专用CreateSiteRootTemplate显式创建，GetSiteRootTemplate/UpdateSiteRootTemplate负责读取及按版本覆盖；普通CRUD不能创建、修改或删除根模板，SQL不插入占位数据。普通自定义模板写入锁定当前站点根模板检查子集，再检查具体菜单存在、启用且为页面或按钮，不继承菜单分组。完整接口和失败语义见 [权限模板接口](USER_PERMISSION.md#权限模板接口)。
 
 本次执行前已核对001结构、空表、新列及约束均不存在，满足003前提。其他环境若已有模板，须先明确类型、归属及版本，另定数据迁移，不自动分类或清空，不无条件重复执行。
 
